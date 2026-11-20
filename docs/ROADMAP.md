@@ -6,9 +6,9 @@
 ## P0 — GitHub 이식 및 재개 가능성
 - [x] 기준 저장소 확정: Propeex/KNULLI-Korean-Auto-Scraper
 - [x] v0.8.4 소스 ZIP 및 테스트 기록 확보
-- [ ] v0.8.4 원본 소스·테스트 전체를 GitHub에 이식하고 파일 비교
-- [ ] GitHub CI의 테스트 상태 확인
-- [ ] 인수인계 문서 최신 상태 동기화
+- [x] v0.8.4 원본 소스·테스트 전체를 GitHub에 이식 (검증된 SHA256 소스 스냅샷 추출, 코드 커밋 `4734f7a`)
+- [x] GitHub CI에서 복원 후 코드 기준 Python 자동 테스트 **성공** ([실행 결과](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/actions/runs/44666745166))
+- [x] README 및 HANDOFF/ROADMAP/DECISIONS/KNOWN_ISSUES/CHANGELOG/ARCHITECTURE/MIGRATION 인수인계 문서 저장
 **완료 기준:** 다른 대화에서 URL만 주면 코드/로드맵/마지막 문제를 확인할 수 있다.
 
 ## P1 — 사용자가 보고한 문제 검증
