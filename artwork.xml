@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<artwork>
+  <output type="screenshot" width="640" height="480">
+    <layer resource="screenshot" width="640" height="480" align="center" valign="middle" />
+    <layer resource="cover" height="220" x="10" y="-10" valign="bottom" />
+  </output>
+  <output type="cover" resource="cover" />
+  <output type="marquee" resource="wheel" />
+</artwork>

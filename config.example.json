@@ -1,0 +1,31 @@
+{
+  "screenscraper_account": {"user": "", "password": ""},
+  "knulli_scraper": {
+    "image_source": "mixrbv1",
+    "box_source": "box-2D",
+    "logo_source": "wheel",
+    "preferred_region": "",
+    "overwrite_names": false,
+    "overwrite_descriptions": true,
+    "overwrite_medias": true,
+    "short_name": false,
+    "rating": true,
+    "video": false,
+    "fanart": false,
+    "bezel": false,
+    "boxback": false,
+    "map": false,
+    "manual": false,
+    "padtokey": false,
+    "desc": true,
+    "genre": true,
+    "releasedate": true,
+    "developer": true,
+    "publisher": true,
+    "players": true
+  },
+  "remote_root": "/userdata/roms",
+  "max_rom_transfer_mb": 256,
+  "use_wikidata": true,
+  "engine_timeout_seconds": 240
+}
