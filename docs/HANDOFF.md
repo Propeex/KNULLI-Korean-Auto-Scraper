@@ -33,11 +33,11 @@
 - **단위 테스트는 통과했지만 이 v0.8.4 수정의 실기기 성공 피드백은 아직 받지 못함.**
 
 ## 현재 중단 지점
-**GitHub 최초 이식 완료(v0.8.4).** GUI/스크래퍼 Python 소스와 60개 테스트, README, 개발 계획/결정/알려진 문제 문서가 `main`에 업로드됨. 다음 작업은 **최신 코드 기준 CI 테스트 상태 확인**, Windows/실기기 기능 검증, 마지막 한글 하위 폴더 문제 재시험. 이식은 새로운 기능 추가가 아닌 기존 상태 기준선 확립.
+**GitHub 최초 이식 완료(v0.8.4).** GUI/스크래퍼 Python 소스와 60개 테스트, README, 개발 계획/결정/알려진 문제 문서가 `main`에 업로드됨. **최신 코드 기준 GitHub Actions CI 성공**: [Python tests run](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/actions/runs/44666745166). 다음 작업은 Windows/실기기 기능 검증과 마지막 한글 하위 폴더 문제 재시험. 이식은 새로운 기능 추가가 아닌 기존 상태 기준선 확립.
 
 ## 이어서 할 일 (우선순위)
 1. [완료] 원본 v0.8.4의 모든 소스 파일을 저장소 루트에 복원. 압축 스냅샷 SHA256 확인. 
-2. [진행/확인 필요] GitHub CI에서 **복원 후 코드** 기준 단위 테스트 통과 확인. 이식 중 임시 코드 없는 커밋에서 발생한 실패와 구분할 것. Windows GUI 및 ADB 사용의 실제 제약 문서화.
+2. [완료] GitHub CI에서 **복원 후 코드** 기준 단위 테스트 성공. 초기 이식 중 코드 없는 커밋의 실패와 구분할 것. [성공 실행](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/actions/runs/44666745166). Windows GUI 및 ADB 사용의 실제 제약 문서화는 다음 작업.
 3. 사용자 실기기에서 v0.8.4 한글 하위 폴더 오류 재시험 결과 수집. 실패하면 기기 로그/last_report.json 기반 원인 수정.
 4. 타이틀 화면(ssTitle) 미지원 문제 검토. 현재 Windows Skyscraper 3.6.12 수집 경로에서 지원/검증되지 않음.
 5. 속도·안정성 개선. 게임별 GUI 갱신, 큰 ROM 전송 최소화, 검색 결과 캐시. 스크래핑 API 한도 준수.
