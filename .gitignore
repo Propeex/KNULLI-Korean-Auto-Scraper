@@ -1,0 +1,49 @@
+# Local config, credentials, and runtime artifacts
+config.json
+config.local.json
+.env
+.env.*
+!.env.example
+work/
+cache/
+logs/
+*.log
+*.db
+*.sqlite
+*.sqlite3
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+build/
+dist/
+*.egg-info/
+
+# Third-party packages and user data
+platform-tools/
+skyscraper/
+roms/
+bios/
+userdata/
+gamelist.xml
+images/
+videos/
+*.gba
+*.gbc
+*.nes
+*.sfc
+*.smc
+*.cue
+*.bin
+*.chd
+*.iso
+*.rom
+*.7z
+*.zip
+
+# OS
+.DS_Store
+Thumbs.db
