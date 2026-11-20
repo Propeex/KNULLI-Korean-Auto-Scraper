@@ -1,0 +1,51 @@
+name: Expand v0.8.4 source snapshot
+on:
+  push:
+    branches: [main]
+    paths:
+      - migration/READY
+
+permissions:
+  contents: write
+
+jobs:
+  expand:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Verify snapshot and expand source
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import base64, bz2, hashlib, io, pathlib, tarfile
+          folder = pathlib.Path('migration/chunks')
+          chunks = sorted(folder.glob('part-*.txt'))
+          assert len(chunks) == 11, f'Expected 11 chunks, got {len(chunks)}'
+          encoded = ''.join(p.read_text(encoding='ascii').strip() for p in chunks)
+          compressed = base64.b64decode(encoded, validate=True)
+          digest = hashlib.sha256(compressed).hexdigest()
+          expected = 'c670d786972d40f229803628a29bd05bbd2d5ef1ac811ac3c8844ff379c26c5c'
+          assert digest == expected, f'Archive SHA256 mismatch: {digest}'
+          content = bz2.decompress(compressed)
+          with tarfile.open(fileobj=io.BytesIO(content), mode='r:') as t:
+              for m in t.getmembers():
+                  path = pathlib.PurePosixPath(m.name)
+                  assert not path.is_absolute() and '..' not in path.parts, m.name
+                  assert m.isfile(), m.name
+                  assert path.parts[0] != '.github', m.name
+                  dest = pathlib.Path(*path.parts)
+                  dest.parent.mkdir(parents=True, exist_ok=True)
+                  dest.write_bytes(t.extractfile(m).read())
+              print('Imported', len(t.getmembers()), 'source files')
+          PY
+      - name: Commit extracted source
+        shell: bash
+        run: |
+          rm -rf migration/chunks migration/READY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet || git commit -m "import: expand verified v0.8.4 Python source snapshot"
+          git push
