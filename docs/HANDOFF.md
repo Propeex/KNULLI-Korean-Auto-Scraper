@@ -32,21 +32,21 @@
 - v0.8.4에서 기기 경로를 바이트/NUL 구분 + 영숫자 인코딩으로 PC에 전달, 파일 크기 조회의 인코딩 개선.
 - **단위 테스트는 통과했지만 이 v0.8.4 수정의 실기기 성공 피드백은 아직 받지 못함.**
 
-## 개발 중 추가 기능 — 삭제된 ROM 연관 데이터 정리 (v0.8.5)
-- 브랜치: `feature/orphan-rom-cleanup-v085`.
+## 현재 추가 기능 — 삭제된 ROM 연관 데이터 정리 (v0.8.5 베타)
+- `main` 통합 완료: PR [#1](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/pull/1), 커밋 `f3f8187bd52e740ae362528e329a3552e1b89221`.
 - 구현: `orphan_cleanup.py`, GUI 목록 조회 시 누락된 ROM의 XML 자료 확인, 다른 게임이 참조하지 않는 미디어만 후보로 선정, 사용자 확인 후 정리.
 - 삭제 전 **XML을 다시 확인하고 ROM이 재등장했는지 검증**. XML을 PC/기기 모두 백업.
 - 단독 이미지/영상/매뉴얼 파일은 삭제될 수 있으므로 확인 대화상자를 제공. 삭제된 미디어 자체는 별도 백업하지 않음.
 - ROM 0개 상태도 코드 보완했으나 실기기 확인은 아직 없음. 특수 시스템/파일명·중복 XML 등의 모든 케이스는 미검증.
-- **현재 중단 지점:** 브랜치 코드를 GitHub CI와 실기기에서 검증 후 main 병합 여부 결정. 검증 전에는 실기기에서 자동 정리를 약속하지 말 것.
+- **GitHub CI 자동 테스트 통과:** [테스트 실행](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/actions/runs/45045628986). **실제 RG35XX Plus 검증 전**, 이미지 삭제는 되돌리기 어렵기 때문에 정리 전 GUI 확인 필수.
 
 ## 현재 중단 지점
-**GitHub 최초 이식 완료(v0.8.4).** GUI/스크래퍼 Python 소스와 60개 테스트, README, 개발 계획/결정/알려진 문제 문서가 `main`에 업로드됨. **최신 코드 기준 GitHub Actions CI 성공**: [Python tests run](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/actions/runs/44666745166). 다음 작업은 Windows/실기기 기능 검증과 마지막 한글 하위 폴더 문제 재시험. 이식은 새로운 기능 추가가 아닌 기존 상태 기준선 확립.
+**v0.8.5 베타를 main에 통합 완료.** v0.8.4를 기반으로 삭제된 ROM의 XML·단독 미디어 정리 기능을 추가. 기존 GUI/스크래퍼와 인수인계 문서는 유지. **최신 코드 기준 GitHub Actions CI 성공**: [Python tests run](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/actions/runs/44666745166). 다음 작업은 v0.8.5 정리 기능의 Windows/실기기 안전성 검증, 마지막 한글 하위 폴더 문제 재시험. 이식은 v0.8.4를 기준선으로 만들었으며, 후속 v0.8.5 기능은 PR #1에서 추가함.
 
 ## 이어서 할 일 (우선순위)
 1. [완료] 원본 v0.8.4의 모든 소스 파일을 저장소 루트에 복원. 압축 스냅샷 SHA256 확인. 
 2. [완료] GitHub CI에서 **복원 후 코드** 기준 단위 테스트 성공. 초기 이식 중 코드 없는 커밋의 실패와 구분할 것. [성공 실행](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/actions/runs/44666745166). Windows GUI 및 ADB 사용의 실제 제약 문서화는 다음 작업.
-3. 사용자 실기기에서 v0.8.4 한글 하위 폴더 오류 재시험 결과 수집. 실패하면 기기 로그/last_report.json 기반 원인 수정.
+3. 사용자 실기기에서 v0.8.5 정리 기능을 소량 시험하고, v0.8.4 한글 하위 폴더 오류 재시험 결과 수집. 실패하면 기기 로그/last_report.json 기반 원인 수정.
 4. 타이틀 화면(ssTitle) 미지원 문제 검토. 현재 Windows Skyscraper 3.6.12 수집 경로에서 지원/검증되지 않음.
 5. 속도·안정성 개선. 게임별 GUI 갱신, 큰 ROM 전송 최소화, 검색 결과 캐시. 스크래핑 API 한도 준수.
 6. 사용자에게 정리된 리포트/릴리스 전달.
