@@ -6,7 +6,7 @@
 - 작성일: 2026-11-20 (Asia/Seoul)
 - 프로젝트: KNULLI Korean Auto Scraper
 - 저장소: https://github.com/Propeex/KNULLI-Korean-Auto-Scraper
-- **현재 개발/배포 대상: `v0.8.7-beta.2` (Atomiswave .7z 인식 수정).** 기존 공개 버전은 [`v0.8.7-beta.1`](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.7-beta.1) (Pre-release, PortMaster 지원). 이전 공개 버전: `v0.8.6-beta.1`. 이전 공개 베타: `v0.8.5-beta.2`. 이전 공개 버전은 `v0.8.5-beta.1`. 최초 이식 소스 기준: **v0.8.4 베타** (`knulli_auto_scraper_adb_v084_unicode_folders.zip`)
+- **현재 최신 공개 베타: [`v0.8.7-beta.2`](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.7-beta.2) (Atomiswave .7z 인식 수정).** 이전 공개 베타는 `v0.8.7-beta.1` (PortMaster 지원). 이전 공개 버전: `v0.8.6-beta.1`. 이전 공개 베타: `v0.8.5-beta.2`. 이전 공개 버전은 `v0.8.5-beta.1`. 최초 이식 소스 기준: **v0.8.4 베타** (`knulli_auto_scraper_adb_v084_unicode_folders.zip`)
 - 대상: Windows PC, RG35XX Plus (KNULLI), USB ADB
 - 스크래핑: Windows에서 Skyscraper / ScreenScraper 사용. PC 인터넷만 필요, 기기 인터넷 불필요.
 - **GitHub 최초 이식 완료:** 2026-11-20, 원본 v0.8.4 소스를 코드 변경 없이 복원한 커밋 `4734f7a954d0953a6f1306f8a3910039bcc6a634`. 원본 압축 스냅샷 SHA256 검증 및 GitHub Actions 복원 성공. 상세 기록: [MIGRATION.md](MIGRATION.md). 실기기 테스트는 사용자 환경에서 별도 확인해야 함.
@@ -32,7 +32,7 @@
 - v0.8.4에서 기기 경로를 바이트/NUL 구분 + 영숫자 인코딩으로 PC에 전달, 파일 크기 조회의 인코딩 개선.
 - **단위 테스트는 통과했지만 이 v0.8.4 수정의 실기기 성공 피드백은 아직 받지 못함.**
 
-## 수정 진행 — Atomiswave .7z 게임 미인식 (v0.8.7-beta.2, 2026-11-23)
+## 수정·배포 완료 — Atomiswave .7z 게임 미인식 (v0.8.7-beta.2, 2026-11-23)
 
 - **현장 보고:** 기기의 Atomiswave `.7z` 게임이 Windows 스크래퍼 목록에 나타나지 않음.
 - **코드에서 확인한 원인:** `core.ROM_EXT`는 `.7z`를 이미 포함했지만 `core.SYSTEM_IDS`에 `atomiswave`가 빠져 있어 게임을 탐색 결과에서 제외했음. `legacy_bridge.PLATFORMS`에도 Skyscraper 매핑이 없어 스크래핑이 불가했음.
@@ -40,8 +40,8 @@
 - **보호:** `.7z` 압축 ROM의 파일명 변경 금지, 게임 원본 내용 무수정, 기존 한글 이름 유지, XML 자동 백업 생성 금지. KNULLI 게임 실행 문제와 스크래핑 인식 문제는 별개.
 - **회귀 테스트:** `tests/test_v087_beta2_atomiswave.py`. 인식, 한글 하위 폴더와 대문자 확장자, Skyscraper `atomiswave` 플랫폼 전달, XML 한글명 보존, 압축 롬 파일명 변경 거부, 다른 기종의 `.dat/.lst` 미인식. Linux POSIX 실셸 시뮬레이션 포함. Windows 테스트 게이트 추가.
 - **문서 확인:** Skyscraper 공식 플랫폼 목록과 Batocera/REG Linux Atomiswave 파일 형식으로 대응 방식 확인.
-- **작업 브랜치:** `fix/atomiswave-7z-v087-beta2`, [PR #5](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/pull/5).
-- **현재 중단 지점:** GitHub CI 최종 검증 → `main` 병합 → `release/request.json`을 `v0.8.7-beta.2`로 변경 → GitHub Windows+Linux 릴리즈 테스트 및 ZIP/.sha256 첨부/Pre-release 확인. 실제 RG35XX Plus 게임 목록과 스크래핑 성공 여부는 사용자 실기기 피드백 필요.
+- **구현 및 main 병합 완료:** [PR #5](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/pull/5) (merge SHA `161cad5bf192853eebde30ea63882e6009dec2f3`); 개발 브랜치: `fix/atomiswave-7z-v087-beta2`.
+- **베타 릴리즈 및 검증 완료:** [v0.8.7-beta.2 Pre-release](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.7-beta.2), [GitHub Actions Windows+Linux 테스트 및 배포](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/actions/runs/45058337387) 성공. ZIP `KNULLI-Korean-Auto-Scraper-v0.8.7-beta.2-Windows.zip` 90,550 bytes, SHA256 `f6351b7a3d58c567ae3f1b6ff6d8fa72d319beea1cf30b33552312ffb1085649`; `.sha256` 첨부 검증. `prerelease=true` 확인. **다음 작업:** 실제 Windows/RG35XX Plus에서 Atomiswave `.7z` 목록 표시와 Skyscraper 미디어 적용 성공 확인. 기기에서 ROM 게임 실행 가능 여부는 본 스크래퍼 검증 범위 밖.
 - **릴리즈 정책:** 사용자 정식 출시 승인 전까지 무조건 Beta; 작업 완료 시 GitHub Release 발행하고 이 HANDOFF 문서 갱신. 이전 `v0.8.6-beta.1`부터 자동 업데이트 기능 탑재.
 
 ## 현재 추가 기능 — 삭제된 ROM 연관 데이터 정리 (v0.8.5 베타)
@@ -81,7 +81,7 @@
 ## 릴리즈 운영 규칙 (2026-11-23)
 - 사용자는 **작업이 성공적으로 종료될 때마다 GitHub Release 발행**을 요구함. 개발은 릴리즈까지 끝나야 완료임.
 - 사용자가 정식 출시를 명시적으로 승인하기 전에는 `vMAJOR.MINOR.PATCH-beta.N` 형식의 **Pre-release**만 가능. 번호는 개발 담당자가 관리.
-- 현재 최신 베타: [`v0.8.7-beta.1`](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.7-beta.1). 이전 베타: `v0.8.6-beta.1`,  [기존 릴리즈 페이지](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.5-beta.2). 첫 베타는 `v0.8.5-beta.1`.
+- 현재 최신 베타: [`v0.8.7-beta.2`](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.7-beta.2). 이전 베타: `v0.8.7-beta.1`,   [기존 릴리즈 페이지](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.5-beta.2). 첫 베타는 `v0.8.5-beta.1`.
 - 릴리즈는 테스트→배포 ZIP/체크섬 생성→GitHub 사전출시 상태/첨부파일 확인까지 완료해야 성공.
 - 절차: [RELEASE_PROCESS.md](RELEASE_PROCESS.md), GitHub Actions `.github/workflows/publish-beta.yml`, 트리거 `release/request.json`.
 - **첫 GitHub Beta Release 발행 확인 완료 (2026-11-23):** [v0.8.5-beta.1](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.5-beta.1). `prerelease=true`, ZIP(68,614 bytes), `.sha256` 두 첨부 자산 확인. [배포 GitHub Actions](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/actions/runs/45046433924)의 테스트·ZIP 빌드·검증·게시·첨부파일 확인 전 단계 성공.
@@ -108,7 +108,7 @@
 - 향후 기능 개발 성공 시 `app_version.VERSION_TAG`와 `release/request.json`을 일치시켜 새로운 `beta.N` 릴리즈를 자동 발행. 정식 출시 승인 전까지 stable 배포 금지.
 
 ## 현재 중단 지점
-**v0.8.5-beta.2 GitHub 사전 출시 완료.** PR #1에서 삭제된 게임 자료 정리, PR #2에서 ADB 명령 길이 수정과 자동 XML 백업 폐지를 적용. 모든 개발 단위 테스트 85개 통과, 릴리즈 아카이브 생성/체크섬 검증 성공. **실제 Windows/RG35XX Plus 연결 결과 미확인**. 다음은 긴 한글 경로/삭제된 게임 XML 정리/기기 과거 백업 제거의 현장 검증이며, 오류 발생 시 로그 분석과 후속 Beta 3 릴리즈 진행.
+**최신 배포 완료: `v0.8.7-beta.2`** (Atomiswave `.7z` 인식 오류 수정). [릴리즈](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.7-beta.2), [Windows+Linux CI](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/actions/runs/45058337387). 기존 PortMaster/자동 업데이트/백업 미생성 정책 유지. **다음 작업:** 사용자 RG35XX Plus에서 Atomiswave 목록 표시, .7z 스크래핑 결과, 기존 한글명 보존을 확인하고 피드백이 있으면 새 베타 릴리즈로 수정. 그 전에는 실기기 성공이라고 단정하지 말 것.
 
 ## 이어서 할 일 (우선순위)
 1. [완료] 원본 v0.8.4의 모든 소스 파일을 저장소 루트에 복원. 압축 스냅샷 SHA256 확인. 
