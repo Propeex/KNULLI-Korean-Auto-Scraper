@@ -1,7 +1,7 @@
 """KNULLI v0.5 GUI backend. No writes to ROMs, no ADB server restart.
 
 GUI queries a read-only catalogue; user chooses jobs. The only device writes are
-new image files and an atomically replaced gamelist.xml with two backups.
+new image files and an atomically replaced gamelist.xml, without backups.
 """
 from __future__ import annotations
 from dataclasses import dataclass, field
@@ -261,14 +261,6 @@ def _device_apply(adb,root_dir, item, media:Path, suffix:str, work:Path):
         # New image filename: re-scraping never destroys the old image.
         remote_image=sysdir+'/images/'+image_name
         adb.upload(media,remote_image)
-        backup_dir=work/'xml_backups'
-        backup_dir.mkdir(parents=True,exist_ok=True)
-        if original is not None:
-            local_backup=backup_dir/(item.system+'_'+stamp+'.xml')
-            local_backup.write_bytes(original)
-            remote_backup=xml_remote+'.knulli-autoscraper-'+stamp+'.bak'
-            adb.shell('cp '+core.sq(xml_remote)+' '+core.sq(remote_backup))
-            if not adb.exists(remote_backup):raise RuntimeError('Backup not confirmed; XML write aborted')
         local_xml=tmp/'updated.xml';local_xml.write_bytes(changed)
         adb.upload(local_xml,xml_remote)
         return image_rel
@@ -343,11 +335,11 @@ def sync_korean_names(adb, config:dict, items:list[RomItem], work:Path|None=None
     """Align KNULLI's <name> with a Korean ROM stem for renameable single-file games.
 
     Runs once after discovery, grouped by system. Never touches ROM files or
-    protected archive names. Every changed XML is backed up on PC and device.
+    protected archive names. No persistent backups are created during title synchronization.
     Only an existing non-Korean <name> is overwritten. Customized Korean
     names and image/desc/etc are preserved.
     """
-    from manager import SINGLE_FILE, _read_xml, _check_unmodified, _backup_and_write
+    from manager import SINGLE_FILE, _read_xml, _check_unmodified, _write_xml
     import re
     root=config.get('remote_root','/userdata/roms').rstrip('/')
     work=Path(work or HERE/'work')
@@ -381,7 +373,7 @@ def sync_korean_names(adb, config:dict, items:list[RomItem], work:Path|None=None
         if updated==original:continue
         _check_unmodified(adb,sysdir,original)
         stamp=datetime.now().strftime('%Y%m%d_%H%M%S_%f')
-        _backup_and_write(adb,sysdir,original,updated,work,stamp)
+        _write_xml(adb,sysdir,updated)
         for item in changed:
             item.metadata['name']=item.stem
             item.display=item.stem
