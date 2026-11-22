@@ -2,11 +2,11 @@
 
 Windows에서 USB ADB로 **RG35XX Plus / KNULLI**의 ROM을 직접 탐색하고, 한국어 파일명·표시명을 보존하면서 ScreenScraper 자료를 수집·적용하는 데스크톱 앱입니다.
 
-> **현재 베타 버전:** `v0.8.5-beta.2` (2026-11-23). 기반 소스는 v0.8.4이며, 기존 스크래핑 기능에 삭제된 ROM 관련 자료 정리 기능을 추가했습니다. 자동 테스트는 통과했지만 이 기능의 실제 기기 검증은 아직 필요합니다.
+> **현재 개발 버전:** `v0.8.6-beta.1` (2026-11-23). 기반 소스는 v0.8.4이며, 기존 스크래핑 기능에 삭제된 ROM 관련 자료 정리 기능을 추가했습니다. 자동 테스트는 통과했지만 이 기능의 실제 기기 검증은 아직 필요합니다.
 
 ## 최신 Windows 베타 다운로드
 
-[**GitHub Releases — v0.8.5-beta.2**](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.5-beta.2)에서 Windows ZIP과 SHA-256 검사 파일을 받으세요. 이 패키지는 독립 실행 EXE가 아니라 **Python GUI 소스 패키지**이며, Windows에 Python 3.10+가 필요합니다.
+[**GitHub Releases — v0.8.6-beta.1**](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.6-beta.1)에서 Windows ZIP과 SHA-256 검사 파일을 받으세요. 이 패키지는 독립 실행 EXE가 아니라 **Python GUI 소스 패키지**이며, Windows에 Python 3.10+가 필요합니다.
 
 배포 규칙: [docs/RELEASE_PROCESS.md](docs/RELEASE_PROCESS.md). 사용자가 정식 출시를 승인하기 전에는 모든 버전을 **Pre-release / Beta**로 발행합니다.
 
@@ -56,6 +56,14 @@ ROM을 사용자가 기기에서 삭제한 뒤 프로그램이 다음에 목록�
 한글 경로 검사에 사용되는 ADB 셸 명령은 길이에 따라 나눠 실행합니다. 길이 오류가 지속되거나 결과가 불완전하면 게임이 삭제된 것으로 잘못 판단하지 않고 정리를 중단합니다.
 
 **주의:** 백업이 생성되지 않으므로 예기치 못한 USB 연결 끊김/기기 오류 시 복구 선택지가 줄어듭니다. 중요한 기기 데이터는 사용자가 별도로 관리해야 합니다.
+
+## 시작 시 자동 업데이트 (v0.8.6-beta.1)
+
+Windows에서 `GUI_실행.pyw` 또는 `GUI_실행.vbs`를 실행하면 앱 시작 전에 GitHub의 **공개 베타(Pre-release) 목록**을 확인합니다. 현재 버전보다 높은 베타가 있으면 별도 확인 창 없이 Windows ZIP을 다운로드하여 SHA-256과 패키지 내부 파일을 검사합니다. 이후 기존 앱을 종료하고 별도 도우미로 프로그램 파일을 교체한 뒤 **새 버전을 자동 재실행**합니다. 인터넷이 없거나 업데이트 검사에 실패하면 기존 버전으로 실행합니다.
+
+**최초 1회 설치:** 이전 `v0.8.5-beta.2`에는 자동 업데이트 기능이 없으므로, 이 `v0.8.6-beta.1`은 릴리즈 ZIP을 직접 설치해야 합니다. 이후 새 베타부터 자동 업데이트됩니다. 사용자 승인 전까지 안정(Stable) 릴리즈로 자동 전환하지 않습니다.
+
+사용자 설정(`Documents/KNULLI Auto Scraper Data`), 스크래핑 데이터, ROM, 기기의 XML과 기존 사용자가 수정한 `aliases.json`·`artwork.xml`은 업데이트 도중 변경하지 않습니다. 일시적 코드 롤백 파일은 스크랩 데이터 백업이 아닙니다. 실패 내역은 사용자 데이터 폴더의 `auto_update.log`에 기록합니다. 업데이트 실패 후에는 기존 앱을 실행하도록 설계했습니다. Windows 실기기 업데이트 동작은 별도 확인이 필요합니다.
 
 ## 테스트
 
