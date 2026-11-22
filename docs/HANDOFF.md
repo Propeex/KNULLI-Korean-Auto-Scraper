@@ -43,7 +43,7 @@
 ## 개발 중 신규 기능 — 실행 시 자동 베타 업데이트 (v0.8.6-beta.1)
 
 - **사용자 요청:** 프로그램을 실행할 때 최신 GitHub 릴리즈를 자동 검색하고, 새 베타가 있으면 **확인 없이 자동 설치·재시작**.
-- `GUI_실행.pyw` 실행 전 `auto_update.try_launch_update()`를 호출. `GUI_실행.vbs`는 .pyw를 실행하므로 동일 동작. 직접 `gui.py`를 실행하는 비표준 경로는 업데이트 검사를 거치지 않음.
+- `GUI_실행.pyw` 실행 전 `auto_update.try_launch_update()` 호출. `GUI_실행.vbs`는 .pyw 실행, 직접 `python gui.py` 실행도 `__main__`에서 업데이트 검사 수행.
 - `app_version.py`의 `VERSION_TAG`와 GitHub Releases API의 공개 베타를 숫자 버전 비교. 정식(Stable)/Draft/태그 오류 제외.
 - 릴리즈 Windows ZIP, SHA256 첨부파일, GitHub Release API digest를 검증하고 ZIP 내용/경로/버전도 검사.
 - `auto_update_helper.py`를 사용자 데이터 내 임시 폴더에 복사하여 별도 프로세스로 실행. 원래 GUI 프로세스 종료를 대기한 후 앱 파일만 교체하고 재시작. 코드 교체 실패 시 이전 앱 파일 복구 시도. 잠금으로 동시 업데이트 방지.
