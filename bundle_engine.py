@@ -135,8 +135,8 @@ def engine_config(config,work,selection):
 def safe_apply(adb,item,found,selected,root='/userdata/roms',work=None):
     """Atomic gamelist upload after new media files are uploaded with unique names.
 
-    The XML is never replaced if a backup cannot be confirmed.
-    Existing paths and fields not selected remain unchanged.
+    Existing paths and fields not selected remain unchanged. No
+    persistent scraper-data XML backups are created.
     """
     work=Path(work or backend.HERE/'work')
     sysdir=root.rstrip('/')+'/'+item.system
@@ -199,8 +199,8 @@ def safe_apply(adb,item,found,selected,root='/userdata/roms',work=None):
     for local,remote in uploads:adb.upload(local,remote)
     # Concurrency guard following media transfer.
     _check_unmodified(adb,sysdir,original)
-    from manager import _backup_and_write
-    _backup_and_write(adb,sysdir,original,updated,work,stamp)
+    from manager import _write_xml
+    _write_xml(adb,sysdir,updated)
     return {'fields':applied_fields,'updated':True}
 
 
