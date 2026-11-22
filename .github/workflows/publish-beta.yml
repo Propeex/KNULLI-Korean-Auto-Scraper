@@ -1,0 +1,91 @@
+name: Publish beta release
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - release/request.json
+
+permissions:
+  contents: write
+
+concurrency:
+  group: beta-release
+  cancel-in-progress: false
+
+jobs:
+  verify-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the exact release commit
+        uses: actions/checkout@v4
+
+      - name: Install Tkinter and virtual display
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-tk xvfb
+
+      - name: Run all regression tests
+        run: xvfb-run -a python3 -m unittest discover -s tests -p 'test_*.py' -v
+
+      - name: Validate beta version and ensure tag is not already released
+        id: beta
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG=$(python3 -c 'from scripts.package_release import load_request; print(load_request())')
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Release already exists: $TAG" >&2
+            exit 1
+          fi
+          if git ls-remote --exit-code --tags origin "refs/tags/$TAG" >/dev/null 2>&1; then
+            echo "Git tag already exists: $TAG" >&2
+            exit 1
+          fi
+
+      - name: Build and verify Windows ZIP
+        run: |
+          python3 scripts/package_release.py
+          (cd dist && sha256sum --check *.sha256)
+
+      - name: Create GitHub prerelease with ZIP and checksum
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.beta.outputs.tag }}
+        run: |
+          gh release create "$TAG" \
+            dist/*.zip dist/*.sha256 \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "KNULLI Korean Auto Scraper $TAG" \
+            --notes-file release/notes.md \
+            --prerelease \
+            --latest=false \
+            --target "$GITHUB_SHA"
+
+      - name: Confirm GitHub prerelease state and downloadable assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.beta.outputs.tag }}
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          import subprocess
+
+          tag = os.environ["TAG"]
+          raw = subprocess.check_output(
+              ["gh", "release", "view", tag,
+               "--repo", os.environ["GITHUB_REPOSITORY"],
+               "--json", "isPrerelease,tagName,assets,url"],
+              text=True,
+          )
+          release = json.loads(raw)
+          assert release["tagName"] == tag
+          assert release["isPrerelease"] is True, "Release must be prerelease"
+          assets = [item["name"] for item in release["assets"]]
+          assert any(name.endswith("-Windows.zip") for name in assets), assets
+          assert any(name.endswith(".zip.sha256") for name in assets), assets
+          print("Verified beta release:", release["url"])
+          print("Assets:", assets)
+          PY
