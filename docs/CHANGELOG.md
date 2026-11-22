@@ -7,7 +7,8 @@
 - 최신 사용자 설정·스크랩 데이터·ROM·KNULLI XML 보존. 사용자 수정 aliases.json/artwork.xml 덮어쓰기 방지.
 - 네트워크 장애 시 기존 앱으로 계속 실행, 동시 업데이트 잠금, 작업 로그 저장.
 - 업데이터가 없는 이전 v0.8.5-beta.2는 **이번 릴리즈를 처음 한 번 수동 설치**해야 함. 이후 자동 업데이트 작동.
-- [PR #3](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/pull/3). Linux 기반 CI 단위 테스트로 검증. Windows 실제 자동 업데이트 동작은 검증 전.
+- [PR #3](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/pull/3) main 병합. [릴리즈 GitHub Actions](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/actions/runs/45052031828)에서 Linux 전체 회귀·Windows 업데이터 테스트/실제 Windows 프로세스 대기·ZIP/체크섬 검증 모두 통과. **실제 사용자 PC에서 자동 업그레이드 성공은 아직 검증 전**.
+- **GitHub 사전 출시 완료:** [v0.8.6-beta.1](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.6-beta.1), Windows ZIP(82,651 bytes) + SHA-256 확인 파일.
 
 
 ## v0.8.5-beta.2 — ADB 명령 길이 오류 및 스크래핑 백업 폐지 (2026-11-23)
