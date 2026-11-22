@@ -43,10 +43,18 @@ class TestRomStaging(unittest.TestCase):
                 destination=Path(td)/('한글 게임.'+ext)
                 result=rom_staging.prepare(adb,ROM,destination,LARGE,256)
                 self.assertTrue(result)
-                self.assertEqual(destination.read_bytes(),rom_staging.PLACEHOLDER)
+                self.assertEqual(destination.read_bytes(),rom_staging.placeholder_for(ROM))
                 self.assertLess(destination.stat().st_size,8192)
         self.assertEqual(adb.full_rom_pull_calls,0)
         self.assertEqual(adb.files[ROM],b'ROM_ORIGINAL_UNMODIFIED')
+
+    def test_name_only_placeholder_is_unique_per_game_path(self):
+        first=rom_staging.placeholder_for(ROOT+'/psp/Game One.iso')
+        second=rom_staging.placeholder_for(ROOT+'/psp/Game Two.iso')
+        self.assertNotEqual(first,second)
+        self.assertEqual(len(first),4096)
+        self.assertNotIn(b'ROM_ORIGINAL_UNMODIFIED',first)
+        self.assertTrue(first.startswith(rom_staging.PLACEHOLDER_PREFIX))
 
     def test_normal_size_disc_still_uses_real_rom_hash_lookup(self):
         adb=FakeADB()
@@ -78,7 +86,7 @@ class TestForcedNameQueries(unittest.TestCase):
             stage=Path(td)
             (stage/'roms').mkdir()
             local=stage/'roms'/'몬스터 헌터 포터블 3rd.iso'
-            local.write_bytes(rom_staging.PLACEHOLDER)
+            local.write_bytes(rom_staging.placeholder_for(ROM))
             engine=bundle_engine.DetailedEngine('Skyscraper.exe',stage/'config.ini')
             commands=[]
             def run(args):
@@ -104,7 +112,7 @@ class TestForcedNameQueries(unittest.TestCase):
             stage=Path(td)
             (stage/'roms').mkdir()
             local=stage/'roms'/'something.iso'
-            local.write_bytes(rom_staging.PLACEHOLDER)
+            local.write_bytes(rom_staging.placeholder_for(ROM))
             engine=bundle_engine.DetailedEngine('Skyscraper.exe',stage/'config.ini')
             with mock.patch.object(engine,'_run') as run:
                 found,reason=engine.scrape_detail(stage,'psp',local,[],['desc'],name_only=True)
@@ -117,7 +125,7 @@ class TestForcedNameQueries(unittest.TestCase):
             stage=Path(td)
             (stage/'roms').mkdir()
             local=stage/'roms'/'game.iso'
-            local.write_bytes(rom_staging.PLACEHOLDER)
+            local.write_bytes(rom_staging.placeholder_for(ROM))
             eng=legacy.SkyscraperEngine('Skyscraper.exe',stage/'config.ini')
             commands=[]
             def run(args):
@@ -144,7 +152,7 @@ class TestLargePspWorkflow(unittest.TestCase):
                 self.assertions = True
                 assert name_only
                 assert platform=='psp'
-                assert romfile.read_bytes()==rom_staging.PLACEHOLDER
+                assert romfile.read_bytes()==rom_staging.placeholder_for(ROM)
                 assert 'Monster Hunter Portable 3rd' in terms
                 image=stage/'game.png'
                 image.write_bytes(PNG)
@@ -162,7 +170,7 @@ class TestLargePspWorkflow(unittest.TestCase):
         self.assertEqual(result[0]['lookup'],'name_only')
         self.assertEqual(adb.full_rom_pull_calls,0)
         self.assertEqual(adb.files[ROM],rom_bytes)
-        self.assertEqual(engine.requests[0][0:3],('psp',True,len(rom_staging.PLACEHOLDER)))
+        self.assertEqual(engine.requests[0][0:3],('psp',True,len(rom_staging.placeholder_for(ROM))))
         xml=core.parse_xml(adb.files[ROOT+'/psp/gamelist.xml'])
         entry=core.find_entry(xml,'./몬스터 헌터 포터블 3rd.iso')
         self.assertEqual(entry.findtext('name'),'몬스터 헌터 포터블 3rd')
@@ -174,7 +182,7 @@ class TestLargePspWorkflow(unittest.TestCase):
             def __init__(self): self.name_only=None
             def scrape(self,stage,platform,romfile,terms,name_only=False):
                 self.name_only=name_only
-                assert romfile.read_bytes()==rom_staging.PLACEHOLDER
+                assert romfile.read_bytes()==rom_staging.placeholder_for(ROM)
                 image=stage/'art.png'
                 image.write_bytes(PNG)
                 return image,'Monster Hunter Portable 3rd','name match'
