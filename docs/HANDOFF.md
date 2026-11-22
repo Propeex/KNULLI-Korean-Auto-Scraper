@@ -57,7 +57,7 @@
 ## 개발 중 — PortMaster 게임 스크래핑 (v0.8.7-beta.1)
 
 - 사용자 요청: PortMaster 포팅 게임을 기존 Windows GUI에서 선택하고 정보·이미지를 스크래핑. 테스트와 릴리즈까지 진행.
-- **소스:** `core.py` (ports 기종·루트 .sh만 탐색), `portmaster.py` (port.json/gameinfo.xml/cover/screenshot 읽기, 정확한 런처 매칭, XML 누락 필드만 보완), `bundle_engine.py` (Skyscraper 우회), `gui.py` (기종 표기), `orphan_cleanup.py` (실행 파일/폴더 보호).
+- **소스:** `core.py` (ports 기종·루트 .sh만 탐색), `portmaster.py` (port.json/gameinfo.xml/cover/screenshot 읽기, 정확한 런처 매칭, XML 누락 필드만 보완), `bundle_engine.py` (Skyscraper 우회), `gui.py` (기종 표기 및 엔진 설치 지연), `orphan_cleanup.py` (실행 파일/폴더 보호).
 - **안전:** PortMaster `.sh` 변경 금지, 게임 데이터/세이브 폴더 수정·삭제 금지, 기존 사용자 게임명/설명/이미지 보존, XML 자동 백업 미생성.
 - 공식 포트 패키지의 `port.json`과 `gameinfo.xml`을 USB ADB로 읽으며 기기 인터넷이 불필요함. 매칭 근거가 없거나 실행 경로가 모순되면 추측하지 않음.
 - `tests/test_v087_portmaster.py`에 한글 .sh, PortMaster 도구 제외, 경로 검증, 기존 정보 보존, 오프라인 gamelist.xml 적용, 중복/오류 케이스 검증.
