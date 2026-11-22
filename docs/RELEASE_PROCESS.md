@@ -4,7 +4,7 @@
 
 ## 버전 규칙
 
-- **개발·다음 릴리즈 대상:** `v0.8.7-beta.3` (대용량 PSP 이름 검색). 이전 공개 베타는 [`v0.8.7-beta.2`](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.7-beta.2).
+- **현재 최신 공개 베타:** [`v0.8.7-beta.3`](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.7-beta.3) (대용량 PSP 이름 검색). 이전 공개 베타는 `v0.8.7-beta.2`.
 - 표준 형식: `vMAJOR.MINOR.PATCH-beta.N`. 예: `v0.8.5-beta.2`, `v0.8.6-beta.1`
 - 같은 기능 버전에서 버그 수정/재빌드는 `beta.N`을 증가.
 - 새 기능/호환성 변경은 보통 PATCH 번호를 증가시킨 뒤 `beta.1`부터 시작.
