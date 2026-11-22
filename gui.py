@@ -297,11 +297,9 @@ class App(tk.Tk):
                 adb=setup_platform_tools.existing_adb(self.config)
                 if not adb:adb=setup_platform_tools.setup(lambda s:self.q.put(('status',s)))
             except Exception as exc:adb_error=str(exc)
-            try:
-                legacy.find_engine(self.config.get('skyscraper_path',''))
-            except Exception:
-                try:setup_engine.setup(lambda s:self.q.put(('status',s)))
-                except Exception as exc:engine_error=str(exc)
+            # Skyscraper is intentionally lazy-installed only when the user
+            # selects a console ROM for scraping. PortMaster-only libraries
+            # must not require Skyscraper or an installer download.
             self.q.put(('setup-finished',(adb_error,engine_error)))
         self._thread(job)
 
