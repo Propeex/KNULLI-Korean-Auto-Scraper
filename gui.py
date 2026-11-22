@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""KNULLI Auto Scraper v0.8.5-beta.2 - safer ADB scanning, no scraper backups.
+"""KNULLI Auto Scraper - auto-updating beta, ADB-safe scanning, no scraper backups.
 
 Single detail pane with explicit consent before orphan-data deletion.
 Program-created XML backups are cleaned once per connected GUI session.
@@ -13,6 +13,7 @@ import threading
 import tkinter as tk
 from tkinter import ttk, messagebox
 
+from app_version import VERSION_TAG
 import backend
 import backup_cleanup
 import orphan_cleanup
@@ -45,7 +46,7 @@ def visible_name(item):
 class App(tk.Tk):
     def __init__(self, auto_setup=True):
         super().__init__()
-        self.title('KNULLI Auto Scraper v0.8.5-beta.2')
+        self.title('KNULLI Auto Scraper ' + VERSION_TAG)
         self.geometry('1250x790')
         self.minsize(990,650)
         self.option_add('*Font',(FONT,10))
@@ -665,7 +666,7 @@ class App(tk.Tk):
         if not item:return
         value=self.description.get('1.0','end-1c').strip()
         if value==(item.metadata.get('desc') or '').strip():return
-        if not messagebox.askyesno('설명 저장','현재 게임의 설명을 저장할까요?\n기존 gamelist.xml은 백업합니다.'):
+        if not messagebox.askyesno('설명 저장','현재 게임의 설명을 저장할까요?\nXML 백업은 생성하지 않습니다.'):
             return
         self._busy(True)
         def job():
@@ -791,7 +792,7 @@ class App(tk.Tk):
         self._start_scrape(chosen)
 
     def _start_scrape(self,chosen):
-        if not messagebox.askyesno('작업 시작',f'{len(chosen)}개 게임을 스크래핑하고 기기에 적용할까요?\n기존 게임 정보는 백업됩니다.'):
+        if not messagebox.askyesno('작업 시작',f'{len(chosen)}개 게임을 스크래핑하고 기기에 적용할까요?\nXML 백업은 생성하지 않습니다.'):
             self._busy(False);return
         self._busy(True)
         self.progress.configure(value=0,maximum=len(chosen))
