@@ -26,8 +26,8 @@ class TestDisplayNameForArchives(unittest.TestCase):
             self.assertEqual(game.findtext('image'),'./images/mslug.png')
             self.assertIn(rom,adb.files)
             self.assertEqual(adb.files[rom],b'PK\x03\x04not_a_real_rom')
-            self.assertTrue(list((Path(temp)/'xml_backups').glob('neogeo_*.xml')))
-            self.assertTrue(any('.bak' in key for key in adb.files))
+            self.assertFalse((Path(temp)/'xml_backups').exists())
+            self.assertFalse(any('.knulli-autoscraper-' in key and key.endswith('.bak') for key in adb.files))
             with self.assertRaises(ValueError):
                 manager.validate_name('mslug.zip','메탈슬러그.zip','neogeo')
 
