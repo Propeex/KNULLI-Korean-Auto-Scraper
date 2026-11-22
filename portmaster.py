@@ -191,6 +191,8 @@ def load_ports(adb, root: str, launchers: list[str]) -> dict[str,PortInfo]:
     found = {}
     # Match by package content, not folder/filename similarity.
     for folder, files in sorted(by_folder.items()):
+        if len(found) >= len(available):
+            break
         obj = {}
         attrs = {}
         xml_fields = {}
@@ -198,12 +200,14 @@ def load_ports(adb, root: str, launchers: list[str]) -> dict[str,PortInfo]:
             try:
                 obj = _read_json(adb,files['json'])
                 attrs = _metadata_from_json(obj)
-            except Exception:
+            except (ValueError, UnicodeError):
+                # Malformed PortMaster package metadata is not trusted.
                 pass
         if 'xml' in files:
             try:
                 xml_fields = _read_gameinfo(adb,files['xml'])
-            except Exception:
+            except (ValueError, ET.ParseError, UnicodeError):
+                # Invalid gameinfo.xml: fall back to a valid port.json.
                 pass
 
         declared = set()
