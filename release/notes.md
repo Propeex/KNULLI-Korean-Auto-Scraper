@@ -1,40 +1,45 @@
-# KNULLI Korean Auto Scraper v0.8.5 Beta 1
+# KNULLI Korean Auto Scraper v0.8.5 Beta 2
 
 **Windows / RG35XX Plus / KNULLI / USB ADB**
 
-> 이 버전은 **베타(Pre-release)**입니다. GitHub 자동 테스트는 통과했지만 Windows와 실제 RG35XX Plus 기기에서 삭제된 ROM 자료 정리 기능을 완전히 검증하지 못했습니다.
+> **베타(Pre-release)**입니다. 자동 테스트는 통과했지만 실제 사용자 기기에서 이번 수정의 최종 검증은 아직 필요합니다.
 
-## 이번 릴리즈의 변경 사항
+## 해결된 문제
 
-- 삭제된 ROM을 기기에서 재조회하고, `gamelist.xml`에 남은 게임 정보 감지
-- 삭제 후보 게임과 이미지·영상·매뉴얼 수를 표시한 후 **사용자 승인**이 있어야 정리
-- 다른 게임 또는 다른 기종에서 **공유하는 미디어 파일은 삭제하지 않음**
-- 기존 `gamelist.xml`을 PC와 기기에 백업하고, 작업 직전 데이터 변경·ROM 재등장 여부를 재검증
-- 한글 하위 폴더를 포함한 ROM 경로 대응
-- ROM을 전부 삭제하여 게임 목록이 비어도 XML 정리 후보를 확인할 수 있게 보완
-- 상세 정리 보고서는 PC 프로그램 폴더의 `work/last_cleanup.json`에 저장
+- **`삭제된 게임 검사 실패: ADB shell failed: error: shell command too long`**: 한글 ROM 경로를 인코딩해 여러 게임을 검사할 때 ADB 명령이 너무 길어지는 문제를 수정했습니다.
+- 검사할 명령을 크기에 따라 나누고, 그래도 길이 오류가 발생하면 다시 분할합니다.
+- 경로 하나조차 확인하지 못하거나 응답이 잘리면 해당 ROM을 삭제된 것으로 간주하지 않고 **자료 정리 중단**을 선택합니다.
 
-## 중요한 주의사항
+## 백업 정책 변경 — 사용자 요청
 
-- **정리 기능은 선택한 뒤 실제 파일을 삭제할 수 있습니다.** 삭제된 이미지·영상 파일 자체는 별도 백업하지 않습니다. 테스트용 게임으로 먼저 확인하세요.
-- XML이 참조하지 않는 미디어나 소유권을 확인할 수 없는 파일은 보호를 위해 자동 삭제하지 않습니다.
-- KNULLI 기기 인터넷은 불필요하며 **Windows PC 인터넷 + USB ADB 연결**이 필요합니다.
-- 외부 화면 스크래핑 엔진 및 원본 ROM 파일은 ZIP에 포함되어 있지 않습니다.
+- 이제 스크래핑, 한글 표시명 동기화, 이름·설명 수정, ROM 이름 변경, 삭제된 게임 자료 정리에서 **새로운 `gamelist.xml` 백업을 만들지 않습니다.**
+- 최초 기기 연결 시 과거 이 프로그램이 생성한 `gamelist.xml.knulli-autoscraper-<시간>.bak` 파일을 기기의 ROM 기종 폴더에서 찾아 정리합니다.
+- Windows PC에서는 현재 설치 폴더와 **같은 상위 폴더의 확인된 이전 설치본**에 있는 `work/xml_backups/<기종>_<시간>.xml` 파일을 정리합니다.
+- **삭제하지 않는 것:** 원본 ROM, 현재 `gamelist.xml` 본파일, 사용 중인 이미지·영상·매뉴얼, 사용자 설정/계정, 직접 만든 다른 이름의 백업.
+- 다른 위치에 있는 기존 설치본은 안전을 위해 컴퓨터 전체를 임의 검색하지 않습니다.
 
-## 설치와 실행
+**주의:** 자동 XML 백업을 만들지 않으므로 USB 연결 중단이나 예기치 않은 XML 쓰기 오류 시 복구가 어려울 수 있습니다. 사용자가 소중한 데이터는 별도로 보관하시기 바랍니다.
 
-1. 아래 **Windows ZIP**을 받아 새 폴더에 압축 해제합니다.
-2. Windows에 Python **3.10 이상**과 Tkinter가 있어야 합니다. **독립 실행 EXE가 아닌 Python GUI 앱**입니다.
-3. RG35XX Plus의 기존 USB ADB 연결을 유지한 채 `GUI_실행.pyw`를 실행합니다.
-4. 프로그램은 ADB/Skyscraper가 없으면 자동 설치를 시도합니다.
-5. 처음에는 중요한 ROM 없이 정리 동작을 확인하는 것을 권장합니다.
+## 기존 기능
 
-기존 사용자 설정과 영문명 대응표는 별도 사용자 데이터 위치에 저장됩니다.
+- 한글 ROM과 하위 폴더의 USB ADB 탐색
+- 게임 정보·이미지·영상 등의 PC 스크래핑 적용
+- 게임 파일을 직접 삭제한 뒤 남은 `gamelist.xml` 정보 및 공유되지 않는 미디어 정리
+- 삭제된 게임 관련 파일의 정리는 별도 확인 창에서 승인해야 실행
+- 회색·검정 다크 GUI, 선택/기종/게임명/상태 목록, 영어 검색명 자동 저장
 
-## 검증
+## 설치
 
-GitHub Actions에서 Python 유닛/GUI 테스트(Xvfb) 후 Windows 배포 ZIP 무결성을 검사하고 배포합니다. **Windows 실기기 연동은 별도로 검증이 필요합니다.**
+1. 이 릴리즈의 Windows ZIP을 내려받아 별도 폴더에 압축 해제하세요.
+2. **Python 3.10 이상과 Tkinter가 필요**합니다. 독립 실행 EXE가 아닌 Python GUI 패키지입니다.
+3. 기존 USB ADB 연결을 유지한 채 `GUI_실행.pyw`를 실행하세요. 기기 자체 인터넷 연결은 불필요합니다.
 
-관련 개발 변경: [Pull Request #1](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/pull/1)
+## 테스트
 
-향후 정식판 여부는 사용자 승인으로만 결정하며, 이 릴리즈는 Beta 1입니다.
+- GitHub Actions Python 회귀/GUI 테스트 **85개 통과** ([검증 기록](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/actions/runs/45048905011)).
+- POSIX 로컬 셸을 이용해 한글 경로 존재 검사, 길이 제한 재분할, 앱 생성 XML 백업 정리 범위 확인.
+- **실제 Windows/RG35XX Plus에서의 최종 검증은 미완료.**
+
+관련 변경: [PR #2](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/pull/2).
+
+정식 출시는 사용자의 승인 전까지 하지 않으며, 이 릴리즈는 Beta 2입니다.

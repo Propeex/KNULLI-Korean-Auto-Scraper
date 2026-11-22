@@ -67,7 +67,7 @@ class TestChanges(unittest.TestCase):
             self.assertEqual(entry.findtext('image'),'./images/마더 III-image.png')
             self.assertEqual(entry.findtext('desc'),'기존 설명')
             self.assertTrue(list((Path(tmp)/'rename_journal').glob('*.json')))
-            self.assertTrue(list((Path(tmp)/'xml_backups').glob('*.xml')))
+            self.assertFalse((Path(tmp)/'xml_backups').exists())
             self.assertEqual(len({x[1:3] for x in plan['moves']}),2)
     def test_rename_does_not_modify_hash_named_media(self):
         db=FakeADB();item=self._item()
@@ -117,7 +117,7 @@ class TestChanges(unittest.TestCase):
             self.assertEqual(entry.findtext('rating'),'0.95')
             self.assertEqual(entry.findtext('genre'),'Role-Playing')
             self.assertEqual(set(result['fields']),{'thumbnail','rating','genre'})
-            self.assertTrue(any('.bak' in k for k in db.files))
+            self.assertFalse(any('.knulli-autoscraper-' in k and k.endswith('.bak') for k in db.files))
     def test_unavailable_media_not_selected(self):
         config={'scrape_fields':['image','manual','fanart','boxback','video','desc']}
         self.assertEqual(bundle_engine.chosen(config),['image','video','desc'])

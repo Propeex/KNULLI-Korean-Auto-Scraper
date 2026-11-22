@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""KNULLI Auto Scraper v0.8.5-beta.1 - orphaned metadata/media cleanup.
+"""KNULLI Auto Scraper v0.8.5-beta.2 - safer ADB scanning, no scraper backups.
 
-Single detail pane; read-only inspection throughout scraping. All device writes
-are initiated only by explicit name/description save or selected scrape jobs.
+Single detail pane with explicit consent before orphan-data deletion.
+Program-created XML backups are cleaned once per connected GUI session.
 """
 from __future__ import annotations
 from collections import Counter
@@ -14,6 +14,7 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 
 import backend
+import backup_cleanup
 import orphan_cleanup
 import bundle_engine
 import core
@@ -44,7 +45,7 @@ def visible_name(item):
 class App(tk.Tk):
     def __init__(self, auto_setup=True):
         super().__init__()
-        self.title('KNULLI Auto Scraper v0.8.5-beta.1')
+        self.title('KNULLI Auto Scraper v0.8.5-beta.2')
         self.geometry('1250x790')
         self.minsize(990,650)
         self.option_add('*Font',(FONT,10))
@@ -55,6 +56,7 @@ class App(tk.Tk):
         self.config=backend.load_config()
         self.overrides=backend.load_overrides()
         self.adb=None;self.busy=False
+        self._backups_cleaned=False
         self.items={};self.checked=set();self.current=None
         self.preview_file=None;self.preview_img=None;self.preview_request_id=0
         self.pending_check=None
@@ -309,6 +311,13 @@ class App(tk.Tk):
             try:
                 adb=core.Adb(os.environ.get('ADB_PATH') or self.config.get('adb_path'))
                 serial=adb.connect()
+                backup_report=None;backup_error=''
+                if not self._backups_cleaned:
+                    try:
+                        backup_report=backup_cleanup.cleanup(
+                            adb,self.config,backend.HERE/'work')
+                    except Exception as exc:
+                        backup_error=str(exc)[:180]
                 rows=backend.catalogue(adb,self.config)
                 # Synchronize Korean filename-derived titles directly in KNULLI XML.
                 # This is not a scrape and never renames a ROM or touches other fields.
@@ -323,7 +332,8 @@ class App(tk.Tk):
                 except Exception as exc:
                     cleanup_error=str(exc)[:180]
                 self.q.put(('scanned',(adb,serial,rows,sync_count,sync_error,
-                                       cleanup_plan,cleanup_error)))
+                                       cleanup_plan,cleanup_error,
+                                       backup_report,backup_error)))
             except Exception as exc:self.q.put(('fatal','ROM 조회 실패: '+str(exc)))
         self._thread(job)
 
@@ -338,7 +348,7 @@ class App(tk.Tk):
                   f'{examples}\n\n'
                   f'gamelist.xml에서 해당 항목을 제거하고, 다른 게임이 사용하지 않는 '
                   f'관련 이미지·영상·매뉴얼 최대 {plan.media_count}개를 정리합니다.\n'
-                  '기존 XML은 PC와 기기에 백업합니다.\n\n지금 정리하시겠습니까?')
+                  'XML 백업을 만들지 않습니다. 관련 미디어 삭제는 되돌리기 어려울 수 있습니다.\n\n지금 정리하시겠습니까?')
         if not messagebox.askyesno('삭제된 게임 자료 정리',question,
                                    icon='warning',default='no'):
             self.status_var.set('삭제된 게임 자료 정리를 건너뛰었습니다.')
@@ -837,11 +847,19 @@ class App(tk.Tk):
                     self.adb,serial,rows,sync_count,sync_error=value[:5]
                     cleanup_plan=value[5] if len(value)>5 else None
                     cleanup_error=value[6] if len(value)>6 else ''
+                    backup_report=value[7] if len(value)>7 else None
+                    backup_error=value[8] if len(value)>8 else ''
+                    if backup_report is not None:
+                        self._backups_cleaned=True
                     self._busy(False);self._paint(rows,self.current)
                     message=f'기기 연결됨 · ROM {len(rows)}개'
                     if sync_count:message+=f' · KNULLI 한글 표시명 {sync_count}개 동기화 (기기 목록 갱신 필요)'
                     if sync_error:message+=' · 한글 표시명 동기화 실패: '+sync_error
                     if cleanup_error:message+=' · 삭제된 게임 검사 실패: '+cleanup_error
+                    if backup_report:
+                        count=backup_report['device_removed']+backup_report['local_removed']
+                        if count:message+=f' · 프로그램 XML 백업 {count}개 삭제'
+                    if backup_error:message+=' · 이전 XML 백업 정리 실패: '+backup_error
                     self.status_var.set(message)
                     if cleanup_plan and cleanup_plan.game_count:
                         self.after(150,lambda p=cleanup_plan:self._offer_cleanup(p))

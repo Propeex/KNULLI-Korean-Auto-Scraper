@@ -28,14 +28,14 @@ class TestKoreanDisplay(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             count=backend.sync_korean_names(a,{'remote_root':'/userdata/roms'},rows,work=Path(td))
             self.assertEqual(count,1)
-            self.assertTrue(list((Path(td)/'xml_backups').glob('*.xml')))
+            self.assertFalse((Path(td)/'xml_backups').exists())
             self.assertEqual(backend.sync_korean_names(a,{'remote_root':'/userdata/roms'},rows,work=Path(td)),0)
         after=core.find_entry(core.parse_xml(a.files[root]),'./마더 3.gba')
         self.assertEqual(after.findtext('name'),'마더 3')
         self.assertEqual(after.findtext('image'),old_image)
         self.assertEqual(after.findtext('desc'),old_desc)
         self.assertEqual(a.files['/userdata/roms/gba/마더 3.gba'],old_rom)
-        self.assertTrue(any('.bak' in x for x in a.files))
+        self.assertFalse(any('.knulli-autoscraper-' in x and x.endswith('.bak') for x in a.files))
 
     def test_safe_apply_syncs_name_even_without_media(self):
         a=FakeADB();self._english_xml(a)
@@ -55,14 +55,13 @@ class TestKoreanDisplay(unittest.TestCase):
         self.assertEqual(core.find_entry(core.parse_xml(a.files['/userdata/roms/neogeo/gamelist.xml']),'./mslug.zip').findtext('name'),'Metal Slug')
         self.assertEqual(core.find_entry(core.parse_xml(a.files['/userdata/roms/gba/gamelist.xml']),'./젤다의 전설 & 검.gba').findtext('name'),'젤다 게임')
 
-    def test_backup_failure_does_not_replace_original_xml(self):
+    def test_upload_failure_does_not_replace_original_xml(self):
         a=FakeADB();self._english_xml(a)
         key='/userdata/roms/gba/gamelist.xml';before=a.files[key]
         rows=backend.catalogue(a,{'remote_root':'/userdata/roms'})
-        def fail_copy(command,timeout=60):
-            if command.startswith('cp '):raise RuntimeError('simulate read-only backup failure')
-            return ''
-        with tempfile.TemporaryDirectory() as td,patch.object(a,'shell',side_effect=fail_copy):
+        def fail_upload(source,remote):
+            raise RuntimeError('simulate XML upload failure')
+        with tempfile.TemporaryDirectory() as td,patch.object(a,'upload',side_effect=fail_upload):
             with self.assertRaises(RuntimeError):
                 backend.sync_korean_names(a,{'remote_root':'/userdata/roms'},rows,work=Path(td))
         self.assertEqual(a.files[key],before)
