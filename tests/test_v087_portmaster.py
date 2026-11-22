@@ -155,10 +155,10 @@ class TestPortMasterMetadata(unittest.TestCase):
         self.assertEqual(info,{})
 
     def test_untrusted_path_and_mismatched_launcher_are_skipped(self):
-        self.docs[MANIFEST]=json.dumps({
+        self.device.docs[MANIFEST]=json.dumps({
             'items':['wrong.sh'], 'attr':{'title':'Not this game'}
         }).encode()
-        self.docs[INFO]=core.xml_bytes(ET.Element('gameList'))
+        self.device.docs[INFO]=core.xml_bytes(ET.Element('gameList'))
         self.assertEqual(self.load(),{})
 
     def test_cover_path_traversal_is_never_used(self):
@@ -167,7 +167,7 @@ class TestPortMasterMetadata(unittest.TestCase):
         ET.SubElement(game,'path').text='./'+LAUNCH
         ET.SubElement(game,'name').text='Star Quest'
         ET.SubElement(game,'image').text='./../../private.png'
-        self.docs[INFO]=core.xml_bytes(xml)
+        self.device.docs[INFO]=core.xml_bytes(xml)
         self.files.remove(COVER)
         self.assertEqual(self.load()[LAUNCH].image,'')
 
