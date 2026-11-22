@@ -127,7 +127,11 @@ class TestArchiveSafety(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "unexpected"):
             update.verify_archive(archive_bytes(self.TAG, unsafe="private_config.json"), self.TAG)
         with self.assertRaisesRegex(ValueError, "version"):
-            update.verify_archive(safe, "v0.8.6-beta.3")
+            incorrect_version = archive_bytes(
+                self.TAG,
+                additional={"app_version.py": b'VERSION_TAG = "v0.8.6-beta.9"\n'},
+            )
+            update.verify_archive(incorrect_version, self.TAG)
 
     def test_reject_duplicate_files(self):
         prefix = f"KNULLI-Korean-Auto-Scraper-{self.TAG}/"
