@@ -780,7 +780,9 @@ class App(tk.Tk):
         chosen=[self.items[r] for r in self.tree.get_children() if r in self.checked]
         if not chosen:
             messagebox.showinfo('선택 없음','작업할 게임을 선택하세요.');return
-        try:legacy.find_engine(self.config.get('skyscraper_path',''))
+        try:
+            if any(item.system!='ports' for item in chosen):
+                legacy.find_engine(self.config.get('skyscraper_path',''))
         except RuntimeError:
             self._busy(True);self.status_var.set('Skyscraper 설치 중…')
             def job():
