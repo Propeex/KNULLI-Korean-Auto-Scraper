@@ -5,6 +5,7 @@ import hashlib
 import io
 import json
 import os
+import subprocess
 from pathlib import Path
 import tempfile
 import unittest
@@ -293,6 +294,14 @@ class TestHelper(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "symbolic link"):
                 helper.apply_update(stage, install)
             self.assertEqual(protected.read_text(), "PERSONAL")
+
+    @unittest.skipUnless(os.name == "nt", "Windows process handle verification")
+    def test_windows_parent_exit_wait_uses_real_process_handle(self):
+        child = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(0.3)"])
+        try:
+            helper.wait_for_parent_exit(child.pid, timeout=15)
+        finally:
+            child.wait(timeout=10)
 
     def test_restart_is_silent_and_no_retry_on_failure(self):
         with mock.patch.object(helper.subprocess, "Popen") as proc:
