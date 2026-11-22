@@ -1,5 +1,16 @@
 # 변경 이력
 
+## v0.8.7-beta.1 — PortMaster 게임 스크래핑 (2026-11-23)
+
+- KNULLI `/userdata/roms/ports` 최상위 `.sh` 포팅 게임을 **PortMaster** 기종으로 탐색. 관리 도구/설치 스크립트 및 게임 데이터 폴더 재귀 탐색은 제외.
+- 설치된 PortMaster의 `gameinfo.xml`/`port.json`에서 제목·설명·장르·개발사·출시일 등을 오프라인 조회, `cover`/`screenshot` 이미지는 기존 기기 경로로 연결.
+- 정확한 실행 파일 매칭이 확인된 경우에만 `ports/gamelist.xml`에 **비어 있는 메타데이터를 보충**. 한글 사용자 이름·설명·이미지와 기존 포트 게임 실행 파일을 보호.
+- PortMaster-only 작업은 Skyscraper 또는 포트 ROM 복사 없이 실행. USB ADB만 사용.
+- 사용자가 승인한 삭제된 포트 게임 정리는 XML 항목만 다루며 포트 데이터·세이브 폴더는 삭제하지 않음.
+- **XML 스크랩 데이터 백업은 생성하지 않음.** 기존 사용자 요청 유지.
+- [PR #4](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/pull/4). Linux 및 Windows CI 테스트 통과 후 베타 릴리즈 발행. **실제 RG35XX Plus에서 다양한 PortMaster 포맷의 동작은 재검증 필요.**
+
+
 ## v0.8.6-beta.1 — 실행 시 베타 자동 업데이트/재시작 (2026-11-23)
 - GitHub 공개 릴리즈를 조회해 현재 설치 버전보다 높은 최신 **베타**를 자동 검색. 안정판은 정식 출시 승인 전까지 제외.
 - 새로운 베타가 있으면 별도 확인 없이 ZIP과 checksum을 다운로드하고 SHA256/API digest, 파일 경로, 패키지 버전을 검증.
