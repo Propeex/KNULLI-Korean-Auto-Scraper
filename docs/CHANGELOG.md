@@ -8,6 +8,7 @@
 - 작업 결과를 work/last_cleanup.json에 기록. Linux + 가상 디스플레이의 GitHub CI 테스트 통과; **실제 기기 검증 전**.
 - ROM이 없는 시스템에서도 정리할 수 있게 빈 ROM 목록 처리를 보완.
 - [PR #1](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/pull/1) 통해 main에 병합.
+- **GitHub Release 발행:** [v0.8.5-beta.1](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.5-beta.1), Windows ZIP + SHA-256 checksum 파일. [릴리즈 검증 GitHub Actions](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/actions/runs/45046433924) 성공. 베타(Pre-release) 상태 확인.
 
 
 ## v0.8.4 — GitHub 최초 이식 기준(2026-11-20)
