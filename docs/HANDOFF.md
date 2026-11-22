@@ -6,7 +6,7 @@
 - 작성일: 2026-11-20 (Asia/Seoul)
 - 프로젝트: KNULLI Korean Auto Scraper
 - 저장소: https://github.com/Propeex/KNULLI-Korean-Auto-Scraper
-- **다음 배포 대상: `v0.8.7-beta.1` (PortMaster 지원).** 현재 최신 공개 베타는 [`v0.8.6-beta.1`](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.6-beta.1) (Pre-release). 이전 공개 베타: `v0.8.5-beta.2`. 이전 공개 버전은 `v0.8.5-beta.1`. 최초 이식 소스 기준: **v0.8.4 베타** (`knulli_auto_scraper_adb_v084_unicode_folders.zip`)
+- **현재 최신 공개 베타:** [`v0.8.7-beta.1`](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.7-beta.1) (Pre-release, PortMaster 지원). 이전 공개 버전: `v0.8.6-beta.1`. 이전 공개 베타: `v0.8.5-beta.2`. 이전 공개 버전은 `v0.8.5-beta.1`. 최초 이식 소스 기준: **v0.8.4 베타** (`knulli_auto_scraper_adb_v084_unicode_folders.zip`)
 - 대상: Windows PC, RG35XX Plus (KNULLI), USB ADB
 - 스크래핑: Windows에서 Skyscraper / ScreenScraper 사용. PC 인터넷만 필요, 기기 인터넷 불필요.
 - **GitHub 최초 이식 완료:** 2026-11-20, 원본 v0.8.4 소스를 코드 변경 없이 복원한 커밋 `4734f7a954d0953a6f1306f8a3910039bcc6a634`. 원본 압축 스냅샷 SHA256 검증 및 GitHub Actions 복원 성공. 상세 기록: [MIGRATION.md](MIGRATION.md). 실기기 테스트는 사용자 환경에서 별도 확인해야 함.
@@ -54,25 +54,37 @@
 - **릴리즈 완료 (2026-11-23):** [v0.8.6-beta.1](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.6-beta.1) 공개, `prerelease=true`, Windows ZIP(82,651바이트) 및 SHA-256 첨부파일 확인. [GitHub Actions](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/actions/runs/45052031828) Windows 업데이터 테스트, Linux 전체 테스트, ZIP 검증, 릴리즈 등록 전 단계 성공.
 - **현재 중단 지점 / 다음 작업:** Windows 사용자 PC에서 v0.8.6-beta.1 최초 수동 설치 확인. 후속 베타 릴리즈가 발행되면 업데이트→프로그램 종료→교체→자동 재시작을 실기기에서 검증. 설치 권한/네트워크 오류는 사용자 문서 폴더의 `auto_update.log`로 조사.
 
-## 개발 중 — PortMaster 게임 스크래핑 (v0.8.7-beta.1)
+## 구현·배포 완료 — PortMaster 게임 스크래핑 (v0.8.7-beta.1)
 
 - 사용자 요청: PortMaster 포팅 게임을 기존 Windows GUI에서 선택하고 정보·이미지를 스크래핑. 테스트와 릴리즈까지 진행.
 - **소스:** `core.py` (ports 기종·루트 .sh만 탐색), `portmaster.py` (port.json/gameinfo.xml/cover/screenshot 읽기, 정확한 런처 매칭, XML 누락 필드만 보완), `bundle_engine.py` (Skyscraper 우회), `gui.py` (기종 표기 및 엔진 설치 지연), `orphan_cleanup.py` (실행 파일/폴더 보호).
 - **안전:** PortMaster `.sh` 변경 금지, 게임 데이터/세이브 폴더 수정·삭제 금지, 기존 사용자 게임명/설명/이미지 보존, XML 자동 백업 미생성.
 - 공식 포트 패키지의 `port.json`과 `gameinfo.xml`을 USB ADB로 읽으며 기기 인터넷이 불필요함. 매칭 근거가 없거나 실행 경로가 모순되면 추측하지 않음.
 - `tests/test_v087_portmaster.py`에 한글 .sh, PortMaster 도구 제외, 경로 검증, 기존 정보 보존, 오프라인 gamelist.xml 적용, 중복/오류 케이스 검증.
-- [PR #4](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/pull/4). [PortMaster 패키징 문서](https://portmaster.games/contribute/porting/packaging/).
-- **현재 중단 지점:** PR #4 CI 검증·main 병합 후 `release/request.json`의 버전을 `v0.8.7-beta.1`로 갱신해 GitHub Pre-release/Windows ZIP/SHA256 자산 확인. 실기기에서는 다양한 PortMaster 설치 구조와 커스텀 메타데이터 보존 확인 필요.
+- [PR #4](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/pull/4) main 병합 완료(커밋 `b4eca62ec58a55be5784546b16927caecc32f18a`). [PortMaster 패키징 문서](https://portmaster.games/contribute/porting/packaging/).
+- **릴리즈 완료 (2026-11-23):** [v0.8.7-beta.1](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.7-beta.1) 공개, `prerelease=true`, Windows ZIP 89,599 bytes 및 `.sha256` 첨부 확인. [최종 GitHub Actions](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/actions/runs/45056648631)에서 Windows 업데이터·PortMaster 테스트, Linux 회귀 테스트, ZIP 검증, 릴리즈 게시 전 단계 성공.
+- **현재 중단 지점 / 다음 작업:** 실제 RG35XX Plus에 설치된 PortMaster 게임의 `port.json`/`gameinfo.xml` 위치를 확인하고 한글·영어 게임명/이미지/설명 적용 및 기존 메타데이터 보존을 실기기에서 재시험. v0.8.6-beta.1 이후 설치본의 자동 업데이트/재시작도 실제 Windows PC에서 확인. 부족한 구조는 후속 베타 릴리즈로 수정.
 - 이미 `v0.8.6-beta.1`을 설치한 사용자는 새 베타가 발행되면 다음 실행 시 자동 업데이트를 시도함. 사용자 승인 전 안정(Stable) 버전 불가.
 
 ## 릴리즈 운영 규칙 (2026-11-23)
 - 사용자는 **작업이 성공적으로 종료될 때마다 GitHub Release 발행**을 요구함. 개발은 릴리즈까지 끝나야 완료임.
 - 사용자가 정식 출시를 명시적으로 승인하기 전에는 `vMAJOR.MINOR.PATCH-beta.N` 형식의 **Pre-release**만 가능. 번호는 개발 담당자가 관리.
-- 현재 최신 베타: [`v0.8.6-beta.1`](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.6-beta.1). 이전 베타: `v0.8.5-beta.2`, [기존 릴리즈 페이지](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.5-beta.2). 첫 베타는 `v0.8.5-beta.1`.
+- 현재 최신 베타: [`v0.8.7-beta.1`](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.7-beta.1). 이전 베타: `v0.8.6-beta.1`,  [기존 릴리즈 페이지](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.5-beta.2). 첫 베타는 `v0.8.5-beta.1`.
 - 릴리즈는 테스트→배포 ZIP/체크섬 생성→GitHub 사전출시 상태/첨부파일 확인까지 완료해야 성공.
 - 절차: [RELEASE_PROCESS.md](RELEASE_PROCESS.md), GitHub Actions `.github/workflows/publish-beta.yml`, 트리거 `release/request.json`.
 - **첫 GitHub Beta Release 발행 확인 완료 (2026-11-23):** [v0.8.5-beta.1](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.5-beta.1). `prerelease=true`, ZIP(68,614 bytes), `.sha256` 두 첨부 자산 확인. [배포 GitHub Actions](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/actions/runs/45046433924)의 테스트·ZIP 빌드·검증·게시·첨부파일 확인 전 단계 성공.
 - **릴리즈 확인 완료 (2026-11-23):** [v0.8.5-beta.2](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.5-beta.2) 공개. `prerelease=true` 확인, Windows ZIP(72,525바이트)과 SHA256 파일 모두 첨부됨. [GitHub Actions 배포 실행](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/actions/runs/45049288546) 테스트·패키징·검증·릴리즈 게시 성공. **다음 작업은 실기기에서 셸 길이 오류와 이전 앱 백업 정리 결과 확인**. 사용자 승인 전 정식 릴리즈 금지.
+
+## v0.8.7-beta.1 출시 검증 (2026-11-23)
+
+- **릴리즈:** https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.7-beta.1
+- **소스 PR:** https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/pull/4 (병합 완료)
+- **GitHub Actions:** https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/actions/runs/45056648631 — Windows + PortMaster 테스트, Linux 전체 테스트, 패키징, 체크섬, Pre-release 확인 모두 성공
+- **Windows ZIP:** `KNULLI-Korean-Auto-Scraper-v0.8.7-beta.1-Windows.zip` (89,599 bytes)
+- **ZIP SHA256:** `c0459a97f9bc6fd5d9cdfef9286c64ee68d01ac3004392d60630ea7334821bef`
+- **Beta 상태:** 공개 `prerelease=true`, 정식 출시 승인 없음
+- **다음 실기기 검증:** PortMaster 폴더/메타데이터 위치 편차, KNULLI 게임 목록 갱신, 직접 수정한 한글 이름·설명 보존, 전용 런처만 사라졌을 때 XML 정리, 다음 시작 시 자동 업데이트·재시작
+- **안전 규칙 유지:** 원본 `.sh`/포트 데이터/세이브 파일 무수정, 기존 메타데이터 보존, 새 XML 스크랩 백업 미생성, 성공한 개발 작업은 새 베타 릴리즈와 인수인계 문서 동시 관리
 
 ## 최종 베타 릴리즈 검증 근거
 
