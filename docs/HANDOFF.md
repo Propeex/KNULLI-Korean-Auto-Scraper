@@ -6,7 +6,7 @@
 - 작성일: 2026-11-20 (Asia/Seoul)
 - 프로젝트: KNULLI Korean Auto Scraper
 - 저장소: https://github.com/Propeex/KNULLI-Korean-Auto-Scraper
-- **개발 중인 다음 버전: `v0.8.5-beta.2` (Beta/Pre-release).** 기존 공개 버전은 `v0.8.5-beta.1`.  최초 이식 소스 기준: **v0.8.4 베타** (`knulli_auto_scraper_adb_v084_unicode_folders.zip`)
+- **현재 `main` 버전: `v0.8.5-beta.2` (Beta/Pre-release 발행 대기).** 기존 공개 버전은 `v0.8.5-beta.1`. 최초 이식 소스 기준: **v0.8.4 베타** (`knulli_auto_scraper_adb_v084_unicode_folders.zip`)
 - 대상: Windows PC, RG35XX Plus (KNULLI), USB ADB
 - 스크래핑: Windows에서 Skyscraper / ScreenScraper 사용. PC 인터넷만 필요, 기기 인터넷 불필요.
 - **GitHub 최초 이식 완료:** 2026-11-20, 원본 v0.8.4 소스를 코드 변경 없이 복원한 커밋 `4734f7a954d0953a6f1306f8a3910039bcc6a634`. 원본 압축 스냅샷 SHA256 검증 및 GitHub Actions 복원 성공. 상세 기록: [MIGRATION.md](MIGRATION.md). 실기기 테스트는 사용자 환경에서 별도 확인해야 함.
@@ -47,7 +47,7 @@
 - 릴리즈는 테스트→배포 ZIP/체크섬 생성→GitHub 사전출시 상태/첨부파일 확인까지 완료해야 성공.
 - 절차: [RELEASE_PROCESS.md](RELEASE_PROCESS.md), GitHub Actions `.github/workflows/publish-beta.yml`, 트리거 `release/request.json`.
 - **첫 GitHub Beta Release 발행 확인 완료 (2026-11-23):** [v0.8.5-beta.1](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.5-beta.1). `prerelease=true`, ZIP(68,614 bytes), `.sha256` 두 첨부 자산 확인. [배포 GitHub Actions](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/actions/runs/45046433924)의 테스트·ZIP 빌드·검증·게시·첨부파일 확인 전 단계 성공.
-- **현재 중단 지점:** v0.8.5-beta.2 수정 PR #2의 CI/병합 및 GitHub Beta Release 발행을 완료해야 함. 실기기에서는 셸 길이 오류와 이전 백업 삭제 결과를 재검증해야 함. 사용자 명시 승인 전까지 모든 후속 릴리즈는 Beta/Pre-release.
+- **현재 중단 지점:** PR #2 `main` 병합 완료(커밋 `bd9aafc09685921715aab6cc26b24fa4b8dc4ddd`), 테스트 85개 통과. **이제 `v0.8.5-beta.2` GitHub Beta Release 발행 및 배포물 검증 필요.** 이후 실기기에서 셸 길이 오류와 이전 앱 백업 정리 결과 재검증. 사용자 승인 전 정식 릴리즈 금지.
 
 ## 현재 중단 지점
 **v0.8.5 베타를 main에 통합 완료.** v0.8.4를 기반으로 삭제된 ROM의 XML·단독 미디어 정리 기능을 추가. 기존 GUI/스크래퍼와 인수인계 문서는 유지. **최신 코드 기준 GitHub Actions CI 성공**: [Python tests run](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/actions/runs/44666745166). 다음 작업은 v0.8.5 정리 기능의 Windows/실기기 안전성 검증, 마지막 한글 하위 폴더 문제 재시험. 이식은 v0.8.4를 기준선으로 만들었으며, 후속 v0.8.5 기능은 PR #1에서 추가함.
