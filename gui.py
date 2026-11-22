@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""KNULLI Auto Scraper v0.8.4 - nested Korean ROM folder handling.
+"""KNULLI Auto Scraper v0.8.5 beta - orphaned metadata/media cleanup.
 
 Single detail pane; read-only inspection throughout scraping. All device writes
 are initiated only by explicit name/description save or selected scrape jobs.
@@ -44,7 +44,7 @@ def visible_name(item):
 class App(tk.Tk):
     def __init__(self, auto_setup=True):
         super().__init__()
-        self.title('KNULLI Auto Scraper v0.8.4')
+        self.title('KNULLI Auto Scraper v0.8.5 beta')
         self.geometry('1250x790')
         self.minsize(990,650)
         self.option_add('*Font',(FONT,10))
