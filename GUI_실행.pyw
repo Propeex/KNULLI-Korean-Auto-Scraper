@@ -4,8 +4,13 @@ from pathlib import Path
 import sys
 sys.path.insert(0,str(Path(__file__).resolve().parent))
 try:
-    from gui import App
-    App().mainloop()
+    # Before importing the GUI, quietly check GitHub for newer beta releases.
+    # If installed update helper is launched, close this process so the helper
+    # can replace application files and automatically restart the updated GUI.
+    from auto_update import try_launch_update
+    if not try_launch_update(Path(__file__).resolve().parent):
+        from gui import App
+        App().mainloop()
 except Exception:
     log=Path(__file__).resolve().parent/'work'/'startup_error.txt'
     log.parent.mkdir(parents=True,exist_ok=True)
