@@ -85,6 +85,12 @@ def _game_path(root: str, system: str, text: str | None) -> str | None:
     else:
         return None
     posix = PurePosixPath(path)
+    if system == 'ports':
+        # Only actual PortMaster launcher XML entries are eligible. Never
+        # treat package directories or PortMaster management tools as games.
+        from portmaster import is_game_launcher
+        if not is_game_launcher('ports/' + posix.name) or len(posix.parts) != len(PurePosixPath(base).parts)+1:
+            return None
     if not posix.suffix or posix.name in ('.', '..'):
         return None
     if not posix.as_posix().startswith(base + '/'):
