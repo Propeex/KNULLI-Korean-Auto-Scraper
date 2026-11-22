@@ -2,7 +2,13 @@
 
 Windows에서 USB ADB로 **RG35XX Plus / KNULLI**의 ROM을 직접 탐색하고, 한국어 파일명·표시명을 보존하면서 ScreenScraper 자료를 수집·적용하는 데스크톱 앱입니다.
 
-> **현재 개발 버전:** v0.8.5 베타 (2026-11-23). 기반 소스는 v0.8.4이며, 기존 스크래핑 기능에 삭제된 ROM 관련 자료 정리 기능을 추가했습니다. 자동 테스트는 통과했지만 이 기능의 실제 기기 검증은 아직 필요합니다.
+> **현재 베타 릴리즈:** `v0.8.5-beta.1` (2026-11-23). 기반 소스는 v0.8.4이며, 기존 스크래핑 기능에 삭제된 ROM 관련 자료 정리 기능을 추가했습니다. 자동 테스트는 통과했지만 이 기능의 실제 기기 검증은 아직 필요합니다.
+
+## 최신 Windows 베타 다운로드
+
+[**GitHub Releases — v0.8.5-beta.1**](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.5-beta.1)에서 Windows ZIP과 SHA-256 검사 파일을 받으세요. 이 패키지는 독립 실행 EXE가 아니라 **Python GUI 소스 패키지**이며, Windows에 Python 3.10+가 필요합니다.
+
+배포 규칙: [docs/RELEASE_PROCESS.md](docs/RELEASE_PROCESS.md). 사용자가 정식 출시를 승인하기 전에는 모든 버전을 **Pre-release / Beta**로 발행합니다.
 
 ## 다른 대화에서 이어서 개발하기
 
