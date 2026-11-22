@@ -408,6 +408,21 @@ class App(tk.Tk):
             selected=focus if focus in self.items else self.tree.get_children()[0]
             self.tree.selection_set(selected);self.tree.focus(selected);self.tree.see(selected)
             self.select_row()
+        else:
+            # Deleting the final ROM must not leave stale, editable game data.
+            self.current=None
+            self.name_var.set('')
+            self.extension.configure(text='')
+            self._english_loading=True
+            try:self.english_var.set('')
+            finally:self._english_loading=False
+            self.preview_request_id+=1
+            self.preview_img=None
+            self.image_label.configure(image='',text='게임이 없습니다')
+            for widget in self.detail_metadata.values():widget.configure(text='—')
+            self.description.configure(state='normal')
+            self.description.delete('1.0','end')
+            self._set_editable(False)
 
     def _toggle(self,rid):
         if self.busy or rid not in self.items:return
