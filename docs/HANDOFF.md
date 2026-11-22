@@ -6,7 +6,7 @@
 - 작성일: 2026-11-20 (Asia/Seoul)
 - 프로젝트: KNULLI Korean Auto Scraper
 - 저장소: https://github.com/Propeex/KNULLI-Korean-Auto-Scraper
-- **현재 `main` 버전: `v0.8.5-beta.2` (Beta/Pre-release 발행 대기).** 기존 공개 버전은 `v0.8.5-beta.1`. 최초 이식 소스 기준: **v0.8.4 베타** (`knulli_auto_scraper_adb_v084_unicode_folders.zip`)
+- **현재 최신 공개 베타: `v0.8.5-beta.2` (Pre-release)**, [릴리즈 링크](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.5-beta.2). 이전 공개 버전은 `v0.8.5-beta.1`. 최초 이식 소스 기준: **v0.8.4 베타** (`knulli_auto_scraper_adb_v084_unicode_folders.zip`)
 - 대상: Windows PC, RG35XX Plus (KNULLI), USB ADB
 - 스크래핑: Windows에서 Skyscraper / ScreenScraper 사용. PC 인터넷만 필요, 기기 인터넷 불필요.
 - **GitHub 최초 이식 완료:** 2026-11-20, 원본 v0.8.4 소스를 코드 변경 없이 복원한 커밋 `4734f7a954d0953a6f1306f8a3910039bcc6a634`. 원본 압축 스냅샷 SHA256 검증 및 GitHub Actions 복원 성공. 상세 기록: [MIGRATION.md](MIGRATION.md). 실기기 테스트는 사용자 환경에서 별도 확인해야 함.
@@ -43,14 +43,14 @@
 ## 릴리즈 운영 규칙 (2026-11-23)
 - 사용자는 **작업이 성공적으로 종료될 때마다 GitHub Release 발행**을 요구함. 개발은 릴리즈까지 끝나야 완료임.
 - 사용자가 정식 출시를 명시적으로 승인하기 전에는 `vMAJOR.MINOR.PATCH-beta.N` 형식의 **Pre-release**만 가능. 번호는 개발 담당자가 관리.
-- 현재 최초 베타: `v0.8.5-beta.1`, [릴리즈 페이지](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.5-beta.1).
+- 현재 최신 베타: `v0.8.5-beta.2`, [릴리즈 페이지](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.5-beta.2). 첫 베타는 `v0.8.5-beta.1`.
 - 릴리즈는 테스트→배포 ZIP/체크섬 생성→GitHub 사전출시 상태/첨부파일 확인까지 완료해야 성공.
 - 절차: [RELEASE_PROCESS.md](RELEASE_PROCESS.md), GitHub Actions `.github/workflows/publish-beta.yml`, 트리거 `release/request.json`.
 - **첫 GitHub Beta Release 발행 확인 완료 (2026-11-23):** [v0.8.5-beta.1](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.5-beta.1). `prerelease=true`, ZIP(68,614 bytes), `.sha256` 두 첨부 자산 확인. [배포 GitHub Actions](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/actions/runs/45046433924)의 테스트·ZIP 빌드·검증·게시·첨부파일 확인 전 단계 성공.
-- **현재 중단 지점:** PR #2 `main` 병합 완료(커밋 `bd9aafc09685921715aab6cc26b24fa4b8dc4ddd`), 테스트 85개 통과. **이제 `v0.8.5-beta.2` GitHub Beta Release 발행 및 배포물 검증 필요.** 이후 실기기에서 셸 길이 오류와 이전 앱 백업 정리 결과 재검증. 사용자 승인 전 정식 릴리즈 금지.
+- **릴리즈 확인 완료 (2026-11-23):** [v0.8.5-beta.2](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.5-beta.2) 공개. `prerelease=true` 확인, Windows ZIP(72,525바이트)과 SHA256 파일 모두 첨부됨. [GitHub Actions 배포 실행](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/actions/runs/45049288546) 테스트·패키징·검증·릴리즈 게시 성공. **다음 작업은 실기기에서 셸 길이 오류와 이전 앱 백업 정리 결과 확인**. 사용자 승인 전 정식 릴리즈 금지.
 
 ## 현재 중단 지점
-**v0.8.5 베타를 main에 통합 완료.** v0.8.4를 기반으로 삭제된 ROM의 XML·단독 미디어 정리 기능을 추가. 기존 GUI/스크래퍼와 인수인계 문서는 유지. **최신 코드 기준 GitHub Actions CI 성공**: [Python tests run](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/actions/runs/44666745166). 다음 작업은 v0.8.5 정리 기능의 Windows/실기기 안전성 검증, 마지막 한글 하위 폴더 문제 재시험. 이식은 v0.8.4를 기준선으로 만들었으며, 후속 v0.8.5 기능은 PR #1에서 추가함.
+**v0.8.5-beta.2 GitHub 사전 출시 완료.** PR #1에서 삭제된 게임 자료 정리, PR #2에서 ADB 명령 길이 수정과 자동 XML 백업 폐지를 적용. 모든 개발 단위 테스트 85개 통과, 릴리즈 아카이브 생성/체크섬 검증 성공. **실제 Windows/RG35XX Plus 연결 결과 미확인**. 다음은 긴 한글 경로/삭제된 게임 XML 정리/기기 과거 백업 제거의 현장 검증이며, 오류 발생 시 로그 분석과 후속 Beta 3 릴리즈 진행.
 
 ## 이어서 할 일 (우선순위)
 1. [완료] 원본 v0.8.4의 모든 소스 파일을 저장소 루트에 복원. 압축 스냅샷 SHA256 확인. 
@@ -79,6 +79,6 @@
 - 사용자는 **프로그램이 만든 스크래핑 데이터(XML) 백업의 신규 생성 금지 및 기존 것 삭제**를 명확히 요청함. ROM 원본·이미지·영상·현재 XML·설정·사용자 개인 백업은 보존.
 - `manager.py`, `backend.py`, `bundle_engine.py`, `orphan_cleanup.py` 백업 작성 코드를 제거. 기존 rename_journal은 데이터 백업이 아닌 작업 상태 기록이므로 유지.
 - 신규 `backup_cleanup.py`: 연결된 기기에서 `gamelist.xml.knulli-autoscraper-<timestamp>.bak`만 삭제. PC에서는 현재 설치 및 검증된 같은 상위 폴더의 이전 설치본 `work/xml_backups/<system>_<timestamp>.xml`만 삭제. 임의 전체 디스크 검색 금지.
-- [PR #2](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/pull/2), [테스트 성공 기록](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/actions/runs/45048905011), 85개 테스트 통과. 단, 변경 후 문서 최종 업데이트 시 CI 재확인 필요.
+- [PR #2](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/pull/2) main 병합 완료. [최종 릴리즈 CI](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/actions/runs/45049288546) 성공, 85개 테스트 통과.
 - **실기기 검증 전**이며 자동 백업이 없어서 예기치 못한 XML 손상 시 사용자 복구 선택지가 적음.
-- 이 문서는 다음 대화에서 기준점으로 사용하며, 최종 릴리즈가 성공하면 이 단락의 공개 버전/중단 상태를 최신으로 바꿀 것.
+- **완료 상태:** v0.8.5-beta.2 배포 확인. 다음 대화에서는 GitHub에서 main/HANDOFF 확인 후 실기기 피드백을 근거로 개선을 진행하고, 성공 시 새 베타 릴리즈까지 발행할 것.
