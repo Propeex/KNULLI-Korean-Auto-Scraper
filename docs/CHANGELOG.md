@@ -9,6 +9,7 @@
 - 비정상 경로/ADB 응답/권한 오류가 있으면 삭제된 게임으로 잘못 판단하지 않음.
 - [PR #2](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/pull/2), GitHub 자동 테스트 85개 통과 ([실행](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/actions/runs/45048905011)). 실기기 재검증은 아직.
 - 주의: 자동 XML 백업이 없어 예상치 못한 쓰기 실패 시 복구가 더 어려울 수 있음.
+- **GitHub 사전 출시 완료:** [v0.8.5-beta.2](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.5-beta.2), Windows ZIP(72,525 bytes), SHA256 파일 포함. [GitHub Actions 릴리즈 테스트 및 게시 성공](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/actions/runs/45049288546). 실제 기기 재시험은 미완료.
 
 
 ## v0.8.5-beta.1 — 첫 GitHub 사전 출시 (2026-11-23)
