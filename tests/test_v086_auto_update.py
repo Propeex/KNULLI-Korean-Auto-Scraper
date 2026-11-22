@@ -90,6 +90,7 @@ class TestBetaDiscovery(unittest.TestCase):
 
     def test_release_api_timeout_is_nonfatal_at_startup(self):
         with tempfile.TemporaryDirectory() as td, \
+             mock.patch.object(update, "data_dir", return_value=Path(td)), \
              mock.patch.object(update, "discover", side_effect=TimeoutError("offline")), \
              mock.patch.object(update, "log_error") as logger:
             self.assertFalse(update.try_launch_update(Path(td)))
@@ -99,6 +100,7 @@ class TestBetaDiscovery(unittest.TestCase):
         r = release_row("v0.8.6-beta.2")
         staged_release = update.choose_newest_beta([r], "v0.8.6-beta.1")
         with tempfile.TemporaryDirectory() as td, \
+             mock.patch.object(update, "data_dir", return_value=Path(td)), \
              mock.patch.object(update, "discover", return_value=staged_release), \
              mock.patch.object(update, "stage_release", return_value=Path(td)) as stage, \
              mock.patch.object(update.subprocess, "Popen") as launch:
@@ -107,6 +109,24 @@ class TestBetaDiscovery(unittest.TestCase):
         args, kwargs = launch.call_args
         self.assertEqual(args[0][1], str(Path(td) / "update_worker.py"))
         self.assertTrue(kwargs["close_fds"])
+
+    def test_concurrent_launch_does_not_install_twice(self):
+        with tempfile.TemporaryDirectory() as td, \
+             mock.patch.object(update, "data_dir", return_value=Path(td)), \
+             mock.patch.object(update, "discover") as discover:
+            lock = update._acquire_update_lock()
+            self.assertTrue(lock.is_file())
+            self.assertFalse(update.try_launch_update(Path(td)))
+            discover.assert_not_called()
+            update._release_update_lock(lock)
+            self.assertFalse(lock.exists())
+
+    def test_no_update_releases_lock(self):
+        with tempfile.TemporaryDirectory() as td, \
+             mock.patch.object(update, "data_dir", return_value=Path(td)), \
+             mock.patch.object(update, "discover", return_value=None):
+            self.assertFalse(update.try_launch_update(Path(td)))
+            self.assertFalse((Path(td) / "auto_update.lock").exists())
 
     def test_skip_retry_after_failed_worker(self):
         with mock.patch.dict(os.environ, {"KNULLI_SKIP_UPDATE_ONCE": "1"}), \
