@@ -116,6 +116,13 @@ class TestOrphanCleanup(unittest.TestCase):
         self.assertEqual(plan.game_count, 1)
         self.assertEqual(plan.media_count, 0)
 
+    def test_plain_relative_path_without_dot_prefix(self):
+        data = xml(('subfolder/missing.gba', {'image':'images/missing.png'}, 'gone'))
+        adb = FakeAdb({SYS+'/gamelist.xml': data})
+        plan = self._inspect(adb)
+        self.assertEqual(plan.game_count, 1)
+        self.assertEqual(plan.media_count, 1)
+
     def test_game_without_extension_is_skipped(self):
         data = xml(('./missing-folder', {'image':'./images/a.png'}, 'folder game'))
         adb = FakeAdb({SYS+'/gamelist.xml': data})
