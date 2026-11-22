@@ -819,7 +819,9 @@ class App(tk.Tk):
                     self._busy(False);self.status_var.set(value)
                     messagebox.showerror('작업 오류',value)
                 elif msg=='scanned':
-                    self.adb,serial,rows,sync_count,sync_error=value
+                    self.adb,serial,rows,sync_count,sync_error=value[:5]
+                    cleanup_plan=value[5] if len(value)>5 else None
+                    cleanup_error=value[6] if len(value)>6 else ''
                     self._busy(False);self._paint(rows,self.current)
                     message=f'기기 연결됨 · ROM {len(rows)}개'
                     if sync_count:message+=f' · KNULLI 한글 표시명 {sync_count}개 동기화 (기기 목록 갱신 필요)'
