@@ -1,0 +1,6 @@
+{
+  "version": "v0.8.5-beta.1",
+  "prerelease": true,
+  "channel": "beta",
+  "notes": "release/notes.md"
+}
