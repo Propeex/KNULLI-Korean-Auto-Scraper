@@ -13,9 +13,9 @@ import re
 import sys
 import zipfile
 
-from app_version import VERSION_TAG
-
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+from app_version import VERSION_TAG
 REQUEST = ROOT / "release" / "request.json"
 DIST = ROOT / "dist"
 VERSION_PATTERN = re.compile(r"v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)-beta\.([1-9]\d*)\Z")
