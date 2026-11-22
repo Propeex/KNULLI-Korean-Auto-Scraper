@@ -7,7 +7,7 @@
 - ScreenScraper 시스템 ID `53` 및 Skyscraper `atomiswave` 플랫폼 연결, GUI에 `Atomiswave` 기종 표시.
 - 확장자 `.7z`, `.zip`, `.chd`, `.bin`와 전용 `.lst`, `.dat` 지원. 한글 중첩 폴더와 대문자 확장자 인식.
 - 원본 압축 ROM의 이름/내용을 변경하지 않으며, 한글 표시명 보존 및 스크랩 데이터 XML 자동 백업 금지 정책 유지.
-- [PR #5](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/pull/5). 자동 테스트 후 GitHub Beta Release `v0.8.7-beta.2` 발행. 사용자 실기기 검증 미완료.
+- [PR #5](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/pull/5) main 병합 완료. [GitHub Windows/Linux 배포 CI](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/actions/runs/45058337387) 성공. **[v0.8.7-beta.2 Pre-release](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.7-beta.2) 발행 및 ZIP 90,550 bytes / .sha256 첨부 확인.** 사용자 실기기 검증 미완료.
 
 
 ## v0.8.7-beta.1 — PortMaster 게임 스크래핑 (2026-11-23)
