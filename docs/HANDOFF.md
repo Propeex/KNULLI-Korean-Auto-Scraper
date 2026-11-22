@@ -46,7 +46,8 @@
 - 현재 최초 베타: `v0.8.5-beta.1`, [릴리즈 페이지](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.5-beta.1).
 - 릴리즈는 테스트→배포 ZIP/체크섬 생성→GitHub 사전출시 상태/첨부파일 확인까지 완료해야 성공.
 - 절차: [RELEASE_PROCESS.md](RELEASE_PROCESS.md), GitHub Actions `.github/workflows/publish-beta.yml`, 트리거 `release/request.json`.
-- **현재 작업:** v0.8.5-beta.1 첫 배포. 실제 발행 성공은 GitHub Release 페이지 확인 후 기록. 배포 후에도 실제 Windows/RG35XX Plus 검증은 여전히 미완료.
+- **첫 GitHub Beta Release 발행 확인 완료 (2026-11-23):** [v0.8.5-beta.1](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.5-beta.1). `prerelease=true`, ZIP(68,614 bytes), `.sha256` 두 첨부 자산 확인. [배포 GitHub Actions](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/actions/runs/45046433924)의 테스트·ZIP 빌드·검증·게시·첨부파일 확인 전 단계 성공.
+- **현재 중단 지점:** v0.8.5-beta.1 배포 완료. 다음 작업은 Windows/RG35XX Plus 실기기에서 사라진 ROM 메타데이터 정리 검증과 한글 하위 폴더 문제 재검증. 사용자 명시 승인 전까지 모든 후속 릴리즈는 Beta/Pre-release.
 
 ## 현재 중단 지점
 **v0.8.5 베타를 main에 통합 완료.** v0.8.4를 기반으로 삭제된 ROM의 XML·단독 미디어 정리 기능을 추가. 기존 GUI/스크래퍼와 인수인계 문서는 유지. **최신 코드 기준 GitHub Actions CI 성공**: [Python tests run](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/actions/runs/44666745166). 다음 작업은 v0.8.5 정리 기능의 Windows/실기기 안전성 검증, 마지막 한글 하위 폴더 문제 재시험. 이식은 v0.8.4를 기준선으로 만들었으며, 후속 v0.8.5 기능은 PR #1에서 추가함.
