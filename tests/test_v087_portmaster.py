@@ -1,6 +1,7 @@
 """Regression tests: offline PortMaster game/metadata support (v0.8.7)."""
 from pathlib import Path
 import json
+import os
 import subprocess
 import sys
 import tempfile
@@ -99,6 +100,7 @@ class TestPortMasterDiscovery(unittest.TestCase):
         self.assertEqual({str(rel) for _,rel,_ in games}, {REL,'gba/mario.gba'})
         self.assertIn('ports',core.SYSTEM_IDS)
 
+    @unittest.skipUnless(os.name == 'posix', 'Requires POSIX sh and od')
     def test_port_scanner_avoids_recursing_into_game_files(self):
         with tempfile.TemporaryDirectory() as td:
             base=Path(td)
