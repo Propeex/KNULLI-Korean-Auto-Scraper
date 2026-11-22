@@ -63,6 +63,15 @@
 - [ ] 명시적 port.json/gameinfo.xml이 없는 포트의 보조 매칭은 추후 안전성 검토
 - [x] GitHub Windows/Linux 테스트 통과 및 [v0.8.7-beta.1 Pre-release](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.7-beta.1) 발행 완료
 
+## P1.9 — Atomiswave .7z 인식 누락 수정 (v0.8.7-beta.2)
+
+- [x] `atomiswave`을 KNULLI 게임 검색 대상 시스템에 등록
+- [x] Skyscraper `atomiswave` 플랫폼 및 GUI 기종 표시 연결
+- [x] `.7z` 포함 Atomiswave 지원 ROM 확장자와 한글 경로 검증
+- [x] 압축 ROM 파일명 변경 방지, 기존 한글 게임명 보존 테스트
+- [ ] GitHub CI 최종 통과 및 `v0.8.7-beta.2` 베타 릴리즈 확인
+- [ ] 사용자 실제 RG35XX Plus에서 Atomiswave .7z 조회·스크래핑 확인
+
 ## P2 — 다운로드 범위와 검색 정확도
 - [ ] 타이틀 화면(sstitle) 다운로드 가능한 공식/허용 경로 검증
 - [ ] KNULLI 스크래퍼 선택지와 실제 Windows 엔진 옵션 대응표 정리
