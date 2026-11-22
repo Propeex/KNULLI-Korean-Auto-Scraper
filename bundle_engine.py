@@ -19,6 +19,7 @@ import scrape_options
 import learned_titles
 import user_data
 import legacy_bridge as legacy
+import portmaster
 
 MEDIA_TAGS=('image','thumbnail','marquee','fanart','video','manual','boxback')
 TEXT_TAGS=('desc','rating','releasedate','genre','developer','publisher','players')
@@ -214,7 +215,7 @@ def process_selected(adb,config,items,overrides,progress=None, engine=None):
 def _process_selected(adb,config,items,overrides,progress=None, engine=None,secret_dir=None):
     selection=chosen(config)
     work=backend.HERE/'work';work.mkdir(exist_ok=True)
-    if engine is None:
+    if engine is None and any(item.system!='ports' for item in items):
         exe=legacy.find_engine(config.get('skyscraper_path',''))
         ini=engine_config(config,secret_dir or work,selection)
         engine=DetailedEngine(exe,ini,config.get('engine_timeout_seconds',240))
@@ -226,11 +227,29 @@ def _process_selected(adb,config,items,overrides,progress=None, engine=None,secr
     learned=user_data.load_titles()
     wiki_cache=backend.load_json(work/'wikidata_titles_cache.json',{})
     report=[]
+    # PortMaster already ships local manifests and artwork; no ScreenScraper
+    # search, launcher transfer, or handheld Internet is necessary.
+    ports=[item for item in items if item.system=='ports']
+    port_catalog={}
+    port_error=''
+    if ports:
+        try:
+            port_catalog=portmaster.load_ports(
+                adb,config.get('remote_root','/userdata/roms'),
+                [item.rel for item in ports])
+        except Exception as exc:
+            port_error=str(exc)[:250]
     for i,item in enumerate(items,1):
         rec={'rom':item.rel,'system':item.system,'status':'working'};report.append(rec)
         if progress:progress(i,len(items),item,'진행 중','')
         try:
             if item.xml_problem:raise RuntimeError('기존 XML 읽기 실패: '+item.xml_problem)
+            if item.system=='ports':
+                if port_error:
+                    raise RuntimeError('PortMaster 정보 확인 실패: '+port_error)
+                applied=portmaster.apply_one(adb,item,config,port_catalog,selection)
+                rec.update(applied)
+                continue
             platform=legacy.PLATFORMS.get(item.system)
             if not platform:rec['status']='unsupported_platform';continue
             size=adb.stat_size(item.remote)
