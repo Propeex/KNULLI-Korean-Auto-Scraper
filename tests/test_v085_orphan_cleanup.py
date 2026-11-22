@@ -182,5 +182,32 @@ class TestOrphanCleanup(unittest.TestCase):
         self.assertEqual(adb.backups, {})
         self.assertFalse(adb.commands)
 
+class TestEmptySystemsAndCrossRefs(unittest.TestCase):
+    def test_valid_empty_rom_listing_is_allowed(self):
+        class EmptyDevice(core.Adb):
+            def __init__(self):
+                pass
+            def shell(self, command, timeout=60):
+                return ''
+        self.assertEqual(EmptyDevice().listing(ROOT), [])
+
+    def test_cross_system_shared_media_is_protected(self):
+        nes_root = ROOT + '/nes'
+        shared = SYS + '/images/shared.png'
+        documents = {
+            SYS + '/gamelist.xml': xml(
+                ('./removed.gba', {'image':'./images/shared.png'}, 'removed')),
+            nes_root + '/gamelist.xml': xml(
+                ('./keep.nes', {'image':shared}, 'keep'))
+        }
+        adb = FakeAdb(documents)
+        keep_rom = nes_root + '/keep.nes'
+        with patch.object(oc, '_path_states',
+                          side_effect=lambda _adb, paths: {p: p == keep_rom for p in paths}):
+            plan = oc.inspect(adb, {'remote_root': ROOT})
+        self.assertEqual(plan.game_count, 1)
+        self.assertEqual(plan.media_count, 0)
+
+
 if __name__ == '__main__':
     unittest.main()
