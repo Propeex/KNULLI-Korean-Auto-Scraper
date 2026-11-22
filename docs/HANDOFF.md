@@ -50,8 +50,8 @@
 - `Documents/KNULLI Auto Scraper Data`와 `work` 폴더, ROM, 현재 기기 데이터는 수정하지 않으며 사용자가 수정한 `aliases.json`/`artwork.xml`은 덮어쓰지 않음. 이 과정에서 만드는 일시적인 프로그램 코드 롤백 복사본은 스크래핑 백업이 아니며 정상 완료 시 제거.
 - 업데이트 확인/다운로드 실패 시 GUI는 기존 버전으로 실행, 로그는 사용자 데이터 폴더의 `auto_update.log`.
 - **초기 배포 한계:** 기존 v0.8.5-beta.2에는 업데이터가 없으므로 v0.8.6-beta.1은 처음 한 번 수동 설치해야 함. 이후부터 실행 시 자동 베타 업데이트.
-- [PR #3](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/pull/3). **Linux CI 자동 테스트 통과, Windows 실사용 갱신 과정 미검증.**
-- **현재 중단 지점:** PR #3 최종 테스트, `main` 병합, v0.8.6-beta.1 Beta Release ZIP/체크섬 발행·검증이 아직 필요. 성공 시 이 문서 업데이트.
+- [PR #3](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/pull/3) **main 병합 완료** (커밋 `6543db6376f54d7fe01da448a3aea5ceb2bcef7d`). Linux 회귀 및 Windows 업데이터 CI 모두 통과. Windows 실제 사용자 프로그램 갱신 과정 미검증.
+- **현재 중단 지점:** PR #3 병합 완료. **이제 `release/request.json`을 v0.8.6-beta.1로 갱신하고 Windows·Linux 릴리즈 게이트 및 GitHub Release 첨부파일 검증 필요.** 다음 단계는 사용자 PC에서 베타.1 최초 설치 및 향후 실제 베타 업데이트/재시작 동작 확인.
 
 ## 릴리즈 운영 규칙 (2026-11-23)
 - 사용자는 **작업이 성공적으로 종료될 때마다 GitHub Release 발행**을 요구함. 개발은 릴리즈까지 끝나야 완료임.
