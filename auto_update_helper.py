@@ -137,22 +137,30 @@ def wait_for_parent_exit(pid: int, timeout: float = 120.0) -> None:
         raise ValueError("Invalid parent process ID")
     if os.name == "nt":
         import ctypes
+        from ctypes import wintypes
+        kernel = ctypes.WinDLL("kernel32", use_last_error=True)
+        kernel.OpenProcess.argtypes = [wintypes.DWORD, wintypes.BOOL, wintypes.DWORD]
+        kernel.OpenProcess.restype = wintypes.HANDLE
+        kernel.WaitForSingleObject.argtypes = [wintypes.HANDLE, wintypes.DWORD]
+        kernel.WaitForSingleObject.restype = wintypes.DWORD
+        kernel.CloseHandle.argtypes = [wintypes.HANDLE]
+        kernel.CloseHandle.restype = wintypes.BOOL
         SYNCHRONIZE = 0x00100000
         WAIT_OBJECT_0 = 0
-        handle = ctypes.windll.kernel32.OpenProcess(SYNCHRONIZE, False, pid)
+        handle = kernel.OpenProcess(SYNCHRONIZE, False, pid)
         if not handle:
-            # The process may have exited before the updater could open it.
-            error = ctypes.windll.kernel32.GetLastError()
+            # The original launcher may have quit before the helper opened it.
+            error = ctypes.get_last_error()
             if error in (87, 1168):  # invalid process ID / not found
                 return
             raise RuntimeError(f"Cannot wait for original GUI process: {error}")
         try:
             millis = min(int(timeout * 1000), 0xFFFFFFFE)
-            state = ctypes.windll.kernel32.WaitForSingleObject(handle, millis)
+            state = kernel.WaitForSingleObject(handle, millis)
             if state != WAIT_OBJECT_0:
-                raise TimeoutError("Original GUI did not exit for update")
+                raise TimeoutError(f"Original GUI did not exit for update (wait={state})")
         finally:
-            ctypes.windll.kernel32.CloseHandle(handle)
+            kernel.CloseHandle(handle)
         return
 
     deadline = time.monotonic() + timeout
