@@ -26,7 +26,8 @@ def remove_local_backups(work: Path) -> int:
     folder = Path(work) / 'xml_backups'
     if not folder.exists() and not folder.is_symlink():
         return 0
-    if folder.is_symlink() or not folder.is_dir():
+    if (Path(work).is_symlink() or folder.is_symlink()
+            or not folder.is_dir()):
         raise RuntimeError('xml_backups 경로가 정상 폴더가 아니어서 삭제하지 않았습니다.')
     removed = 0
     for path in folder.iterdir():
@@ -85,9 +86,37 @@ def remove_device_backups(adb, root: str) -> int:
     return removed
 
 
+def _work_directories(work: Path):
+    """Current installation and verified sibling installations only.
+
+    Previously delivered versions were often extracted to separate adjacent
+    folders. Do not search the user's entire disk or traverse arbitrary paths.
+    """
+    work = Path(work)
+    yield work
+    install = work.parent
+    if not ((install / 'GUI_실행.pyw').is_file()
+            and (install / 'backend.py').is_file()):
+        return
+    try:
+        siblings = list(install.parent.iterdir())
+    except OSError:
+        return
+    for sibling in siblings:
+        if sibling == install or sibling.is_symlink() or not sibling.is_dir():
+            continue
+        lower = sibling.name.casefold()
+        if 'knulli' not in lower or 'scrap' not in lower:
+            continue
+        if ((sibling / 'GUI_실행.pyw').is_file()
+                and (sibling / 'backend.py').is_file()):
+            yield sibling / 'work'
+
+
 def cleanup(adb, config: dict, work: Path) -> dict:
-    """One-time cleanup on connected device and current app work folder."""
+    """Remove own backups on device and in adjacent app install folders."""
     root = config.get('remote_root', '/userdata/roms')
     device_count = remove_device_backups(adb, root)
-    local_count = remove_local_backups(work)
+    local_count = sum(remove_local_backups(folder)
+                      for folder in _work_directories(Path(work)))
     return {'device_removed': device_count, 'local_removed': local_count}
