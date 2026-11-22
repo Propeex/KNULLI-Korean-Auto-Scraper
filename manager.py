@@ -110,20 +110,17 @@ def plan_rename(item, new_name, xml_root, root='/userdata/roms', rename_display=
             'moves':moves,'display_name':bool(rename_display)}
 
 
-def _backup_and_write(adb, sysdir, original, changed, work:Path, stamp:str):
-    remote_xml=sysdir+'/gamelist.xml'
-    with tempfile.TemporaryDirectory(prefix='knulli_xml_save_') as td:
-        td=Path(td)
-        if original is not None:
-            bdir=work/'xml_backups';bdir.mkdir(parents=True,exist_ok=True)
-            local=bdir/(PurePosixPath(sysdir).name+'_'+stamp+'.xml')
-            local.write_bytes(original)
-            remote_backup=remote_xml+'.knulli-autoscraper-'+stamp+'.bak'
-            adb.shell('cp '+core.sq(remote_xml)+' '+core.sq(remote_backup))
-            if not adb.exists(remote_backup):
-                raise RuntimeError('기기 XML 백업 검증 실패: 파일을 변경하지 않았습니다.')
-        destination=td/'gamelist.xml';destination.write_bytes(changed)
-        adb.upload(destination,remote_xml)
+def _write_xml(adb, sysdir: str, changed: bytes) -> None:
+    """Replace gamelist.xml via ADB's temporary upload, without backups.
+
+    The currently read XML remains in memory until the caller returns; no
+    persistent XML copy is written locally or on the handheld.
+    """
+    remote_xml = sysdir + '/gamelist.xml'
+    with tempfile.TemporaryDirectory(prefix='knulli_xml_write_') as td:
+        path = Path(td) / 'gamelist.xml'
+        path.write_bytes(changed)
+        adb.upload(path, remote_xml)
 
 
 def _read_xml(adb,sysdir):
@@ -145,9 +142,9 @@ def _check_unmodified(adb,sysdir,expected):
 def rename_rom(adb,item,new_name,root='/userdata/roms',work:Path|None=None,rename_display=True):
     """Moves a single-file ROM and any unshared stem-named referenced media.
 
-    XML is backed up before the first mv, and all known moves are reversed if
-    a step fails. If USB disappears during rollback, report explicitly and
-    retain the backup/journal to support manual recovery.
+    If an operation fails, known file moves are reversed where possible.
+    No persistent XML backups are created; an operational rename journal may
+    remain to diagnose failed rollback (it is not a copy of scraped data).
     """
     work=Path(work or Path(__file__).resolve().parent/'work')
     sysdir=root.rstrip('/')+'/'+item.system
@@ -176,16 +173,9 @@ def rename_rom(adb,item,new_name,root='/userdata/roms',work:Path|None=None,renam
     updated=core.xml_bytes(xml)
     _check_unmodified(adb,sysdir,initial)
     stamp=datetime.now().strftime('%Y%m%d_%H%M%S_%f')
-    # Backup must happen before first move; backups and journal never live on ROM path.
-    if initial is not None:
-        bdir=work/'xml_backups';bdir.mkdir(parents=True,exist_ok=True)
-        (bdir/(item.system+'_'+stamp+'.xml')).write_bytes(initial)
-        remote_backup=sysdir+'/gamelist.xml.knulli-autoscraper-'+stamp+'.bak'
-        adb.shell('cp '+core.sq(sysdir+'/gamelist.xml')+' '+core.sq(remote_backup))
-        if not adb.exists(remote_backup):raise RuntimeError('XML 백업에 실패해 ROM 이름을 변경하지 않았습니다.')
     plan['moves']=[(key,src,dest) for key,src,dest,_ in actual_moves]
     jpath=work/'rename_journal'/('rename_'+stamp+'.json')
-    core.json_write(jpath,{**plan,'stage':'backup_created'})
+    core.json_write(jpath,{**plan,'stage':'prepared'})
     moved=[]
     try:
         move_targets=[(plan['old_remote'],plan['new_remote'])]+[(src,dest) for _,src,dest in plan['moves']]
@@ -193,9 +183,7 @@ def rename_rom(adb,item,new_name,root='/userdata/roms',work:Path|None=None,renam
             adb.shell('mv '+core.sq(src)+' '+core.sq(dest))
             moved.append((src,dest))
             core.json_write(jpath,{**plan,'stage':'moving','moved':moved})
-        with tempfile.TemporaryDirectory(prefix='knulli_rename_') as td:
-            f=Path(td)/'updated.xml';f.write_bytes(updated)
-            adb.upload(f,sysdir+'/gamelist.xml')
+        _write_xml(adb,sysdir,updated)
         core.json_write(jpath,{**plan,'stage':'done','moved':moved})
         return plan
     except Exception as e:
@@ -231,5 +219,5 @@ def update_metadata(adb,item,edits:dict,root='/userdata/roms',work:Path|None=Non
     changed=core.xml_bytes(xml)
     if changed==original:return False
     _check_unmodified(adb,sysdir,original)
-    _backup_and_write(adb,sysdir,original,changed,work,datetime.now().strftime('%Y%m%d_%H%M%S_%f'))
+    _write_xml(adb,sysdir,changed)
     return True
