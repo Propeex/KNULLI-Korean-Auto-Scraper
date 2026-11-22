@@ -303,6 +303,38 @@ class TestHelper(unittest.TestCase):
         finally:
             child.wait(timeout=10)
 
+    def test_worker_replaces_program_and_restarts_without_confirmation(self):
+        with tempfile.TemporaryDirectory() as td:
+            base = Path(td)
+            install, _ = self.make_install(base)
+            stage = self.make_stage(base)
+            (base / "auto_update.lock").write_text("12345", encoding="ascii")
+            with mock.patch.object(helper, "wait_for_parent_exit") as waiter, \
+                 mock.patch.object(helper, "_restart") as restart:
+                code = helper.main([str(stage), str(install), "12345", sys.executable])
+            self.assertEqual(code, 0)
+            waiter.assert_called_once_with(12345)
+            restart.assert_called_once()
+            self.assertFalse(restart.call_args.kwargs["skip_update"])
+            self.assertEqual((install / "gui.py").read_text(), "print('new GUI')\n")
+            self.assertFalse(stage.exists())
+            self.assertFalse((base / "auto_update.lock").exists())
+
+    def test_worker_validation_failure_restarts_existing_app_no_retry(self):
+        with tempfile.TemporaryDirectory() as td:
+            base = Path(td)
+            install, _ = self.make_install(base)
+            stage = self.make_stage(base)
+            (stage / "payload" / "gui.py").write_text("corrupt", encoding="utf-8")
+            (base / "auto_update.lock").write_text("12345", encoding="ascii")
+            with mock.patch.object(helper, "wait_for_parent_exit"), \
+                 mock.patch.object(helper, "_restart") as restart:
+                code = helper.main([str(stage), str(install), "12345", sys.executable])
+            self.assertEqual(code, 1)
+            self.assertTrue(restart.call_args.kwargs["skip_update"])
+            self.assertEqual((install / "gui.py").read_text(), "old gui")
+            self.assertFalse((base / "auto_update.lock").exists())
+
     def test_restart_is_silent_and_no_retry_on_failure(self):
         with mock.patch.object(helper.subprocess, "Popen") as proc:
             helper._restart("pythonw.exe", Path("C:/DemoApp"), skip_update=True)
