@@ -1,40 +1,38 @@
-# KNULLI Korean Auto Scraper v0.8.7 Beta 1
+# KNULLI Korean Auto Scraper v0.8.7 Beta 2
 
 **Windows / RG35XX Plus / KNULLI / USB ADB**
 
-> 이 버전은 **Beta / Pre-release**입니다. 자동 테스트는 통과했지만 실제 RG35XX Plus에서 PortMaster 게임 폴더·메타데이터 구조는 추가 검증이 필요합니다.
+> 이번 버전은 **Beta / Pre-release**입니다. GitHub 자동 테스트는 수행하지만 실제 사용자 RG35XX Plus에서 Atomiswave .7z 인식·스크래핑은 별도 검증이 필요합니다.
 
-## 새 기능 — PortMaster 포팅 게임 메타데이터
+## 수정 내용 — Atomiswave .7z 게임 인식
 
-- `/userdata/roms/ports/`에 설치된 **최상위 `.sh` 게임 실행 스크립트**를 기존 GUI의 게임 목록에서 `PortMaster` 기종으로 표시합니다.
-- PortMaster 설치/관리 도구 스크립트는 게임 목록에서 제외하며, 포트 게임의 방대한 데이터 디렉터리를 ROM으로 재귀 탐색하지 않습니다.
-- 선택한 게임에 대해 로컬 `port.json`·`gameinfo.xml`을 읽어 **게임명, 설명, 장르, 개발사, 배급사, 출시일** 등을 보완합니다. `gameinfo.xml` 정보가 우선합니다.
-- 이미 설치된 `cover.png/.jpg`·`screenshot.png/.jpg`를 새로 복사하지 않고 `ports/gamelist.xml`의 이미지 경로로 연결합니다.
-- 게임과 메타데이터에 **명시적으로 같은 실행 스크립트가 연결된 경우에만** 적용하며, 이름을 추측하여 엉뚱한 게임으로 매칭하지 않습니다.
-- 기존 사용자의 한글 게임명, 수동 설명 및 이미지 등은 **덮어쓰지 않습니다**. 비어 있는 XML 필드만 작성합니다.
-- PortMaster 게임만 선택했다면 Skyscraper/ScreenScraper가 필요 없고, 기기 인터넷도 요구하지 않습니다.
+- 이전에는 `.7z` 파일이 허용 목록에 있어도 **`atomiswave` 시스템 폴더 자체가 누락**되어 게임 목록에 나타나지 않았습니다.
+- 이제 `/userdata/roms/atomiswave/` 및 그 하위 폴더에 있는 `.7z`, `.zip`, `.chd`, `.bin`, `.lst`, `.dat` 게임을 검색합니다.
+- Skyscraper `atomiswave` 플랫폼 / ScreenScraper 시스템 ID `53`을 연결했습니다.
+- GUI 기종 열에 **Atomiswave**로 표시합니다.
+- 한글 게임/폴더 이름, 대문자 `.7Z` 확장자를 지원합니다.
 
-## 파일 안전성
+## 기존 안전 정책 유지
 
-- 포트의 `.sh` 실행 파일, 게임 데이터, 게임 세이브, 설치 파일은 수정/삭제하지 않습니다.
-- 삭제된 포트 게임의 정보 정리는 기존 사용자 확인 후 **해당 XML 게임 항목만** 삭제하며 포트 폴더를 제거하지 않습니다.
-- 이전에 확정한 정책대로 **스크랩 데이터 XML 백업을 만들지 않습니다**.
-- 로컬 메타데이터가 없거나 형식이 달라 매칭할 수 없다면 안전하게 검색 실패로 표시하고 다른 게임 정보를 적용하지 않습니다.
+- `.7z` 등 압축 ROM의 파일명이나 원본 내용을 변경하지 않습니다. 사용자 지정 게임명과 기존 메타데이터는 가능한 한 보존합니다.
+- 사용자 요청대로 게임 정보 XML 자동 백업을 생성하지 않습니다.
+- 사용자 설정과 스크래핑 캐시는 기존 상태를 유지합니다.
+- 이전 베타부터 제공되는 시작 시 자동 업데이트 및 자동 재시작 기능이 유지됩니다.
 
-## 설치 및 자동 업데이트
+## 설치와 업데이트
 
-- 이전 `v0.8.6-beta.1` 이상 설치본은 프로그램을 시작할 때 이 공개 베타 릴리즈를 검색하고, 승인 창 없이 검증·자동 설치한 다음 재시작하도록 설계되어 있습니다.
-- 수동 설치를 원하면 Windows ZIP을 받아 기존 ZIP 설치 파일이 있는 폴더가 아닌 별도 새 폴더에 풀고 `GUI_실행.pyw`로 시작하세요.
-- **Python 3.10 이상과 Tkinter**가 필요합니다. 독립 실행 EXE는 아닙니다.
-- 사용자 설정은 Windows 사용자 문서 폴더에 저장되며 릴리즈 업데이트 시 보존됩니다.
+- 이미 `v0.8.6-beta.1` 이상의 자동 업데이트 지원 버전을 쓰고 있다면 **다음 실행 때 공개 베타를 조회·적용**하도록 구현되어 있습니다.
+- 수동 설치는 이 릴리즈의 Windows ZIP을 다운로드해 압축 해제한 후 `GUI_실행.pyw`로 시작하면 됩니다.
+- Windows **Python 3.10 이상 + Tkinter**가 필요합니다. 독립 실행 EXE는 아닙니다.
+- KNULLI 기기 인터넷 연결은 불필요하며 PC의 인터넷과 USB ADB를 사용합니다.
 
-## 검증 및 제한
+## 검증
 
-- GitHub Actions에서 Linux 전체 단위/GUI 테스트와 Windows 업데이터 테스트, 릴리즈 ZIP/체크섬 검증 후 배포합니다.
-- 추가 PortMaster 테스트에서 한글 `.sh` 경로, 관리 스크립트 제외, XML 필드 우선순위, 사용자 편집 내용 보호, 포트 데이터 무변경, 메타데이터 오류/경로 충돌을 확인합니다.
-- **실제 기기에서 PortMaster 메타데이터가 다른 위치에 저장된 경우** 자동 적용되지 않을 수 있습니다. 이 경우 설치된 포트 폴더 구조를 확인해 후속 베타에서 대응합니다.
+- 자동 테스트: Atomiswave 파일 인식·한글 중첩 폴더·Skyscraper 플랫폼 매핑, 원본 압축 ROM 보호, 기존 한글 XML 표시명 보존.
+- GitHub Actions에서 Windows와 Linux 테스트를 통과한 경우에만 ZIP·SHA-256 확인 파일을 첨부합니다.
+- **실제 기기 테스트는 미완료**입니다. 이 수정은 게임 목록/메타데이터 스크래핑용이며 ROM 실행, BIOS 및 에뮬레이터 정상 구동 여부를 보장하지 않습니다.
 
-개발 변경: [PR #4](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/pull/4).
-자료 형식: [PortMaster 공식 포트 패키징 문서](https://portmaster.games/contribute/porting/packaging/).
+변경 기록: [Pull Request #5](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/pull/5).
+관련 문서: [Skyscraper 지원 플랫폼](https://github.com/muldjord/skyscraper/blob/master/docs/PLATFORMS.md), [Atomiswave ROM 형식](https://wiki.batocera.org/systems:atomiswave).
 
-정식 출시 승인이 있기 전까지 모든 릴리즈는 Beta / Pre-release입니다.
+사용자의 명시적인 정식 출시 승인 전까지 모든 배포는 Beta / Pre-release입니다.

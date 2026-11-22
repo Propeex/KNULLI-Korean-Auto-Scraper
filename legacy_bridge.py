@@ -29,7 +29,7 @@ PLATFORMS = {
     'n64':'n64','nds':'nds','megadrive':'megadrive','mastersystem':'mastersystem',
     'gamegear':'gamegear','pcengine':'pcengine','psx':'psx','psp':'psp',
     'saturn':'saturn','dreamcast':'dreamcast','sega32x':'sega32x',
-    'segacd':'segacd','mame':'mame','fbneo':'fba','neogeo':'neogeo',
+    'segacd':'segacd','mame':'mame','fbneo':'fba','neogeo':'neogeo','atomiswave':'atomiswave',
     'atari2600':'atari2600','atari7800':'atari7800','ngp':'ngp','ngpc':'ngpc',
     'wswan':'wonderswan','wswanc':'wonderswanc',
 }

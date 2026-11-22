@@ -1,4 +1,4 @@
-KNULLI Auto Scraper v0.8.7-beta.1 (Windows / RG35XX Plus / USB ADB)
+KNULLI Auto Scraper v0.8.7-beta.2 (Windows / RG35XX Plus / USB ADB)
 =====================================================
 
 시작하기
@@ -147,7 +147,7 @@ Platform-Tools: https://developer.android.com/tools/releases/platform-tools
 
 [베타 릴리즈 다운로드]
 ------------------------
-- https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.7-beta.1
+- https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.7-beta.2
 - Windows ZIP을 압축 해제한 후 GUI_실행.pyw를 실행합니다 (Python 3.10 이상 필요).
 - 이번 버전은 정식판이 아니며 GitHub 사전 출시(Beta)로 배포됩니다.
 
@@ -193,3 +193,14 @@ Platform-Tools: https://developer.android.com/tools/releases/platform-tools
 - 사용자의 요청대로 프로그램은 XML 스크랩 백업을 자동 생성하지 않습니다.
 - 실제 사용자 RG35XX Plus의 다양한 PortMaster 게임 설치 방식은 아직 실기기 검증 전입니다.
 - v0.8.6-beta.1의 자동 업데이트 기능을 가진 설치본은 새 베타 발행 시 실행 때 자동 업데이트합니다.
+
+
+[v0.8.7-beta.2: Atomiswave 7z 게임 조회 수정]
+------------------------------------------------
+- 이전에는 atomiswave 시스템 폴더가 조회 대상에서 빠져 .7z 롬이 나타나지 않았습니다.
+- /userdata/roms/atomiswave 폴더와 하위 폴더의 .7z, .zip, .chd, .bin, .lst, .dat 게임을 자동 인식합니다.
+- 스크래핑은 Skyscraper의 atomiswave 플랫폼으로 처리합니다.
+- .7z 압축 롬 원본 파일명과 내용은 변경하지 않습니다.
+- 한글 게임명·기존 설명·이미지 등 사용자 지정 내용 보존 정책을 유지합니다.
+- 이전 v0.8.6-beta.1 이후 자동 업데이트 기능이 있는 설치본은 다음 실행 시 새 베타를 자동 설치합니다.
+- 실제 사용자 기기에서의 동작은 아직 검증 전입니다.

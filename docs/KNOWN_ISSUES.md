@@ -30,6 +30,12 @@
 - 정보 누락 항목만 채우므로 기존에 잘못 설정된 메타데이터의 강제 교체는 미지원.
 - 실제 RG35XX Plus/Windows USB ADB 조합에서 PortMaster 포맷 편차 검증은 아직 필요.
 
+## Atomiswave 7z 인식 누락 (v0.8.7-beta.2)
+- 이전 버전에서는 `.7z` 확장자가 허용돼 있어도 `atomiswave` 폴더 자체가 시스템 목록에 없어 모든 Atomiswave ROM이 누락됨.
+- `core.SYSTEM_IDS` 및 `legacy_bridge.PLATFORMS`에 Atomiswave 추가. ScreenScraper 시스템 ID 53, Skyscraper 플랫폼 이름 `atomiswave`.
+- Atomiswave `.7z` 및 전용 `.lst`/`.dat`와 한글 하위 폴더의 탐색을 회귀 테스트에 추가.
+- 실제 사용자 Windows/RG35XX Plus에서의 목록 조회·스크래핑은 아직 별도 확인 필요. 게임 실행 가능 여부나 BIOS/에뮬레이터 문제는 이 스크래퍼의 범위가 아님.
+
 ## 해결 기록
 - v0.3.1: 전체 `adb exec-out find -print0`의 `error: closed` → 폴더별 안정 탐색.
 - v0.4~0.5: Skyscraper `artwork.xml` 읽기 오류 수정 및 GUI 선택 기능.

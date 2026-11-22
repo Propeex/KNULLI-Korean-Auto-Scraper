@@ -6,7 +6,7 @@
 - 작성일: 2026-11-20 (Asia/Seoul)
 - 프로젝트: KNULLI Korean Auto Scraper
 - 저장소: https://github.com/Propeex/KNULLI-Korean-Auto-Scraper
-- **현재 최신 공개 베타:** [`v0.8.7-beta.1`](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.7-beta.1) (Pre-release, PortMaster 지원). 이전 공개 버전: `v0.8.6-beta.1`. 이전 공개 베타: `v0.8.5-beta.2`. 이전 공개 버전은 `v0.8.5-beta.1`. 최초 이식 소스 기준: **v0.8.4 베타** (`knulli_auto_scraper_adb_v084_unicode_folders.zip`)
+- **현재 개발/배포 대상: `v0.8.7-beta.2` (Atomiswave .7z 인식 수정).** 기존 공개 버전은 [`v0.8.7-beta.1`](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.7-beta.1) (Pre-release, PortMaster 지원). 이전 공개 버전: `v0.8.6-beta.1`. 이전 공개 베타: `v0.8.5-beta.2`. 이전 공개 버전은 `v0.8.5-beta.1`. 최초 이식 소스 기준: **v0.8.4 베타** (`knulli_auto_scraper_adb_v084_unicode_folders.zip`)
 - 대상: Windows PC, RG35XX Plus (KNULLI), USB ADB
 - 스크래핑: Windows에서 Skyscraper / ScreenScraper 사용. PC 인터넷만 필요, 기기 인터넷 불필요.
 - **GitHub 최초 이식 완료:** 2026-11-20, 원본 v0.8.4 소스를 코드 변경 없이 복원한 커밋 `4734f7a954d0953a6f1306f8a3910039bcc6a634`. 원본 압축 스냅샷 SHA256 검증 및 GitHub Actions 복원 성공. 상세 기록: [MIGRATION.md](MIGRATION.md). 실기기 테스트는 사용자 환경에서 별도 확인해야 함.
@@ -31,6 +31,18 @@
 - v0.8.3에서 한글 하위 폴더 `psx/한글 폴더/Silent Hill (K).cue`의 경로가 `????`로 깨져 `remote file size unavailable` 발생.
 - v0.8.4에서 기기 경로를 바이트/NUL 구분 + 영숫자 인코딩으로 PC에 전달, 파일 크기 조회의 인코딩 개선.
 - **단위 테스트는 통과했지만 이 v0.8.4 수정의 실기기 성공 피드백은 아직 받지 못함.**
+
+## 수정 진행 — Atomiswave .7z 게임 미인식 (v0.8.7-beta.2, 2026-11-23)
+
+- **현장 보고:** 기기의 Atomiswave `.7z` 게임이 Windows 스크래퍼 목록에 나타나지 않음.
+- **코드에서 확인한 원인:** `core.ROM_EXT`는 `.7z`를 이미 포함했지만 `core.SYSTEM_IDS`에 `atomiswave`가 빠져 있어 게임을 탐색 결과에서 제외했음. `legacy_bridge.PLATFORMS`에도 Skyscraper 매핑이 없어 스크래핑이 불가했음.
+- **수정:** `core.py`에 `atomiswave:53` 등록(ScreenScraper ID), `.lst`/`.dat`는 Atomiswave 기종에만 허용. `legacy_bridge.PLATFORMS`에 `atomiswave` 매핑. `gui.py`에 기종명 `Atomiswave`. `.7z/.zip/.chd/.bin`은 기존 일반 확장자 경로로 인식.
+- **보호:** `.7z` 압축 ROM의 파일명 변경 금지, 게임 원본 내용 무수정, 기존 한글 이름 유지, XML 자동 백업 생성 금지. KNULLI 게임 실행 문제와 스크래핑 인식 문제는 별개.
+- **회귀 테스트:** `tests/test_v087_beta2_atomiswave.py`. 인식, 한글 하위 폴더와 대문자 확장자, Skyscraper `atomiswave` 플랫폼 전달, XML 한글명 보존, 압축 롬 파일명 변경 거부, 다른 기종의 `.dat/.lst` 미인식. Linux POSIX 실셸 시뮬레이션 포함. Windows 테스트 게이트 추가.
+- **문서 확인:** Skyscraper 공식 플랫폼 목록과 Batocera/REG Linux Atomiswave 파일 형식으로 대응 방식 확인.
+- **작업 브랜치:** `fix/atomiswave-7z-v087-beta2`, [PR #5](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/pull/5).
+- **현재 중단 지점:** GitHub CI 최종 검증 → `main` 병합 → `release/request.json`을 `v0.8.7-beta.2`로 변경 → GitHub Windows+Linux 릴리즈 테스트 및 ZIP/.sha256 첨부/Pre-release 확인. 실제 RG35XX Plus 게임 목록과 스크래핑 성공 여부는 사용자 실기기 피드백 필요.
+- **릴리즈 정책:** 사용자 정식 출시 승인 전까지 무조건 Beta; 작업 완료 시 GitHub Release 발행하고 이 HANDOFF 문서 갱신. 이전 `v0.8.6-beta.1`부터 자동 업데이트 기능 탑재.
 
 ## 현재 추가 기능 — 삭제된 ROM 연관 데이터 정리 (v0.8.5 베타)
 - `main` 통합 완료: PR [#1](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/pull/1), 커밋 `f3f8187bd52e740ae362528e329a3552e1b89221`.
