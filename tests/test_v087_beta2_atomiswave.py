@@ -87,7 +87,8 @@ class TestAtomiswaveRecognition(unittest.TestCase):
         self.assertFalse(any('.knulli-autoscraper-' in remote for remote in a.files))
         doc=core.parse_xml(a.files[ROOT+'/atomiswave/gamelist.xml'])
         entry=core.find_entry(doc,'./북두의 권.7z')
-        self.assertEqual(entry.findtext('name'),'Fist of the North Star')
+        # Search title may be English, but KNULLI display stays Korean.
+        self.assertEqual(entry.findtext('name'),'북두의 권')
         self.assertTrue((entry.findtext('image') or '').startswith('./images/'))
 
     def test_archive_filename_rename_refused_but_xml_display_name_editable(self):
