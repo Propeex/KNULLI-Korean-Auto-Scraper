@@ -79,6 +79,9 @@ def _game_path(root: str, system: str, text: str | None) -> str | None:
         path = base + '/' + text[2:]
     elif text.startswith(base + '/'):
         path = text
+    elif not text.startswith('/'):
+        # Some EmulationStation gamelists omit the leading ./.
+        path = base + '/' + text
     else:
         return None
     posix = PurePosixPath(path)
