@@ -15,7 +15,7 @@
 - `tests/`: 버전별 회귀/GUI/경로 인코딩 테스트
 
 ## 처리 흐름
-Windows GUI → ADB로 `/userdata/roms` 탐색 → KNULLI 시스템 폴더/ROM 식별 → 해시/저장된 영어명 매칭 → Skyscraper/ScreenScraper 검색 → 미디어 다운로드 → ADB 전송 → `gamelist.xml` 백업·병합 → 게임별 상태/미리보기 갱신.
+Windows GUI → ADB로 `/userdata/roms` 탐색 → KNULLI 시스템 폴더/ROM 식별 → 해시/저장된 영어명 매칭 → Skyscraper/ScreenScraper 검색 → 미디어 다운로드 → ADB 전송 → `gamelist.xml` 안전 검사·병합(영구 백업 없음) → 게임별 상태/미리보기 갱신.
 
 기기 자체의 인터넷 연결은 필요하지 않으며, PC 인터넷만 사용합니다.
 
