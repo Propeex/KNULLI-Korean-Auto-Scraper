@@ -8,7 +8,7 @@
 - PortMaster-only 작업은 Skyscraper 또는 포트 ROM 복사 없이 실행. USB ADB만 사용.
 - 사용자가 승인한 삭제된 포트 게임 정리는 XML 항목만 다루며 포트 데이터·세이브 폴더는 삭제하지 않음.
 - **XML 스크랩 데이터 백업은 생성하지 않음.** 기존 사용자 요청 유지.
-- [PR #4](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/pull/4). Linux 및 Windows CI 테스트 통과 후 베타 릴리즈 발행. **실제 RG35XX Plus에서 다양한 PortMaster 포맷의 동작은 재검증 필요.**
+- [PR #4](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/pull/4) main 병합, [v0.8.7-beta.1 Pre-release](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.7-beta.1) 발행 완료. [Windows+Linux GitHub Actions 검증](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/actions/runs/45056648631) 통과. Windows ZIP(89,599 bytes) 및 SHA-256 첨부 확인. **실제 RG35XX Plus에서 다양한 PortMaster 포맷의 동작은 재검증 필요.**
 
 
 ## v0.8.6-beta.1 — 실행 시 베타 자동 업데이트/재시작 (2026-11-23)
