@@ -1,4 +1,4 @@
-KNULLI Auto Scraper v0.8.7-beta.2 (Windows / RG35XX Plus / USB ADB)
+KNULLI Auto Scraper v0.8.7-beta.3 (Windows / RG35XX Plus / USB ADB)
 =====================================================
 
 시작하기
@@ -147,7 +147,7 @@ Platform-Tools: https://developer.android.com/tools/releases/platform-tools
 
 [베타 릴리즈 다운로드]
 ------------------------
-- https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.7-beta.2
+- https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.7-beta.3
 - Windows ZIP을 압축 해제한 후 GUI_실행.pyw를 실행합니다 (Python 3.10 이상 필요).
 - 이번 버전은 정식판이 아니며 GitHub 사전 출시(Beta)로 배포됩니다.
 
@@ -204,3 +204,15 @@ Platform-Tools: https://developer.android.com/tools/releases/platform-tools
 - 한글 게임명·기존 설명·이미지 등 사용자 지정 내용 보존 정책을 유지합니다.
 - 이전 v0.8.6-beta.1 이후 자동 업데이트 기능이 있는 설치본은 다음 실행 시 새 베타를 자동 설치합니다.
 - 실제 사용자 기기에서의 동작은 아직 검증 전입니다.
+
+
+[v0.8.7-beta.3: PSP rom_too_large 오류 수정]
+---------------------------------------------
+- 이전에는 스크래핑 전에 PSP ISO 등 모든 ROM을 USB ADB로 PC에 복사했습니다.
+- 기본 256MB 전송 제한을 넘으면 rom_too_large로 스크래핑도 시도하지 못했습니다.
+- 이제 큰 .iso, .cso, .pbp, .chd, .cdi, .gdi 디스크 ROM은 전체 데이터를 PC에 받지 않습니다.
+- 대신 영문 검색명을 사용해 ScreenScraper/Skyscraper로 게임 정보와 이미지를 찾습니다.
+- 게임명 일치도가 낮으면 잘못된 게임 정보를 적용하지 않습니다.
+- 작은 ROM은 기존 해시 기반 검색을 유지하고, 큰 .zip/.7z 파일은 용량 제한을 유지합니다.
+- ROM 원본과 사용자 한글 게임명은 변경하지 않습니다. XML 자동 백업도 생성하지 않습니다.
+- 실제 사용자 PC의 Skyscraper 및 기기에서 검색 결과는 아직 실기기 확인 전입니다.
