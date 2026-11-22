@@ -225,6 +225,14 @@ def main(args: list[str] | None = None) -> int:
             _restart(executable, install, skip_update=not success)
         except Exception as exc:
             _log(stage, f"Failed to restart application: {exc}")
+        # Release the lock only if it still belongs to the GUI PID that
+        # launched this helper. Never remove another app instance's lock.
+        try:
+            lock = stage.parent / "auto_update.lock"
+            if lock.read_text(encoding="ascii") == str(pid):
+                lock.unlink()
+        except OSError:
+            pass
         if success:
             try:
                 shutil.rmtree(stage)
