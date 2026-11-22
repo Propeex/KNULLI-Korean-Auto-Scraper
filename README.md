@@ -2,11 +2,11 @@
 
 Windows에서 USB ADB로 **RG35XX Plus / KNULLI**의 ROM을 직접 탐색하고, 한국어 파일명·표시명을 보존하면서 ScreenScraper 자료를 수집·적용하는 데스크톱 앱입니다.
 
-> **현재 공개 베타:** [`v0.8.7-beta.1`](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.7-beta.1) (2026-11-23). 이전 베타는 `v0.8.6-beta.1`입니다. 기반 소스는 v0.8.4이며, 기존 스크래핑 기능에 삭제된 ROM 관련 자료 정리 기능을 추가했습니다. 자동 테스트는 통과했지만 이 기능의 실제 기기 검증은 아직 필요합니다.
+> **현재 공개 베타:** [`v0.8.7-beta.2`](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.7-beta.2) (2026-11-23). 이전 베타는 `v0.8.6-beta.1`입니다. 기반 소스는 v0.8.4이며, 기존 스크래핑 기능에 삭제된 ROM 관련 자료 정리 기능을 추가했습니다. 자동 테스트는 통과했지만 이 기능의 실제 기기 검증은 아직 필요합니다.
 
 ## 최신 Windows 베타 다운로드
 
-[**GitHub Releases — v0.8.7-beta.1**](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.7-beta.1)에서 Windows ZIP과 SHA-256 검사 파일을 받으세요. 이 패키지는 독립 실행 EXE가 아니라 **Python GUI 소스 패키지**이며, Windows에 Python 3.10+가 필요합니다.
+[**GitHub Releases — v0.8.7-beta.2**](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.7-beta.2)에서 Windows ZIP과 SHA-256 검사 파일을 받으세요. 이 패키지는 독립 실행 EXE가 아니라 **Python GUI 소스 패키지**이며, Windows에 Python 3.10+가 필요합니다.
 
 배포 규칙: [docs/RELEASE_PROCESS.md](docs/RELEASE_PROCESS.md). 사용자가 정식 출시를 승인하기 전에는 모든 버전을 **Pre-release / Beta**로 발행합니다.
 
@@ -72,6 +72,12 @@ KNULLI의 `/userdata/roms/ports/` 최상위 `.sh` 게임 실행 스크립트도 
 이 작업은 **ScreenScraper/Skyscraper 및 포트 게임 파일 복사가 필요 없고**, 기기 자체 인터넷도 필요 없습니다. 이미 사용자가 지정한 표시명·설명·이미지는 덮어쓰지 않으며, `.sh` 실행 스크립트, 포트 본체, 게임 데이터·세이브 파일은 수정하지 않습니다. 예전부터 요청하신 규칙대로 XML 백업도 만들지 않습니다. 삭제된 포트 게임은 기존 사용자 확인 절차에서 **사라진 런처의 XML 게임 항목만** 정리하고 포트 폴더/세이브는 삭제하지 않습니다.
 
 **제한:** PortMaster가 인식되는 게임이라도 로컬 `port.json`/`gameinfo.xml`가 없거나 런처와 연결되지 않으면 자동으로 제목을 추측하지 않습니다. 직접 넣은 사용자 제작 `.sh` 포트도 마찬가지입니다. 실제 RG35XX Plus의 다양한 포트 설치 방식은 실기기 검증 전입니다. [PortMaster 공식 포트 패키징 문서](https://portmaster.games/contribute/porting/packaging/).
+
+## Atomiswave .7z 인식 수정 (v0.8.7-beta.2)
+
+기존 버전은 `.7z` 압축 파일 확장자는 알고 있었지만 **`atomiswave` 시스템 폴더를 게임 검색 대상에 포함하지 않아** 해당 게임이 나타나지 않았습니다. 이제 `/userdata/roms/atomiswave/`의 `.7z`, `.zip`, `.chd`, `.bin`, `.lst`, `.dat` 게임 파일을 자동 조회합니다. 한글 하위 폴더와 대문자 확장자도 인식하며, **Skyscraper의 `atomiswave` 플랫폼**으로 스크래핑합니다.
+
+압축된 원본 게임 파일은 이름과 내용을 바꾸지 않습니다. 스크래핑할 때 사용자 지정 한글 게임명도 보존하며, 기존 정책대로 `gamelist.xml`의 자동 백업은 생성하지 않습니다. 실제 RG35XX Plus에서의 재검증은 필요합니다. [Skyscraper 플랫폼 목록](https://github.com/muldjord/skyscraper/blob/master/docs/PLATFORMS.md), [Atomiswave 지원 파일 형식](https://wiki.batocera.org/systems:atomiswave).
 
 ## 테스트
 
