@@ -11,13 +11,22 @@ with the temporary directory. Never run hash searches on the stub.
 from __future__ import annotations
 
 from pathlib import Path
+import hashlib
 
 # Large disc games supported in name-only mode. Archive containers can require
 # parsing/extraction by specific Skyscraper versions and are intentionally not
 # substituted with invalid .zip/.7z files.
 NAME_ONLY_EXT = frozenset({'.iso', '.cso', '.pbp', '.chd', '.cdi', '.gdi'})
-# No file content is derived from the user's ROM in name-only mode.
-PLACEHOLDER = b'KNULLI NAME-ONLY SEARCH INPUT\n' + b'\x00' * (4096 - 30)
+# Do not put game contents, file hashes or secrets in the input file. A small
+# filename/path-derived marker differentiates otherwise identical fake files,
+# preventing accidental resource-cache cross-association between two games.
+PLACEHOLDER_PREFIX = b'KNULLI NAME-ONLY SEARCH INPUT\n'
+
+
+def placeholder_for(remote: str) -> bytes:
+    label = hashlib.sha256(remote.encode('utf-8')).hexdigest().encode('ascii')
+    data = PLACEHOLDER_PREFIX + label + b'\n'
+    return data + b'\x00' * (4096 - len(data))
 
 
 def prepare(adb, remote: str, destination: Path, size: int,
@@ -36,7 +45,7 @@ def prepare(adb, remote: str, destination: Path, size: int,
         if destination.suffix.lower() not in NAME_ONLY_EXT:
             raise ValueError('rom_too_large: 이 파일 형식은 이름 검색용 가상 ROM을 지원하지 않습니다.')
         destination.parent.mkdir(parents=True, exist_ok=True)
-        destination.write_bytes(PLACEHOLDER)
+        destination.write_bytes(placeholder_for(remote))
         return True
     destination.parent.mkdir(parents=True, exist_ok=True)
     adb.pull(remote, destination)
