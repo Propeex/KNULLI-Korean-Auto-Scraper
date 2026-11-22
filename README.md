@@ -2,7 +2,7 @@
 
 Windows에서 USB ADB로 **RG35XX Plus / KNULLI**의 ROM을 직접 탐색하고, 한국어 파일명·표시명을 보존하면서 ScreenScraper 자료를 수집·적용하는 데스크톱 앱입니다.
 
-> **현재 개발 버전:** `v0.8.7-beta.1` (2026-11-23). 기존 공개 베타는 `v0.8.6-beta.1`입니다. 기반 소스는 v0.8.4이며, 기존 스크래핑 기능에 삭제된 ROM 관련 자료 정리 기능을 추가했습니다. 자동 테스트는 통과했지만 이 기능의 실제 기기 검증은 아직 필요합니다.
+> **현재 공개 베타:** [`v0.8.7-beta.1`](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.7-beta.1) (2026-11-23). 이전 베타는 `v0.8.6-beta.1`입니다. 기반 소스는 v0.8.4이며, 기존 스크래핑 기능에 삭제된 ROM 관련 자료 정리 기능을 추가했습니다. 자동 테스트는 통과했지만 이 기능의 실제 기기 검증은 아직 필요합니다.
 
 ## 최신 Windows 베타 다운로드
 
@@ -28,7 +28,7 @@ Windows에서 USB ADB로 **RG35XX Plus / KNULLI**의 ROM을 직접 탐색하고,
 1. 기존 USB ADB 연결이 동작하는지 확인합니다. **기기 인터넷은 필요 없고 PC 인터넷만 필요**합니다.
 2. Windows에 Python 3.10 이상과 Tkinter를 준비합니다.
 3. `GUI_실행.pyw`를 실행합니다. 대체 실행기는 `GUI_실행.vbs`입니다.
-4. 앱은 ADB / Windows용 Skyscraper를 찾거나, 없으면 공식 배포 파일을 설치하려고 시도합니다.
+4. 앱은 ADB를 확인하며 필요 시 설치를 시도합니다. **일반 ROM 스크래핑을 선택한 경우에만** Windows용 Skyscraper를 확인·설치합니다. PortMaster-only 작업은 Skyscraper가 필요 없습니다.
 5. ROM 목록에서 게임을 선택한 뒤 `작업 시작`을 누릅니다.
 
 공식 개발자 API ID를 요구하지 않는 Skyscraper 기반입니다. 일반 ScreenScraper 계정은 설정에서 입력합니다.
