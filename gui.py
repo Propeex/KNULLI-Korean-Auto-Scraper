@@ -924,4 +924,8 @@ class App(tk.Tk):
         self.destroy()
 
 
-if __name__=='__main__':App().mainloop()
+if __name__=='__main__':
+    # Also support users starting gui.py directly instead of GUI_실행.pyw.
+    from auto_update import try_launch_update
+    if not try_launch_update(HERE):
+        App().mainloop()
