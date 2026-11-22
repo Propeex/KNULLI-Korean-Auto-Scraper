@@ -61,7 +61,7 @@
 - [x] 사라진 런처의 XML 게임 항목만 제거 후보; 데이터/세이브 폴더 보호
 - [ ] Windows/RG35XX Plus 실제 PortMaster 포트별 설치 경로 재검증
 - [ ] 명시적 port.json/gameinfo.xml이 없는 포트의 보조 매칭은 추후 안전성 검토
-- [ ] GitHub 테스트·릴리즈 최종 검증 후 이 문서 갱신
+- [x] GitHub Windows/Linux 테스트 통과 및 [v0.8.7-beta.1 Pre-release](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.7-beta.1) 발행 완료
 
 ## P2 — 다운로드 범위와 검색 정확도
 - [ ] 타이틀 화면(sstitle) 다운로드 가능한 공식/허용 경로 검증
