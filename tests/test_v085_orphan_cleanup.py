@@ -89,8 +89,7 @@ class TestOrphanCleanup(unittest.TestCase):
         self.assertEqual(result['removed_media'], 2)
         remaining = core.parse_xml(adb.docs[SYS + '/gamelist.xml'])
         self.assertEqual([x.findtext('name') for x in remaining.findall('game')], ['젤다'])
-        self.assertEqual(len(adb.backups), 1)
-        self.assertEqual(adb.backups[next(iter(adb.backups))], data)
+        self.assertEqual(adb.backups, {})
 
     def test_shared_image_is_never_deleted(self):
         data = xml(
