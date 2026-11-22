@@ -1,4 +1,4 @@
-KNULLI Auto Scraper v0.8.6-beta.1 (Windows / RG35XX Plus / USB ADB)
+KNULLI Auto Scraper v0.8.7-beta.1 (Windows / RG35XX Plus / USB ADB)
 =====================================================
 
 시작하기
@@ -147,7 +147,7 @@ Platform-Tools: https://developer.android.com/tools/releases/platform-tools
 
 [베타 릴리즈 다운로드]
 ------------------------
-- https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.6-beta.1
+- https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.7-beta.1
 - Windows ZIP을 압축 해제한 후 GUI_실행.pyw를 실행합니다 (Python 3.10 이상 필요).
 - 이번 버전은 정식판이 아니며 GitHub 사전 출시(Beta)로 배포됩니다.
 
@@ -177,3 +177,19 @@ Platform-Tools: https://developer.android.com/tools/releases/platform-tools
 - 향후 릴리즈부터는 실행할 때 자동 업데이트됩니다.
 - 오류 기록: Documents\KNULLI Auto Scraper Data\auto_update.log
 - Windows 실기기에서 업데이트 전체 과정은 아직 검증 전입니다.
+
+
+[v0.8.7-beta.1: PortMaster 포팅 게임 지원]
+----------------------------------------------
+- KNULLI roms/ports 최상위 .sh 실행 파일을 PortMaster 게임으로 목록에 표시합니다.
+- PortMaster.sh 및 Install.PortMaster.sh 등 관리/설치용 스크립트는 게임으로 취급하지 않습니다.
+- 목록에서 원하는 포트 게임을 선택하고 작업 시작을 누르면 port.json과 gameinfo.xml을 읽습니다.
+- 설치된 cover.png/.jpg 또는 screenshot.png/.jpg를 기존 경로 그대로 XML에 연결합니다.
+- gameinfo.xml을 우선 적용하고 부족한 항목은 port.json으로 보완합니다.
+- 사용자가 입력한 게임명/설명/이미지를 보존하며 비어 있는 게임 정보만 보완합니다.
+- 실행 스크립트 .sh, 게임 데이터/세이브 폴더, 원본 미디어는 수정하거나 삭제하지 않습니다.
+- 포트 게임 작업만 선택했다면 Skyscraper/ScreenScraper 설치와 접속이 필요 없습니다.
+- 포트 데이터가 없거나 런처 정보가 일치하지 않으면 다른 게임으로 추정하지 않고 정보 없음으로 표시합니다.
+- 사용자의 요청대로 프로그램은 XML 스크랩 백업을 자동 생성하지 않습니다.
+- 실제 사용자 RG35XX Plus의 다양한 PortMaster 게임 설치 방식은 아직 실기기 검증 전입니다.
+- v0.8.6-beta.1의 자동 업데이트 기능을 가진 설치본은 새 베타 발행 시 실행 때 자동 업데이트합니다.
