@@ -15,3 +15,16 @@ jobs:
           sudo apt-get install -y python3-tk xvfb
       - name: Run unit tests (virtual display)
         run: xvfb-run -a python3 -m unittest discover -s tests -p 'test_*.py' -v
+
+  windows-updater:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Run automatic updater regression tests on Windows
+        run: python tests/test_v086_auto_update.py -v
+      - name: Compile Windows launcher and updater modules
+        run: python -m compileall -q GUI_실행.pyw auto_update.py auto_update_helper.py app_version.py gui.py
