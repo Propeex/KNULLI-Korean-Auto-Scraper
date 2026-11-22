@@ -1,4 +1,4 @@
-KNULLI Auto Scraper v0.8.4 (Windows / RG35XX Plus / USB ADB)
+KNULLI Auto Scraper v0.8.5 beta (Windows / RG35XX Plus / USB ADB)
 =====================================================
 
 시작하기
@@ -132,3 +132,14 @@ Platform-Tools: https://developer.android.com/tools/releases/platform-tools
   복사/검색 단계에서 별도의 메시지가 나올 경우 work/last_report.json을 확인하세요.
 - 한글 하위 폴더 이름을 영문으로 바꿀 필요는 없습니다.
 - KNULLI 기기와 ScreenScraper 서버의 전체 실사용 검증은 별도입니다.
+
+
+[v0.8.5 추가: ROM 삭제 후 관련 자료 정리]
+------------------------------------------
+- 사용자가 기기에서 ROM 파일을 삭제하면 다음 ROM 조회 때 gamelist.xml에서 남은 게임 정보를 찾습니다.
+- ROM이 실제로 없는지 ADB에서 다시 확인합니다.
+- 다른 게임과 공유하지 않는 이미지·동영상·매뉴얼 중 안전한 경로만 정리 대상으로 잡습니다.
+- 정리할 게임·파일 수를 보여주고 사용자가 승인한 경우에만 삭제합니다.
+- gamelist.xml은 PC와 기기에 백업합니다. 삭제된 미디어 자체는 따로 백업하지 않습니다.
+- 정리 결과는 work/last_cleanup.json에 기록됩니다.
+- 실기기에서 검증 전이므로 처음에는 중요하지 않은 시험 데이터로 확인해 주세요.
