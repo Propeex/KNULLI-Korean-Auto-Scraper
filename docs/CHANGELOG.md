@@ -1,5 +1,16 @@
 # 변경 이력
 
+## v0.8.7-beta.3 — PSP 대용량 디스크 `rom_too_large` 수정 (2026-11-23)
+
+- 사용자 보고: PSP ISO/CSO가 256MiB 이상일 때 게임을 스크래핑하지 않고 `rom_too_large` 처리됨.
+- **원인:** GUI `bundle_engine._process_selected`가 게임 원본 파일을 기기에서 PC로 통째로 가져오도록 구현됐고, 기본 제한 `max_rom_transfer_mb=256`으로 시작 전 작업 차단.
+- **수정:** 제한을 초과하는 `.iso`/`.cso`/`.pbp`/`.chd`/`.cdi`/`.gdi`는 실제 디스크를 복사하지 않고 경로마다 다른 작은 임시 파일명 운반체를 생성해 **Skyscraper의 `--query romnom=...` 이름 검색만 실행**. 작은 ROM은 기존 해시 조회 방식 유지.
+- Skyscraper는 `--query`일 때 자동 파일 해시 검색을 사용하지 않는다고 문서화. **검색 이름과 검색 결과 게임명 유사도 검증은 반드시 유지**하고, 영문 후보가 없으면 안전하게 중단.
+- 공유 `rom_staging.py`를 도입해 GUI·구형 backend·CLI legacy 코드의 대용량 디스크 처리 동일화. 다른 형식(큰 ZIP/7z 등)은 가짜 압축파일로 잘못 처리하지 않도록 기존 제한 유지.
+- 2GiB를 가상으로 보고하는 PSP ROM에서 실제 ADB 파일 복사가 전혀 호출되지 않음을 자동 테스트로 검증, 한글명/XML 원본과 기존 ROM 보존.
+- [PR #6](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/pull/6). 실제 Windows Skyscraper/사용자 RG35XX Plus에서의 통합 검증은 아직 필요.
+
+
 ## v0.8.7-beta.2 — Atomiswave .7z 게임 인식 누락 수정 (2026-11-23)
 
 - 사용자 보고: `/userdata/roms/atomiswave`의 `.7z` 게임이 앱 목록에 나타나지 않음.
