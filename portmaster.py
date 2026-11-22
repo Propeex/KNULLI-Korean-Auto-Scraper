@@ -206,14 +206,19 @@ def load_ports(adb, root: str, launchers: list[str]) -> dict[str,PortInfo]:
             except Exception:
                 pass
 
-        matched = set()
+        declared = set()
         for item in obj.get('items',[]) if isinstance(obj.get('items'),list) else []:
             launch = _launcher_from_path(item,ports_root)
-            if launch and launch in available:
-                matched.add(launch)
-        launch = _launcher_from_path(xml_fields.get('path',''),ports_root)
-        if launch and launch in available:
-            matched.add(launch)
+            if launch:
+                declared.add(launch)
+        xml_launch = _launcher_from_path(xml_fields.get('path',''),ports_root)
+        # If both metadata sources explicitly name different launchers,
+        # do not guess which installed game to modify.
+        if xml_launch and declared and xml_launch not in declared:
+            continue
+        matched = (declared & available)
+        if xml_launch and xml_launch in available:
+            matched.add(xml_launch)
         if len(matched) != 1:
             # Do not guess for mismatched/multiple launchers.
             continue
