@@ -80,7 +80,7 @@
 - [x] 실제 ROM을 복사하는 소형 파일 경로는 그대로 유지
 - [x] 유효하지 않은 임시 ZIP/7z를 만들지 않고 대용량 디스크 형식으로만 허용
 - [x] 2GiB 가상 파일, 영문 검색 누락, 중복 캐시 방지, Windows/Linux 회귀 테스트 추가
-- [ ] 최종 PR 병합/GitHub Beta Release `v0.8.7-beta.3`/체크섬 검증
+- [x] [PR #6](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/pull/6) 병합, [GitHub Windows+Linux 릴리즈 CI](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/actions/runs/45059639699) 통과, [v0.8.7-beta.3 Pre-release](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.7-beta.3) ZIP/.sha256 첨부 확인
 - [ ] 사용자 Windows/RG35XX Plus에서 실제 PSP ISO 이름 검색 및 이미지 적용 확인
 
 ## P2 — 다운로드 범위와 검색 정확도
