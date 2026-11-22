@@ -127,27 +127,63 @@ def _reference_path(root: str, system: str, tag: str, text: str | None) -> str |
     return _media_path(root, target_system, tag, text)
 
 
-def _path_states(adb, paths: list[str]) -> dict[str, bool]:
-    """Read file existence safely across a Korean-path-hostile ADB shell.
+# Leave substantial headroom for short ADB shell command limits on KNULLI.
+MAX_EXISTENCE_SHELL_LENGTH = 1000
 
-    A missing path must be reported explicitly as 0; unexpected output,
-    timeouts, or truncated responses abort the entire cleanup plan.
+
+def _path_states(adb, paths: list[str]) -> dict[str, bool]:
+    """Check exact ROM paths without exceeding ADB shell command length.
+
+    Each Unicode path is encoded once and assigned to a shell variable; the
+    previous version expanded the octal-encoded path twice for every check.
+    A length-budgeted batch is sent only when all checks fit. If ADB still
+    refuses a batch for length, retry with smaller batches. Never interpret
+    an ADB error or shortened reply as 'ROM missing'.
     """
     unique = list(dict.fromkeys(paths))
-    states = {}
-    for start in range(0, len(unique), 12):
-        group = unique[start:start + 12]
-        checks = []
-        for path in group:
-            expr = core.Adb._encoded_remote_path(path)
-            checks.append(
-                'if [ -e ' + expr + ' ] || [ -L ' + expr
-                + " ]; then printf 1; else printf 0; fi"
+    states: dict[str, bool] = {}
+
+    def statement(path: str) -> str:
+        encoded = core.Adb._encoded_remote_path(path)
+        return ('p=' + encoded + '; if [ -e "$p" ] || [ -L "$p" ]; '
+                'then printf 1; else printf 0; fi')
+
+    def verify(batch: list[tuple[str, str]]) -> None:
+        cmd = '; '.join(snippet for _, snippet in batch)
+        try:
+            reply = adb.shell(cmd, timeout=70).replace('\r', '').replace('\n', '')
+        except Exception as exc:
+            if len(batch) > 1 and 'too long' in str(exc).lower():
+                midpoint = len(batch) // 2
+                verify(batch[:midpoint])
+                verify(batch[midpoint:])
+                return
+            raise RuntimeError(
+                'ADB ROM 파일 존재 확인 실패(안전상 자료 삭제 중단): ' + str(exc)
+            ) from exc
+        if len(reply) != len(batch) or any(bit not in '01' for bit in reply):
+            raise RuntimeError(
+                'ADB ROM 검사 응답이 불완전합니다. 안전을 위해 자료 정리를 중단합니다.'
             )
-        answer = adb.shell('; '.join(checks), timeout=70).replace('\r', '').replace('\n', '')
-        if len(answer) != len(group) or any(x not in '01' for x in answer):
-            raise RuntimeError('ADB 파일 존재 확인에 실패했습니다. 안전을 위해 정리를 중단합니다.')
-        states.update({path: x == '1' for path, x in zip(group, answer)})
+        for (path, _), bit in zip(batch, reply):
+            states[path] = bit == '1'
+
+    batch: list[tuple[str, str]] = []
+    total = 0
+    for path in unique:
+        snippet = statement(path)
+        added = len(snippet) + (2 if batch else 0)
+        if batch and total + added > MAX_EXISTENCE_SHELL_LENGTH:
+            verify(batch)
+            batch = []
+            total = 0
+            added = len(snippet)
+        # A single very long pathname is still checked individually. If the
+        # device refuses it, verify() raises rather than guessing 'missing'.
+        batch.append((path, snippet))
+        total += added
+    if batch:
+        verify(batch)
     return states
 
 
