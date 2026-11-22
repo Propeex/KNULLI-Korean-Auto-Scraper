@@ -13,6 +13,8 @@ import re
 import sys
 import zipfile
 
+from app_version import VERSION_TAG
+
 ROOT = Path(__file__).resolve().parents[1]
 REQUEST = ROOT / "release" / "request.json"
 DIST = ROOT / "dist"
@@ -43,6 +45,8 @@ def load_request() -> str:
         raise ValueError("Only numbered beta tags are permitted before explicit stable approval")
     if obj.get("prerelease") is not True:
         raise ValueError("All releases must be marked prerelease until stable approval")
+    if version != VERSION_TAG:
+        raise ValueError("GUI application version and release request are inconsistent")
     return version
 
 
