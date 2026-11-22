@@ -6,7 +6,7 @@
 - 작성일: 2026-11-20 (Asia/Seoul)
 - 프로젝트: KNULLI Korean Auto Scraper
 - 저장소: https://github.com/Propeex/KNULLI-Korean-Auto-Scraper
-- **현재 기준: v0.8.5 베타(main)**. 최초 이식 소스 기준: **v0.8.4 베타** (`knulli_auto_scraper_adb_v084_unicode_folders.zip`)
+- **현재 버전: `v0.8.5-beta.1` (Beta/Pre-release).** 최초 이식 소스 기준: **v0.8.4 베타** (`knulli_auto_scraper_adb_v084_unicode_folders.zip`)
 - 대상: Windows PC, RG35XX Plus (KNULLI), USB ADB
 - 스크래핑: Windows에서 Skyscraper / ScreenScraper 사용. PC 인터넷만 필요, 기기 인터넷 불필요.
 - **GitHub 최초 이식 완료:** 2026-11-20, 원본 v0.8.4 소스를 코드 변경 없이 복원한 커밋 `4734f7a954d0953a6f1306f8a3910039bcc6a634`. 원본 압축 스냅샷 SHA256 검증 및 GitHub Actions 복원 성공. 상세 기록: [MIGRATION.md](MIGRATION.md). 실기기 테스트는 사용자 환경에서 별도 확인해야 함.
@@ -39,6 +39,14 @@
 - 단독 이미지/영상/매뉴얼 파일은 삭제될 수 있으므로 확인 대화상자를 제공. 삭제된 미디어 자체는 별도 백업하지 않음.
 - ROM 0개 상태도 코드 보완했으나 실기기 확인은 아직 없음. 특수 시스템/파일명·중복 XML 등의 모든 케이스는 미검증.
 - **GitHub CI 자동 테스트 통과:** [테스트 실행](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/actions/runs/45045628986). **실제 RG35XX Plus 검증 전**, 이미지 삭제는 되돌리기 어렵기 때문에 정리 전 GUI 확인 필수.
+
+## 릴리즈 운영 규칙 (2026-11-23)
+- 사용자는 **작업이 성공적으로 종료될 때마다 GitHub Release 발행**을 요구함. 개발은 릴리즈까지 끝나야 완료임.
+- 사용자가 정식 출시를 명시적으로 승인하기 전에는 `vMAJOR.MINOR.PATCH-beta.N` 형식의 **Pre-release**만 가능. 번호는 개발 담당자가 관리.
+- 현재 최초 베타: `v0.8.5-beta.1`, [릴리즈 페이지](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.5-beta.1).
+- 릴리즈는 테스트→배포 ZIP/체크섬 생성→GitHub 사전출시 상태/첨부파일 확인까지 완료해야 성공.
+- 절차: [RELEASE_PROCESS.md](RELEASE_PROCESS.md), GitHub Actions `.github/workflows/publish-beta.yml`, 트리거 `release/request.json`.
+- **현재 작업:** v0.8.5-beta.1 첫 배포. 실제 발행 성공은 GitHub Release 페이지 확인 후 기록. 배포 후에도 실제 Windows/RG35XX Plus 검증은 여전히 미완료.
 
 ## 현재 중단 지점
 **v0.8.5 베타를 main에 통합 완료.** v0.8.4를 기반으로 삭제된 ROM의 XML·단독 미디어 정리 기능을 추가. 기존 GUI/스크래퍼와 인수인계 문서는 유지. **최신 코드 기준 GitHub Actions CI 성공**: [Python tests run](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/actions/runs/44666745166). 다음 작업은 v0.8.5 정리 기능의 Windows/실기기 안전성 검증, 마지막 한글 하위 폴더 문제 재시험. 이식은 v0.8.4를 기준선으로 만들었으며, 후속 v0.8.5 기능은 PR #1에서 추가함.
