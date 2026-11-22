@@ -223,6 +223,10 @@ class Adb:
                 errors.append(directory+': '+str(exc)[:120])
         if result:
             return list(dict.fromkeys(result))
+        # A device may have valid system folders but no ROMs at all.
+        # Treat genuine empty discovery as empty, not a transport error.
+        if errors == ['batch scan returned no files']:
+            return []
         raise RuntimeError('ROM listing produced no valid paths; no files changed. '
                            + '; '.join(errors[:4]))
 
