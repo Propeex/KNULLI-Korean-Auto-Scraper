@@ -28,11 +28,11 @@ SYSTEM_IDS = {
     'megadrive':1, 'mastersystem':2, 'gamegear':21, 'pcengine':31,
     'psx':57, 'psp':61, 'saturn':22, 'dreamcast':23, 'sega32x':19,
     'segacd':20, 'mame':75, 'fbneo':75, 'neogeo':142, 'atari2600':26,
-    'atari7800':27, 'ngp':25, 'ngpc':82, 'wswan':45, 'wswanc':46,
+    'atari7800':27, 'ngp':25, 'ngpc':82, 'wswan':45, 'wswanc':46, 'ports':0,  # Native PortMaster launchers
 }
 ROM_EXT = {'.nes','.fds','.sfc','.smc','.gb','.gbc','.gba','.nds','.n64','.z64','.v64',
            '.md','.gen','.bin','.sms','.gg','.pce','.zip','.7z','.chd','.iso','.cue',
-           '.pbp','.cso','.cdi','.gdi','.32x','.a26','.a78','.ngp','.ngc','.ws','.wsc'}
+           '.pbp','.cso','.cdi','.gdi','.32x','.a26','.a78','.ngp','.ngc','.ws','.wsc','.sh'}
 # Disc containers/archives can't be assumed to match hash catalog; for them search names only.
 NO_HASH = {'.zip','.7z','.chd','.iso','.cue','.pbp','.cso','.cdi','.gdi'}
 EXT_MATCH = {
@@ -185,6 +185,10 @@ class Adb:
         dirs=' '.join(sq(path) for path in system_roots)
         return ('(for d in ' + dirs + '; do '
                 '[ -d "$d" ] || continue; '
+                # Never recurse into PortMaster game-data directories.
+                'case "$d" in */ports) '
+                'for p in "$d"/*.sh; do [ -f "$p" ] && printf "%s\\000" "$p"; done; '
+                'continue ;; esac; '
                 'for p in "$d"/*; do '
                 'if [ -f "$p" ]; then printf "%s\\000" "$p"; '
                 'elif [ -d "$p" ]; then '
@@ -373,6 +377,11 @@ def collect_roms(adb, root):
     for remote in adb.listing(root):
         rel=safe_rel(remote,root)
         if not rel or rel.suffix.lower() not in ROM_EXT or rel.parts[0].lower() not in SYSTEM_IDS:continue
+        if rel.parts[0].lower()=='ports':
+            from portmaster import is_game_launcher
+            if not is_game_launcher(rel.as_posix()):continue
+        elif rel.suffix.lower()=='.sh':
+            continue
         if any(x.lower() in ('images','videos','manuals','media') for x in rel.parts[1:-1]):continue
         # A system directory is authoritative for ambiguous image extensions. Do not guess on .zip/.chd.
         system=rel.parts[0].lower()
