@@ -72,6 +72,17 @@
 - [x] [Windows+Linux GitHub CI 성공](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/actions/runs/45058337387) 및 [`v0.8.7-beta.2` Pre-release](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.7-beta.2) / ZIP / SHA256 파일 확인
 - [ ] 사용자 실제 RG35XX Plus에서 Atomiswave .7z 조회·스크래핑 확인
 
+## P1.10 — 대용량 PSP `rom_too_large` 해소 (v0.8.7-beta.3)
+
+- [x] PSP 256MiB 초과 ISO/CSO/PBP/CHD 원본 PC 복사 없이 이름 검색 가능하게 변경
+- [x] Skyscraper `--query romnom`로 이름 검색을 강제하여 임시 파일의 가짜 해시 조회 방지
+- [x] 결과 제목 유사도 검증 및 기존 한글 표시명/원본 ROM 보호
+- [x] 실제 ROM을 복사하는 소형 파일 경로는 그대로 유지
+- [x] 유효하지 않은 임시 ZIP/7z를 만들지 않고 대용량 디스크 형식으로만 허용
+- [x] 2GiB 가상 파일, 영문 검색 누락, 중복 캐시 방지, Windows/Linux 회귀 테스트 추가
+- [ ] 최종 PR 병합/GitHub Beta Release `v0.8.7-beta.3`/체크섬 검증
+- [ ] 사용자 Windows/RG35XX Plus에서 실제 PSP ISO 이름 검색 및 이미지 적용 확인
+
 ## P2 — 다운로드 범위와 검색 정확도
 - [ ] 타이틀 화면(sstitle) 다운로드 가능한 공식/허용 경로 검증
 - [ ] KNULLI 스크래퍼 선택지와 실제 Windows 엔진 옵션 대응표 정리

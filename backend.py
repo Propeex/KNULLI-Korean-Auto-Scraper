@@ -18,6 +18,7 @@ import core
 import user_data
 import credential_store
 import legacy_bridge as legacy
+import rom_staging
 
 HERE = Path(__file__).resolve().parent
 RESOURCES = ('image', 'thumbnail', 'marquee', 'fanart', 'video', 'manual', 'boxback', 'titleshot', 'wheel', 'mix', 'boxart')
@@ -290,13 +291,12 @@ def process_selected(adb,config,items:list[RomItem], overrides:dict,
             if not platform:
                 row['status']='unsupported_platform';continue
             size=adb.stat_size(item.remote)
-            if size > int(config.get('max_rom_transfer_mb',256))*1024*1024:
-                row['status']='rom_too_large';continue
             with tempfile.TemporaryDirectory(prefix='knulli_rom_') as td:
                 stage=Path(td);(stage/'roms').mkdir()
                 local_rom=stage/'roms'/PurePosixPath(item.rel).name
-                adb.pull(item.remote,local_rom)
-                if local_rom.stat().st_size!=size:raise RuntimeError('ROM byte count mismatch; no writes')
+                name_only=rom_staging.prepare(
+                    adb,item.remote,local_rom,size,
+                    int(config.get('max_rom_transfer_mb',256)))
                 manual=(overrides.get(item.rel) or '').strip()
                 internal=None
                 if item.system=='gba':
@@ -309,7 +309,10 @@ def process_selected(adb,config,items:list[RomItem], overrides:dict,
                 if manual:
                     candidates=[manual]+[s for s in candidates if core.norm(s)!=core.norm(manual)]
                 row['candidates']=candidates
-                result=engine.scrape(stage,platform,local_rom,candidates)
+                if name_only:
+                    result=engine.scrape(stage,platform,local_rom,candidates,name_only=True)
+                else:
+                    result=engine.scrape(stage,platform,local_rom,candidates)
                 media,title,reason=result
                 if media is None:
                     row['status']='unmatched';row['note']=reason;continue
@@ -322,6 +325,12 @@ def process_selected(adb,config,items:list[RomItem], overrides:dict,
                 row['image']=rel;row['status']='applied'
                 item.resource_paths['image']=root_dir+'/'+item.system+'/'+rel.removeprefix('./')
                 item.image_exists=True;item.metadata['image']=rel
+        except ValueError as e:
+            if str(e).startswith('rom_too_large:'):
+                row['status']='rom_too_large'
+                row['note']=str(e).removeprefix('rom_too_large:').strip()[:400]
+            else:
+                row['status']='error';row['note']=str(e)[:400]
         except Exception as e:
             row['status']='error';row['note']=str(e)[:400]
         finally:

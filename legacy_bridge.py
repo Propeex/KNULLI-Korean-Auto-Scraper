@@ -20,6 +20,7 @@ import tempfile
 import xml.etree.ElementTree as ET
 
 import core
+import rom_staging
 
 HERE = Path(__file__).resolve().parent
 # Explicit platform names supported by tested Skyscraper versions; unsupported systems skipped.
@@ -143,13 +144,15 @@ class SkyscraperEngine:
             return False,str(e)[:160]
         output=(done.stdout+done.stderr).decode('utf-8','replace')
         return done.returncode==0,output[-1200:]
-    def scrape(self,stage,platform,romfile,terms):
+    def scrape(self,stage,platform,romfile,terms,name_only=False):
         # First let Skyscraper inspect the real ROM hash. Then try known names if needed.
         # Query override is officially documented; never assume a translated title is correct.
         base=['-p',platform,'-i',stage/'roms','-c',self.ini, '-a', HERE/'artwork.xml', '-t','1']
         out=stage/'export'
         out.mkdir(exist_ok=True)
-        attempts=[None]+terms[:6]
+        attempts=terms[:6] if name_only else [None]+terms[:6]
+        if name_only and not attempts:
+            return None,None,'대용량 디스크 이름 검색어가 없습니다.'
         last='no media generated'
         for idx,term in enumerate(attempts):
             if idx:
@@ -240,15 +243,12 @@ def inspect_and_apply(adb,engine,config,apply=False):
             # ROMs are pulled only if missing media; original remains untouched.
             try:
                 size=adb.stat_size(remote)
-                max_mb=int(config.get('max_rom_transfer_mb',256))
-                if size>max_mb*1024*1024:
-                    rec['status']='rom_too_large';continue
-                localdir=tmp/('case_'+hashlib.sha1(str(rel).encode()).hexdigest()[:14]);
+                localdir=tmp/('case_'+hashlib.sha1(str(rel).encode()).hexdigest()[:14])
                 (localdir/'roms').mkdir(parents=True)
-                # We may need a physical copy for Skyscraper checksum-based lookup.
                 local_rom=localdir/'roms'/rel.name
-                adb.pull(remote,local_rom)
-                if local_rom.stat().st_size!=size:raise RuntimeError('ROM byte count differs after ADB pull')
+                name_only=rom_staging.prepare(
+                    adb,remote,local_rom,size,
+                    int(config.get('max_rom_transfer_mb',256)))
                 gba_title=None
                 if system=='gba':
                     try:gba_title=adb.gba_internal_name(remote)
@@ -259,7 +259,10 @@ def inspect_and_apply(adb,engine,config,apply=False):
                     wiki=core.wikidata_title(rel.stem,wiki_cache)
                 terms=normalized_candidates(rel.stem,aliases,gba_title,wiki)
                 rec['candidates']=terms
-                media,exported_title,reason=engine.scrape(localdir,platform,local_rom,terms)
+                if name_only:
+                    media,exported_title,reason=engine.scrape(localdir,platform,local_rom,terms,name_only=True)
+                else:
+                    media,exported_title,reason=engine.scrape(localdir,platform,local_rom,terms)
                 if not media:
                     rec['status']='unmatched';rec['note']=reason;continue
                 data=media.read_bytes();ext=image_extension(data)

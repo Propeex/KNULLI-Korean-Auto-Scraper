@@ -2,11 +2,11 @@
 
 Windows에서 USB ADB로 **RG35XX Plus / KNULLI**의 ROM을 직접 탐색하고, 한국어 파일명·표시명을 보존하면서 ScreenScraper 자료를 수집·적용하는 데스크톱 앱입니다.
 
-> **현재 공개 베타:** [`v0.8.7-beta.2`](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.7-beta.2) (2026-11-23). 이전 베타는 `v0.8.6-beta.1`입니다. 기반 소스는 v0.8.4이며, 기존 스크래핑 기능에 삭제된 ROM 관련 자료 정리 기능을 추가했습니다. 자동 테스트는 통과했지만 이 기능의 실제 기기 검증은 아직 필요합니다.
+> **현재 공개 베타:** [`v0.8.7-beta.3`](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.7-beta.3) (2026-11-23). 이전 베타는 `v0.8.6-beta.1`입니다. 기반 소스는 v0.8.4이며, 기존 스크래핑 기능에 삭제된 ROM 관련 자료 정리 기능을 추가했습니다. 자동 테스트는 통과했지만 이 기능의 실제 기기 검증은 아직 필요합니다.
 
 ## 최신 Windows 베타 다운로드
 
-[**GitHub Releases — v0.8.7-beta.2**](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.7-beta.2)에서 Windows ZIP과 SHA-256 검사 파일을 받으세요. 이 패키지는 독립 실행 EXE가 아니라 **Python GUI 소스 패키지**이며, Windows에 Python 3.10+가 필요합니다.
+[**GitHub Releases — v0.8.7-beta.3**](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.7-beta.3)에서 Windows ZIP과 SHA-256 검사 파일을 받으세요. 이 패키지는 독립 실행 EXE가 아니라 **Python GUI 소스 패키지**이며, Windows에 Python 3.10+가 필요합니다.
 
 배포 규칙: [docs/RELEASE_PROCESS.md](docs/RELEASE_PROCESS.md). 사용자가 정식 출시를 승인하기 전에는 모든 버전을 **Pre-release / Beta**로 발행합니다.
 
@@ -78,6 +78,12 @@ KNULLI의 `/userdata/roms/ports/` 최상위 `.sh` 게임 실행 스크립트도 
 기존 버전은 `.7z` 압축 파일 확장자는 알고 있었지만 **`atomiswave` 시스템 폴더를 게임 검색 대상에 포함하지 않아** 해당 게임이 나타나지 않았습니다. 이제 `/userdata/roms/atomiswave/`의 `.7z`, `.zip`, `.chd`, `.bin`, `.lst`, `.dat` 게임 파일을 자동 조회합니다. 한글 하위 폴더와 대문자 확장자도 인식하며, **Skyscraper의 `atomiswave` 플랫폼**으로 스크래핑합니다.
 
 압축된 원본 게임 파일은 이름과 내용을 바꾸지 않습니다. 스크래핑할 때 사용자 지정 한글 게임명도 보존하며, 기존 정책대로 `gamelist.xml`의 자동 백업은 생성하지 않습니다. 실제 RG35XX Plus에서의 재검증은 필요합니다. [Skyscraper 플랫폼 목록](https://github.com/muldjord/skyscraper/blob/master/docs/PLATFORMS.md), [Atomiswave 지원 파일 형식](https://wiki.batocera.org/systems:atomiswave).
+
+## PSP 등 대용량 디스크 `rom_too_large` 수정 (v0.8.7-beta.3)
+
+기존 스크래핑 코드가 **256MiB 초과 ROM 전체를 ADB로 PC에 복사하기 전부터 차단**해 PSP ISO 등에서 `rom_too_large`가 발생했습니다. 이제 기본 설정의 용량 제한을 초과하는 **디스크 이미지**(`.iso`, `.cso`, `.pbp`, `.chd`, `.cdi`, `.gdi`)는 ROM 파일을 복사하지 않고 동일한 파일명/확장자의 **작은 임시 이름 검색용 파일**을 만들어 Skyscraper에 `--query romnom=영문검색명`으로 조회합니다. 실제 ROM 해시 조회는 시도하지 않으며, 반환된 게임 제목이 검색어와 충분히 일치하지 않으면 적용하지 않습니다. **원본 ROM과 한글 표시명은 보존**됩니다.
+
+256MiB 이하 파일은 기존 실제 ROM 복사 및 해시/이름 검색 방식을 유지합니다. 위 디스크 형식이 아닌 **큰 ZIP/7z**는 유효하지 않은 가짜 압축파일 처리의 위험 때문에 기존 전송 제한을 유지합니다. 디스크명 검색에 필요한 영문 후보가 없거나 매칭되지 않으면 성공으로 처리하지 않습니다. 사용자 PC의 Skyscraper/ScreenScraper 실제 호출 결과는 실기기 피드백으로 확인해야 합니다. [Skyscraper 공식 CLI `--query` 문서](https://gemba.github.io/skyscraper/CLIHELP/).
 
 ## 테스트
 

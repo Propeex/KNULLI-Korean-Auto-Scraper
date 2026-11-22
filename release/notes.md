@@ -1,38 +1,43 @@
-# KNULLI Korean Auto Scraper v0.8.7 Beta 2
+# KNULLI Korean Auto Scraper v0.8.7 Beta 3
 
 **Windows / RG35XX Plus / KNULLI / USB ADB**
 
-> 이번 버전은 **Beta / Pre-release**입니다. GitHub 자동 테스트는 수행하지만 실제 사용자 RG35XX Plus에서 Atomiswave .7z 인식·스크래핑은 별도 검증이 필요합니다.
+> **Beta / Pre-release.** 이번 버전은 사용자 보고 PSP `rom_too_large` 오류를 수정합니다. 자동 테스트는 통과했지만 실제 Windows/Skyscraper/PSP 실기기에서의 검색 성공 여부는 아직 재검증 전입니다.
 
-## 수정 내용 — Atomiswave .7z 게임 인식
+## 주요 수정: 대용량 PSP ISO도 게임 정보 스크래핑
 
-- 이전에는 `.7z` 파일이 허용 목록에 있어도 **`atomiswave` 시스템 폴더 자체가 누락**되어 게임 목록에 나타나지 않았습니다.
-- 이제 `/userdata/roms/atomiswave/` 및 그 하위 폴더에 있는 `.7z`, `.zip`, `.chd`, `.bin`, `.lst`, `.dat` 게임을 검색합니다.
-- Skyscraper `atomiswave` 플랫폼 / ScreenScraper 시스템 ID `53`을 연결했습니다.
-- GUI 기종 열에 **Atomiswave**로 표시합니다.
-- 한글 게임/폴더 이름, 대문자 `.7Z` 확장자를 지원합니다.
+- **이전 문제:** 기본 설정에서는 256MiB보다 큰 PSP ISO/CSO/PBP 게임을 스크래핑하기 전에 `rom_too_large`로 중단했습니다. 원인은 스크래핑을 위해 큰 게임 파일 자체를 먼저 USB ADB로 PC에 복사하던 프로그램 구조입니다.
+- **수정:** 디스크 게임이 전송 제한을 초과하면 PSP `.iso`, `.cso`, `.pbp`, `.chd` 등 지원 디스크 이미지 형식에 대해 원본 게임 전체를 다운로드하지 않습니다. 같은 파일명을 가진 임시 입력 파일을 사용해 **Skyscraper의 `--query romnom=...` 이름 검색**을 실행합니다.
+- 원본 ROM의 **해시 확인은 생략**하는 대신, 검색어와 검색 결과 이름이 충분히 유사한 경우에만 메타데이터를 적용합니다. 영문 검색명을 사용자가 직접 지정할 수도 있습니다.
+- 작은 ROM은 기존 파일 복사 및 해시 기반 검색으로 동작합니다.
+- 원본 ROM 내용·파일명, 기존 사용자 한글 게임명, 사용자 설정은 보존하며 요청하신 정책대로 **XML 스크래핑 백업을 만들지 않습니다**.
 
-## 기존 안전 정책 유지
+## 제한 및 주의
 
-- `.7z` 등 압축 ROM의 파일명이나 원본 내용을 변경하지 않습니다. 사용자 지정 게임명과 기존 메타데이터는 가능한 한 보존합니다.
-- 사용자 요청대로 게임 정보 XML 자동 백업을 생성하지 않습니다.
-- 사용자 설정과 스크래핑 캐시는 기존 상태를 유지합니다.
-- 이전 베타부터 제공되는 시작 시 자동 업데이트 및 자동 재시작 기능이 유지됩니다.
+- 이번 우회 대상은 **디스크 이미지 형식**: `.iso`, `.cso`, `.pbp`, `.chd`, `.cdi`, `.gdi`. 큰 `.zip`/`.7z`는 잘못된 압축파일 형식으로 파싱되는 위험 때문에 기존 용량 제한을 유지합니다.
+- 이름 검색은 해시 매칭보다 확실성이 낮아, 잘못된 게임 정보가 적용되지 않도록 검색 결과의 이름을 검증합니다.
+- Windows Skyscraper의 사용 버전에 따라 큰 ISO의 임시 파일 기반 이름 검색 동작이 다를 수 있습니다. **실제 사용자 장치에서 추가 확인이 필요합니다.**
 
-## 설치와 업데이트
+## 기존 기능 유지
 
-- 이미 `v0.8.6-beta.1` 이상의 자동 업데이트 지원 버전을 쓰고 있다면 **다음 실행 때 공개 베타를 조회·적용**하도록 구현되어 있습니다.
-- 수동 설치는 이 릴리즈의 Windows ZIP을 다운로드해 압축 해제한 후 `GUI_실행.pyw`로 시작하면 됩니다.
-- Windows **Python 3.10 이상 + Tkinter**가 필요합니다. 독립 실행 EXE는 아닙니다.
-- KNULLI 기기 인터넷 연결은 불필요하며 PC의 인터넷과 USB ADB를 사용합니다.
+- 한글 ROM/하위 폴더, Atomiswave `.7z` 인식 및 PortMaster 게임 메타데이터 지원
+- 누락된 게임의 관련 XML/미디어 안전 정리 (사용자 확인 후 적용)
+- GitHub 최신 베타 자동 검색·다운로드·검증·재시작
+- 자동 스크랩 데이터 백업 미생성, 기존 사용자 설정 유지
 
-## 검증
+## 설치
 
-- 자동 테스트: Atomiswave 파일 인식·한글 중첩 폴더·Skyscraper 플랫폼 매핑, 원본 압축 ROM 보호, 기존 한글 XML 표시명 보존.
-- GitHub Actions에서 Windows와 Linux 테스트를 통과한 경우에만 ZIP·SHA-256 확인 파일을 첨부합니다.
-- **실제 기기 테스트는 미완료**입니다. 이 수정은 게임 목록/메타데이터 스크래핑용이며 ROM 실행, BIOS 및 에뮬레이터 정상 구동 여부를 보장하지 않습니다.
+- `v0.8.6-beta.1` 이상이면 프로그램 시작 시 새 베타를 자동 감지·적용하도록 설계돼 있습니다.
+- 수동 설치: Windows ZIP을 받아 폴더에 압축 해제한 후 `GUI_실행.pyw` 실행.
+- **Python 3.10+와 Tkinter**가 필요합니다. 독립 실행 EXE는 아닙니다.
+- 기기 자체 인터넷은 불필요합니다. PC 인터넷과 USB ADB가 필요합니다.
 
-변경 기록: [Pull Request #5](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/pull/5).
-관련 문서: [Skyscraper 지원 플랫폼](https://github.com/muldjord/skyscraper/blob/master/docs/PLATFORMS.md), [Atomiswave ROM 형식](https://wiki.batocera.org/systems:atomiswave).
+## 테스트
 
-사용자의 명시적인 정식 출시 승인 전까지 모든 배포는 Beta / Pre-release입니다.
+- PSP 2GiB 가상 ROM: **원본 ADB ROM 다운로드 0회**, 이름 검색 강제, XML 이미지 적용 및 한글 표시명 보존 확인.
+- 작은 ROM은 기존 방식 유지. 큰 ZIP/7z 오처리 거부.
+- 서로 다른 게임에 동일한 임시 파일 내용이 사용되지 않도록 경로별 식별자 포함.
+- GitHub Actions Linux 전체 회귀 테스트, Windows 베타 업데이터 및 PSP 전용 회귀 테스트, ZIP SHA-256 검증 후 공개합니다.
+
+개발 변경: [Pull Request #6](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/pull/6).
+이 릴리즈는 사용자의 승인 전까지 Beta / Pre-release입니다.
