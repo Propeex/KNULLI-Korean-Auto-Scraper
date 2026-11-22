@@ -1,4 +1,4 @@
-KNULLI Auto Scraper v0.8.5-beta.2 (Windows / RG35XX Plus / USB ADB)
+KNULLI Auto Scraper v0.8.6-beta.1 (Windows / RG35XX Plus / USB ADB)
 =====================================================
 
 시작하기
@@ -147,7 +147,7 @@ Platform-Tools: https://developer.android.com/tools/releases/platform-tools
 
 [베타 릴리즈 다운로드]
 ------------------------
-- https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.5-beta.2
+- https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.6-beta.1
 - Windows ZIP을 압축 해제한 후 GUI_실행.pyw를 실행합니다 (Python 3.10 이상 필요).
 - 이번 버전은 정식판이 아니며 GitHub 사전 출시(Beta)로 배포됩니다.
 
@@ -162,3 +162,18 @@ Platform-Tools: https://developer.android.com/tools/releases/platform-tools
 - 기존 gamelist.xml 본파일, ROM, 이미지·영상, 사용자 수동 백업, 계정/설정은 삭제하지 않습니다.
 - 이전 설치본이 다른 위치에 있으면 안전을 위해 자동 검색·삭제하지 않습니다.
 - 자동 백업이 없으므로 예상치 못한 오류에서 복구가 어려울 수 있습니다.
+
+
+[v0.8.6-beta.1 추가: 실행 시 베타 자동 업데이트]
+-------------------------------------------------
+- Windows에서 GUI_실행.pyw 또는 GUI_실행.vbs를 실행하면 최신 GitHub 베타 릴리즈를 자동 확인합니다.
+- 새 베타가 있으면 별도 승인 없이 PC로 Windows ZIP을 다운로드해 SHA-256을 검증합니다.
+- 실행 중인 프로그램을 종료하고 업데이트 도우미가 프로그램 파일만 교체한 뒤 자동 재시작합니다.
+- 데이터 파일, ROM, 기기 gamelist.xml, 사용자 설정, 스크랩 캐시, 기존 수정된 aliases.json·artwork.xml은 보존합니다.
+- 설치가 실패할 경우 가능한 범위에서 기존 프로그램 파일로 복구하고 다시 실행합니다.
+- PC 인터넷이 없거나 GitHub에 접속할 수 없을 때는 현재 버전으로 계속 실행합니다.
+- 사용자가 정식판을 승인하기 전에는 베타(Pre-release)만 자동 설치합니다.
+- 이전 v0.8.5-beta.2에는 자동 업데이트 기능이 없으므로 이번 v0.8.6-beta.1은 처음 한 번 수동 설치해야 합니다.
+- 향후 릴리즈부터는 실행할 때 자동 업데이트됩니다.
+- 오류 기록: Documents\KNULLI Auto Scraper Data\auto_update.log
+- Windows 실기기에서 업데이트 전체 과정은 아직 검증 전입니다.

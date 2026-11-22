@@ -4,7 +4,7 @@
 
 ## 버전 규칙
 
-- 현재 최신 공개 베타: `v0.8.5-beta.2` ([GitHub Release](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.5-beta.2)). 이전 버전은 `v0.8.5-beta.1`.
+- 현재 개발/배포 대상: `v0.8.6-beta.1` (이전 공개 베타: `v0.8.5-beta.2`).
 - 표준 형식: `vMAJOR.MINOR.PATCH-beta.N`. 예: `v0.8.5-beta.2`, `v0.8.6-beta.1`
 - 같은 기능 버전에서 버그 수정/재빌드는 `beta.N`을 증가.
 - 새 기능/호환성 변경은 보통 PATCH 번호를 증가시킨 뒤 `beta.1`부터 시작.
@@ -22,6 +22,15 @@
 6. GitHub Release를 Git 태그 `v...-beta.N`에 게시한다. ZIP, `.sha256` 파일과 릴리즈 노트를 첨부한다.
 7. 릴리즈의 **Pre-release 여부, ZIP 다운로드 자산, 테스트 성공 여부**를 직접 확인한 뒤 사용자에게 정확한 Release 링크를 안내한다.
 8. 실제 Windows + RG35XX Plus에서 테스트하지 못한 기능은 문서와 릴리즈 노트에 미검증이라고 명시한다. GitHub CI 성공을 실기기 성공으로 과장하지 않는다.
+
+## 자동 업데이트와 릴리즈 호환성
+
+- `v0.8.6-beta.1`부터 앱 시작 시 GitHub의 공개 베타 릴리즈 목록을 검색하고 최신 베타 ZIP을 자동 설치·재시작합니다. 사용자 확인이 필요하지 않습니다.
+- 업데이트 대상 베타는 **기존보다 높은 버전**만 허용하며, 사용자가 승인하지 않은 안정판을 자동 설치하지 않습니다.
+- 모든 새로운 릴리즈 ZIP은 `app_version.py`, `auto_update.py`, `auto_update_helper.py`, `GUI_실행.pyw`를 포함해야 합니다.
+- 릴리즈 빌드는 `app_version.VERSION_TAG`와 `release/request.json` 버전이 일치하는지 검증합니다.
+- 기존 `v0.8.5-beta.2` 설치에는 자동 업데이트 기능이 없으므로 `v0.8.6-beta.1`만 최초 수동 설치가 필요합니다.
+- 향후 사용자 승인 없이 자동 업데이트는 계속 작동하되 모든 태그는 베타 정책을 따라야 합니다.
 
 ## 배포 내용
 
