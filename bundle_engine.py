@@ -20,6 +20,7 @@ import learned_titles
 import user_data
 import legacy_bridge as legacy
 import portmaster
+import rom_staging
 
 MEDIA_TAGS=('image','thumbnail','marquee','fanart','video','manual','boxback')
 TEXT_TAGS=('desc','rating','releasedate','genre','developer','publisher','players')
@@ -71,15 +72,19 @@ def export_path(stage:Path, xml_path:Path, raw:str, key:str):
 
 
 class DetailedEngine(legacy.SkyscraperEngine):
-    def scrape_detail(self, stage:Path,platform,romfile,terms, wanted):
+    def scrape_detail(self, stage:Path,platform,romfile,terms, wanted, name_only=False):
         base=['-p',platform,'-i',stage/'roms','-c',self.ini,
               '-a',getattr(self,'artwork_path',legacy.HERE/'artwork.xml'),'-t','1']
         region=getattr(self,'region','')
         if region:base.extend(['--region',region])
         out=stage/'export';out.mkdir(exist_ok=True)
         last='검색 결과가 없거나 유효한 데이터를 찾지 못했습니다.'
-        # Genuine hash lookup first, English aliases if necessary.
-        for term in [None]+list(terms[:6]):
+        # For a large disc we have only a synthetic filename carrier.
+        # NEVER hash-search that fake file. Force --query romnom each time.
+        attempts=list(terms[:6]) if name_only else [None]+list(terms[:6])
+        if name_only and not attempts:
+            return None,'대용량 디스크 이름 검색어가 없어 안전하게 건너뜁니다.'
+        for term in attempts:
             (out/'gamelist.xml').unlink(missing_ok=True)
             param=base+['-s','screenscraper','-m','85']
             if term:
@@ -253,13 +258,13 @@ def _process_selected(adb,config,items,overrides,progress=None, engine=None,secr
             platform=legacy.PLATFORMS.get(item.system)
             if not platform:rec['status']='unsupported_platform';continue
             size=adb.stat_size(item.remote)
-            if size>int(config.get('max_rom_transfer_mb',256))*1024*1024:
-                rec['status']='rom_too_large';continue
             with tempfile.TemporaryDirectory(prefix='knulli_rom_') as tmp:
                 stage=Path(tmp);(stage/'roms').mkdir()
                 local=stage/'roms'/PurePosixPath(item.rel).name
-                adb.pull(item.remote,local)
-                if local.stat().st_size!=size:raise RuntimeError('복사한 ROM 용량 불일치')
+                name_only=rom_staging.prepare(
+                    adb,item.remote,local,size,
+                    int(config.get('max_rom_transfer_mb',256)))
+                rec['lookup']='name_only' if name_only else 'hash_or_name'
                 manual=(overrides.get(item.rel) or '').strip()
                 learned_term=learned_titles.lookup(learned,item.system,item.stem)
                 internal=adb.gba_internal_name(item.remote) if item.system=='gba' else None
@@ -270,7 +275,11 @@ def _process_selected(adb,config,items,overrides,progress=None, engine=None,secr
                 prior=manual or learned_term
                 if prior:terms=[prior]+[s for s in terms if core.norm(s)!=core.norm(prior)]
                 rec['candidates']=terms
-                result,reason=engine.scrape_detail(stage,platform,local,terms,selection)
+                if name_only:
+                    result,reason=engine.scrape_detail(
+                        stage,platform,local,terms,selection,name_only=True)
+                else:
+                    result,reason=engine.scrape_detail(stage,platform,local,terms,selection)
                 if result is None:
                     rec['status']='unmatched';rec['note']=reason;continue
                 result['_config']=config
@@ -281,6 +290,12 @@ def _process_selected(adb,config,items,overrides,progress=None, engine=None,secr
                     user_data.save_titles(learned)
                 rec['fields']=applied['fields']
                 rec['unavailable']=[x for x in selection if x not in applied['fields']]
+        except ValueError as exc:
+            if str(exc).startswith('rom_too_large:'):
+                rec['status']='rom_too_large'
+                rec['note']=str(exc).removeprefix('rom_too_large:').strip()[:400]
+            else:
+                rec['status']='error';rec['note']=str(exc)[:400]
         except Exception as exc:
             rec['status']='error';rec['note']=str(exc)[:400]
         finally:
