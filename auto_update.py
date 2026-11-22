@@ -19,6 +19,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import time
 import urllib.parse
 import urllib.request
 import zipfile
@@ -241,16 +242,53 @@ def log_error(exc: Exception | str) -> None:
         pass  # Update failure must never prevent the app from starting.
 
 
-def try_launch_update(install_dir: Path, current_tag: str = VERSION_TAG) -> bool:
-    """Return True only after a fully checked update has its own child process.
+def _acquire_update_lock() -> Path | None:
+    """Avoid two independently started GUIs installing over each other."""
+    home = data_dir()
+    home.mkdir(parents=True, exist_ok=True)
+    lock = home / "auto_update.lock"
+    for _ in range(2):
+        try:
+            fd = os.open(str(lock), os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+        except FileExistsError:
+            try:
+                if time.time() - lock.stat().st_mtime > 15 * 60:
+                    lock.unlink()
+                    continue
+            except FileNotFoundError:
+                continue
+            return None
+        with os.fdopen(fd, "w", encoding="ascii") as out:
+            out.write(str(os.getpid()))
+        return lock
+    return None
 
-    If GitHub is offline/limited or an update fails validation, simply run
-    the already-installed app. Skip once after a failed helper to avoid a loop.
+
+def _release_update_lock(lock: Path | None) -> None:
+    if lock is None:
+        return
+    try:
+        if lock.read_text(encoding="ascii") == str(os.getpid()):
+            lock.unlink()
+    except OSError:
+        pass
+
+
+def try_launch_update(install_dir: Path, current_tag: str = VERSION_TAG) -> bool:
+    """Return True only after a checked update is assigned to its own process.
+
+    Offline/timeouts/invalid releases must not prevent the existing GUI from
+    starting. An update lock avoids simultaneous installers on the same PC.
     """
     if os.environ.pop("KNULLI_SKIP_UPDATE_ONCE", None) == "1":
         return False
     stage = None
+    lock = None
+    launched = False
     try:
+        lock = _acquire_update_lock()
+        if lock is None:
+            return False
         release = discover(current_tag)
         if not release:
             return False
@@ -260,9 +298,13 @@ def try_launch_update(install_dir: Path, current_tag: str = VERSION_TAG) -> bool
                    str(Path(install_dir).resolve()), str(os.getpid()), sys.executable]
         flags = getattr(subprocess, "CREATE_NO_WINDOW", 0) if os.name == "nt" else 0
         subprocess.Popen(command, cwd=str(stage), close_fds=True, creationflags=flags)
+        launched = True
         return True
     except Exception as exc:
         log_error(exc)
         if stage:
             shutil.rmtree(stage, ignore_errors=True)
         return False
+    finally:
+        if not launched:
+            _release_update_lock(lock)
