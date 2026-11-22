@@ -1,5 +1,15 @@
 # 변경 이력
 
+## v0.8.7-beta.2 — Atomiswave .7z 게임 인식 누락 수정 (2026-11-23)
+
+- 사용자 보고: `/userdata/roms/atomiswave`의 `.7z` 게임이 앱 목록에 나타나지 않음.
+- 원인: `core.ROM_EXT`에 `.7z`는 이미 포함되어 있었으나 `core.SYSTEM_IDS`에 `atomiswave` 시스템이 빠져 있었음.
+- ScreenScraper 시스템 ID `53` 및 Skyscraper `atomiswave` 플랫폼 연결, GUI에 `Atomiswave` 기종 표시.
+- 확장자 `.7z`, `.zip`, `.chd`, `.bin`와 전용 `.lst`, `.dat` 지원. 한글 중첩 폴더와 대문자 확장자 인식.
+- 원본 압축 ROM의 이름/내용을 변경하지 않으며, 한글 표시명 보존 및 스크랩 데이터 XML 자동 백업 금지 정책 유지.
+- [PR #5](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/pull/5). 자동 테스트 후 GitHub Beta Release `v0.8.7-beta.2` 발행. 사용자 실기기 검증 미완료.
+
+
 ## v0.8.7-beta.1 — PortMaster 게임 스크래핑 (2026-11-23)
 
 - KNULLI `/userdata/roms/ports` 최상위 `.sh` 포팅 게임을 **PortMaster** 기종으로 탐색. 관리 도구/설치 스크립트 및 게임 데이터 폴더 재귀 탐색은 제외.
