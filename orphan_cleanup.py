@@ -268,11 +268,10 @@ def inspect(adb, config: dict) -> CleanupPlan:
 
 
 def apply(adb, plan: CleanupPlan, work: Path) -> dict:
-    """Apply an approved plan with revalidation and XML backups.
+    """Apply an approved plan with revalidation and NO persistent backups.
 
-    Media are removed only *after* XML has been successfully backed up and
-    updated. If a media delete fails, it is reported without deleting other
-    unrelated files. The XML backup allows later restoration.
+    Media are removed only *after* XML is successfully updated. A failed media
+    removal is reported without removing other unrelated files.
     """
     if not plan.game_count:
         return {'removed_games': 0, 'removed_media': 0, 'warnings': []}
@@ -287,7 +286,7 @@ def apply(adb, plan: CleanupPlan, work: Path) -> dict:
     work = Path(work)
     stamp = datetime.now().strftime('%Y%m%d_%H%M%S_%f')
     report = {'removed_games': 0, 'removed_media': 0, 'warnings': [],
-              'systems': [], 'backups': []}
+              'systems': []}
     for sysplan in plan.systems:
         sysdir = plan.root + '/' + sysplan.system
         xml = core.parse_xml(sysplan.original)
@@ -301,12 +300,9 @@ def apply(adb, plan: CleanupPlan, work: Path) -> dict:
             continue
         # Only remove XML entries, never source ROM files.
         manager._check_unmodified(adb, sysdir, sysplan.original)
-        manager._backup_and_write(
-            adb, sysdir, sysplan.original, core.xml_bytes(xml), work, stamp
-        )
+        manager._write_xml(adb, sysdir, core.xml_bytes(xml))
         report['removed_games'] += removed
         report['systems'].append(sysplan.system)
-        report['backups'].append(sysdir + '/gamelist.xml.knulli-autoscraper-' + stamp + '.bak')
         for remote in sysplan.media:
             # Re-check that the target is a controlled media path and not a directory.
             if not any(_media_path(plan.root, sysplan.system, tag, remote) == remote
