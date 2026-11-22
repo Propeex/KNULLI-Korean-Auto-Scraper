@@ -91,6 +91,29 @@ class TestBackupSelection(unittest.TestCase):
             self.assertTrue(other.exists())
             self.assertEqual(backup_cleanup.remove_local_backups(work), 0)
 
+    def test_only_verified_adjacent_old_installations_are_cleaned(self):
+        with tempfile.TemporaryDirectory() as td:
+            parent = Path(td)
+            current = parent / 'KNULLI-Korean-Auto-Scraper-v0.8.5-beta.2'
+            old = parent / 'knulli_auto_scraper_v084'
+            unrelated = parent / 'knulli_scraper_notes'
+            for install in (current, old, unrelated):
+                install.mkdir()
+                (install / 'work' / 'xml_backups').mkdir(parents=True)
+                filename = install / 'work' / 'xml_backups' / 'gba_20261123_210000_123456.xml'
+                filename.write_bytes(b'OLD XML BACKUP')
+            for install in (current, old):
+                (install / 'GUI_실행.pyw').touch()
+                (install / 'backend.py').touch()
+            with mock.patch.object(backup_cleanup, 'remove_device_backups', return_value=0):
+                result = backup_cleanup.cleanup(object(), {'remote_root': '/userdata/roms'},
+                                                current / 'work')
+            self.assertEqual(result['local_removed'], 2)
+            self.assertFalse((current / 'work' / 'xml_backups').exists())
+            self.assertFalse((old / 'work' / 'xml_backups').exists())
+            self.assertTrue((unrelated / 'work' / 'xml_backups' /
+                             'gba_20261123_210000_123456.xml').exists())
+
     def test_symlinked_backup_directory_is_never_followed(self):
         if os.name == 'nt':
             self.skipTest('Symlinks may require elevated privileges on Windows')
