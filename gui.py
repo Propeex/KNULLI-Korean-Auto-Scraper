@@ -14,6 +14,7 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 
 import backend
+import orphan_cleanup
 import bundle_engine
 import core
 import legacy_bridge as legacy
@@ -316,8 +317,40 @@ class App(tk.Tk):
                     sync_count=backend.sync_korean_names(adb,self.config,rows)
                 except Exception as exc:
                     sync_error=str(exc)[:160]
-                self.q.put(('scanned',(adb,serial,rows,sync_count,sync_error)))
+                cleanup_plan=None;cleanup_error=''
+                try:
+                    cleanup_plan=orphan_cleanup.inspect(adb,self.config)
+                except Exception as exc:
+                    cleanup_error=str(exc)[:180]
+                self.q.put(('scanned',(adb,serial,rows,sync_count,sync_error,
+                                       cleanup_plan,cleanup_error)))
             except Exception as exc:self.q.put(('fatal','ROM 조회 실패: '+str(exc)))
+        self._thread(job)
+
+    def _offer_cleanup(self,plan):
+        """Confirm destructive cleanup explicitly; discovery itself is read-only."""
+        if self.busy or not plan.game_count:
+            return
+        examples='\n'.join('• '+name for name in plan.examples(5))
+        if plan.game_count>5:
+            examples+='\n• 외 '+str(plan.game_count-5)+'개'
+        question=(f'기기에 ROM 파일이 없는 게임 항목 {plan.game_count}개를 찾았습니다.\n\n'
+                  f'{examples}\n\n'
+                  f'gamelist.xml에서 해당 항목을 제거하고, 다른 게임이 사용하지 않는 '
+                  f'관련 이미지·영상·매뉴얼 최대 {plan.media_count}개를 정리합니다.\n'
+                  '기존 XML은 PC와 기기에 백업합니다.\n\n지금 정리하시겠습니까?')
+        if not messagebox.askyesno('삭제된 게임 자료 정리',question,
+                                   icon='warning',default='no'):
+            self.status_var.set('삭제된 게임 자료 정리를 건너뛰었습니다.')
+            return
+        self._busy(True)
+        self.status_var.set('삭제된 게임 관련 자료를 정리하는 중…')
+        def job():
+            try:
+                result=orphan_cleanup.apply(self.adb,plan,backend.HERE/'work')
+                self.q.put(('cleanup-done',result))
+            except Exception as exc:
+                self.q.put(('cleanup-failed',str(exc)))
         self._thread(job)
 
     def _glyph(self,rid):
@@ -375,6 +408,21 @@ class App(tk.Tk):
             selected=focus if focus in self.items else self.tree.get_children()[0]
             self.tree.selection_set(selected);self.tree.focus(selected);self.tree.see(selected)
             self.select_row()
+        else:
+            # Deleting the final ROM must not leave stale, editable game data.
+            self.current=None
+            self.name_var.set('')
+            self.extension.configure(text='')
+            self._english_loading=True
+            try:self.english_var.set('')
+            finally:self._english_loading=False
+            self.preview_request_id+=1
+            self.preview_img=None
+            self.image_label.configure(image='',text='게임이 없습니다')
+            for widget in self.detail_metadata.values():widget.configure(text='—')
+            self.description.configure(state='normal')
+            self.description.delete('1.0','end')
+            self._set_editable(False)
 
     def _toggle(self,rid):
         if self.busy or rid not in self.items:return
@@ -786,12 +834,33 @@ class App(tk.Tk):
                     self._busy(False);self.status_var.set(value)
                     messagebox.showerror('작업 오류',value)
                 elif msg=='scanned':
-                    self.adb,serial,rows,sync_count,sync_error=value
+                    self.adb,serial,rows,sync_count,sync_error=value[:5]
+                    cleanup_plan=value[5] if len(value)>5 else None
+                    cleanup_error=value[6] if len(value)>6 else ''
                     self._busy(False);self._paint(rows,self.current)
                     message=f'기기 연결됨 · ROM {len(rows)}개'
                     if sync_count:message+=f' · KNULLI 한글 표시명 {sync_count}개 동기화 (기기 목록 갱신 필요)'
                     if sync_error:message+=' · 한글 표시명 동기화 실패: '+sync_error
+                    if cleanup_error:message+=' · 삭제된 게임 검사 실패: '+cleanup_error
                     self.status_var.set(message)
+                    if cleanup_plan and cleanup_plan.game_count:
+                        self.after(150,lambda p=cleanup_plan:self._offer_cleanup(p))
+                elif msg=='cleanup-done':
+                    self._busy(False)
+                    message=(f'정리 완료 · 게임 정보 {value["removed_games"]}개, '
+                             f'관련 자원 {value["removed_media"]}개 정리')
+                    self.status_var.set(message)
+                    if value['warnings']:
+                        messagebox.showwarning('일부 자원 정리 실패',
+                            message+'\n\n자세한 내용은 work/last_cleanup.json을 확인하세요.')
+                    else:
+                        messagebox.showinfo('정리 완료',
+                            message+'\n\nKNULLI 게임 목록은 기기에서 갱신해 주세요.')
+                    self.scan()
+                elif msg=='cleanup-failed':
+                    self._busy(False)
+                    self.status_var.set('자료 정리 실패 · 기존 데이터 상태를 확인하세요.')
+                    messagebox.showerror('자료 정리 실패',str(value))
                 elif msg=='preview':
                     token,rid,path,error=value
                     if token==self.preview_request_id and self.active() and self.active().rel==rid:

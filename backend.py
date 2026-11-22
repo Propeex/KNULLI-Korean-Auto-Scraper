@@ -72,7 +72,8 @@ def catalogue(adb: core.Adb, config: dict, update: Callable[[str],None]|None=Non
     if adb.shell('if [ -d '+core.sq(root)+' ]; then echo YES; fi')!='YES':
         raise RuntimeError('ROM root not found: '+root)
     files=core.collect_roms(adb,root)
-    if not files:raise RuntimeError('ROM list is empty or inaccessible')
+    # A valid, reachable KNULLI ROM root can contain zero games. The orphan
+    # cleanup feature must still be able to inspect existing gamelist.xml files.
     report=load_json(HERE/'work'/'last_report.json',[])
     recent={r.get('rom'):r for r in report if isinstance(r,dict) and r.get('rom')} if isinstance(report,list) else {}
     with tempfile.TemporaryDirectory(prefix='knulli_catalog_') as td:
