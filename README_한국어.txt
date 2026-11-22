@@ -1,4 +1,4 @@
-KNULLI Auto Scraper v0.8.5 beta (Windows / RG35XX Plus / USB ADB)
+KNULLI Auto Scraper v0.8.5-beta.1 (Windows / RG35XX Plus / USB ADB)
 =====================================================
 
 시작하기
@@ -143,3 +143,10 @@ Platform-Tools: https://developer.android.com/tools/releases/platform-tools
 - gamelist.xml은 PC와 기기에 백업합니다. 삭제된 미디어 자체는 따로 백업하지 않습니다.
 - 정리 결과는 work/last_cleanup.json에 기록됩니다.
 - 실기기에서 검증 전이므로 처음에는 중요하지 않은 시험 데이터로 확인해 주세요.
+
+
+[베타 릴리즈 다운로드]
+------------------------
+- https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.5-beta.1
+- Windows ZIP을 압축 해제한 후 GUI_실행.pyw를 실행합니다 (Python 3.10 이상 필요).
+- 이번 버전은 정식판이 아니며 GitHub 사전 출시(Beta)로 배포됩니다.
