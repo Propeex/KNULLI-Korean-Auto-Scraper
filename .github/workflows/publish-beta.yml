@@ -24,8 +24,10 @@ jobs:
           python-version: '3.13'
       - name: Verify automatic updater and Windows process exit handling
         run: python tests/test_v086_auto_update.py -v
+      - name: Verify PortMaster metadata/launcher safety on Windows
+        run: python tests/test_v087_portmaster.py -v
       - name: Verify updater modules compile
-        run: python -m compileall -q GUI_실행.pyw auto_update.py auto_update_helper.py app_version.py gui.py
+        run: python -m compileall -q GUI_실행.pyw auto_update.py auto_update_helper.py app_version.py gui.py portmaster.py
 
   verify-and-release:
     needs: windows-updater-check
