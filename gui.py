@@ -297,11 +297,9 @@ class App(tk.Tk):
                 adb=setup_platform_tools.existing_adb(self.config)
                 if not adb:adb=setup_platform_tools.setup(lambda s:self.q.put(('status',s)))
             except Exception as exc:adb_error=str(exc)
-            try:
-                legacy.find_engine(self.config.get('skyscraper_path',''))
-            except Exception:
-                try:setup_engine.setup(lambda s:self.q.put(('status',s)))
-                except Exception as exc:engine_error=str(exc)
+            # Skyscraper is intentionally lazy-installed only when the user
+            # selects a console ROM for scraping. PortMaster-only libraries
+            # must not require Skyscraper or an installer download.
             self.q.put(('setup-finished',(adb_error,engine_error)))
         self._thread(job)
 
@@ -403,8 +401,8 @@ class App(tk.Tk):
                 self._restyle_row(rid)
 
     def _insert_item(self,item):
-        values=(self._glyph(item.rel),item.system.upper() if item.system not in ('neogeo','megadrive','gamegear')
-                else {'neogeo':'Neo Geo','megadrive':'Mega Drive','gamegear':'Game Gear'}[item.system],
+        values=(self._glyph(item.rel),item.system.upper() if item.system not in ('neogeo','megadrive','gamegear','ports')
+                else {'neogeo':'Neo Geo','megadrive':'Mega Drive','gamegear':'Game Gear','ports':'PortMaster'}[item.system],
                 visible_name(item),self._status_text(item))
         self.tree.insert('','end',iid=item.rel,values=values)
 
@@ -780,7 +778,9 @@ class App(tk.Tk):
         chosen=[self.items[r] for r in self.tree.get_children() if r in self.checked]
         if not chosen:
             messagebox.showinfo('선택 없음','작업할 게임을 선택하세요.');return
-        try:legacy.find_engine(self.config.get('skyscraper_path',''))
+        try:
+            if any(item.system!='ports' for item in chosen):
+                legacy.find_engine(self.config.get('skyscraper_path',''))
         except RuntimeError:
             self._busy(True);self.status_var.set('Skyscraper 설치 중…')
             def job():

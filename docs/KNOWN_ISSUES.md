@@ -21,6 +21,15 @@
 - `v0.8.5-beta.2` 및 그 이전 버전은 업데이터 미탑재: `v0.8.6-beta.1`의 최초 1회 수동 설치 필요.
 - 임의 위치의 사용자 수정 `aliases.json` 및 `artwork.xml`을 자동 덮어쓰지 않음. 향후 해당 파일이 배포 필수로 변경되는 경우 별도 호환성 정책 필요.
 
+## PortMaster 지원 범위 및 확인 필요 사항 (v0.8.7-beta.1)
+
+- `roms/ports` 최상위 `.sh` 게임을 조회, `port.json` + `gameinfo.xml`로 명확히 매칭되는 포트의 정보만 `ports/gamelist.xml`에 보완함.
+- 설치 방식에 따라 `port.json`/`gameinfo.xml`가 장치에 존재하지 않거나 예상한 폴더 밖에 있을 수 있음. 이 경우 임의의 다른 게임 정보를 덮어쓰지 않고 검색 실패로 처리.
+- 영상·매뉴얼·추가 외부 미디어의 자동 획득은 이번 PortMaster 전용 흐름에 포함되지 않음. 이미 설치된 cover/screenshot 경로를 사용함.
+- PortMaster 런처 외 설치/관리 스크립트는 게임 목록에서 제외. **기기 포트 데이터 폴더/세이브 파일을 삭제하지 않음.**
+- 정보 누락 항목만 채우므로 기존에 잘못 설정된 메타데이터의 강제 교체는 미지원.
+- 실제 RG35XX Plus/Windows USB ADB 조합에서 PortMaster 포맷 편차 검증은 아직 필요.
+
 ## 해결 기록
 - v0.3.1: 전체 `adb exec-out find -print0`의 `error: closed` → 폴더별 안정 탐색.
 - v0.4~0.5: Skyscraper `artwork.xml` 읽기 오류 수정 및 GUI 선택 기능.

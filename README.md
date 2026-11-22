@@ -2,11 +2,11 @@
 
 Windows에서 USB ADB로 **RG35XX Plus / KNULLI**의 ROM을 직접 탐색하고, 한국어 파일명·표시명을 보존하면서 ScreenScraper 자료를 수집·적용하는 데스크톱 앱입니다.
 
-> **현재 공개 베타 릴리즈:** `v0.8.6-beta.1` (2026-11-23). 기반 소스는 v0.8.4이며, 기존 스크래핑 기능에 삭제된 ROM 관련 자료 정리 기능을 추가했습니다. 자동 테스트는 통과했지만 이 기능의 실제 기기 검증은 아직 필요합니다.
+> **현재 개발 버전:** `v0.8.7-beta.1` (2026-11-23). 기존 공개 베타는 `v0.8.6-beta.1`입니다. 기반 소스는 v0.8.4이며, 기존 스크래핑 기능에 삭제된 ROM 관련 자료 정리 기능을 추가했습니다. 자동 테스트는 통과했지만 이 기능의 실제 기기 검증은 아직 필요합니다.
 
 ## 최신 Windows 베타 다운로드
 
-[**GitHub Releases — v0.8.6-beta.1**](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.6-beta.1)에서 Windows ZIP과 SHA-256 검사 파일을 받으세요. 이 패키지는 독립 실행 EXE가 아니라 **Python GUI 소스 패키지**이며, Windows에 Python 3.10+가 필요합니다.
+[**GitHub Releases — v0.8.7-beta.1**](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.7-beta.1)에서 Windows ZIP과 SHA-256 검사 파일을 받으세요. 이 패키지는 독립 실행 EXE가 아니라 **Python GUI 소스 패키지**이며, Windows에 Python 3.10+가 필요합니다.
 
 배포 규칙: [docs/RELEASE_PROCESS.md](docs/RELEASE_PROCESS.md). 사용자가 정식 출시를 승인하기 전에는 모든 버전을 **Pre-release / Beta**로 발행합니다.
 
@@ -64,6 +64,14 @@ Windows에서 `GUI_실행.pyw` 또는 `GUI_실행.vbs`를 실행하면 앱 시�
 **최초 1회 설치:** 이전 `v0.8.5-beta.2`에는 자동 업데이트 기능이 없으므로, 이 `v0.8.6-beta.1`은 릴리즈 ZIP을 직접 설치해야 합니다. 이후 새 베타부터 자동 업데이트됩니다. 사용자 승인 전까지 안정(Stable) 릴리즈로 자동 전환하지 않습니다.
 
 사용자 설정(`Documents/KNULLI Auto Scraper Data`), 스크래핑 데이터, ROM, 기기의 XML과 기존 사용자가 수정한 `aliases.json`·`artwork.xml`은 업데이트 도중 변경하지 않습니다. 일시적 코드 롤백 파일은 스크랩 데이터 백업이 아닙니다. 실패 내역은 사용자 데이터 폴더의 `auto_update.log`에 기록합니다. 업데이트 실패 후에는 기존 앱을 실행하도록 설계했습니다. Windows 실기기 업데이트 동작은 별도 확인이 필요합니다.
+
+## PortMaster 포팅 게임 지원 (v0.8.7-beta.1)
+
+KNULLI의 `/userdata/roms/ports/` 최상위 `.sh` 게임 실행 스크립트도 기종 **PortMaster**로 표시합니다. `PortMaster.sh` 및 설치·관리용 스크립트는 제외하고, 게임 데이터 폴더를 재귀적으로 훑지 않습니다. 원하는 포트 게임을 체크하여 **작업 시작**하면, 포트 폴더의 `port.json`과 `gameinfo.xml` (게임명·설명·장르·제작사·출시일 등), 기존 `cover.png/.jpg`·`screenshot.png/.jpg`를 조회해 KNULLI의 `ports/gamelist.xml`에서 **비어 있는 항목만** 채웁니다. 정보 우선순위는 `gameinfo.xml` → `port.json`; 명시적 실행 파일 매칭이 없는 게임은 추측하지 않습니다.
+
+이 작업은 **ScreenScraper/Skyscraper 및 포트 게임 파일 복사가 필요 없고**, 기기 자체 인터넷도 필요 없습니다. 이미 사용자가 지정한 표시명·설명·이미지는 덮어쓰지 않으며, `.sh` 실행 스크립트, 포트 본체, 게임 데이터·세이브 파일은 수정하지 않습니다. 예전부터 요청하신 규칙대로 XML 백업도 만들지 않습니다. 삭제된 포트 게임은 기존 사용자 확인 절차에서 **사라진 런처의 XML 게임 항목만** 정리하고 포트 폴더/세이브는 삭제하지 않습니다.
+
+**제한:** PortMaster가 인식되는 게임이라도 로컬 `port.json`/`gameinfo.xml`가 없거나 런처와 연결되지 않으면 자동으로 제목을 추측하지 않습니다. 직접 넣은 사용자 제작 `.sh` 포트도 마찬가지입니다. 실제 RG35XX Plus의 다양한 포트 설치 방식은 실기기 검증 전입니다. [PortMaster 공식 포트 패키징 문서](https://portmaster.games/contribute/porting/packaging/).
 
 ## 테스트
 
