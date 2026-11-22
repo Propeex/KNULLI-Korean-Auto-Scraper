@@ -6,7 +6,7 @@
 - 작성일: 2026-11-20 (Asia/Seoul)
 - 프로젝트: KNULLI Korean Auto Scraper
 - 저장소: https://github.com/Propeex/KNULLI-Korean-Auto-Scraper
-- **현재 개발 중인 버전: `v0.8.6-beta.1` (베타 사전 출시 대상).** 기존 최신 공개 베타: `v0.8.5-beta.2` (Pre-release), [릴리즈 링크](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.5-beta.2). 이전 공개 버전은 `v0.8.5-beta.1`. 최초 이식 소스 기준: **v0.8.4 베타** (`knulli_auto_scraper_adb_v084_unicode_folders.zip`)
+- **현재 최신 공개 베타: [`v0.8.6-beta.1`](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.6-beta.1) (Pre-release).** 이전 공개 베타: `v0.8.5-beta.2`. 이전 공개 버전은 `v0.8.5-beta.1`. 최초 이식 소스 기준: **v0.8.4 베타** (`knulli_auto_scraper_adb_v084_unicode_folders.zip`)
 - 대상: Windows PC, RG35XX Plus (KNULLI), USB ADB
 - 스크래핑: Windows에서 Skyscraper / ScreenScraper 사용. PC 인터넷만 필요, 기기 인터넷 불필요.
 - **GitHub 최초 이식 완료:** 2026-11-20, 원본 v0.8.4 소스를 코드 변경 없이 복원한 커밋 `4734f7a954d0953a6f1306f8a3910039bcc6a634`. 원본 압축 스냅샷 SHA256 검증 및 GitHub Actions 복원 성공. 상세 기록: [MIGRATION.md](MIGRATION.md). 실기기 테스트는 사용자 환경에서 별도 확인해야 함.
@@ -40,7 +40,7 @@
 - ROM 0개 상태도 코드 보완했으나 실기기 확인은 아직 없음. 특수 시스템/파일명·중복 XML 등의 모든 케이스는 미검증.
 - **GitHub CI 자동 테스트 통과:** [테스트 실행](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/actions/runs/45045628986). **실제 RG35XX Plus 검증 전**, 이미지 삭제는 되돌리기 어렵기 때문에 정리 전 GUI 확인 필수.
 
-## 개발 중 신규 기능 — 실행 시 자동 베타 업데이트 (v0.8.6-beta.1)
+## 구현·배포 완료 — 실행 시 자동 베타 업데이트 (v0.8.6-beta.1)
 
 - **사용자 요청:** 프로그램을 실행할 때 최신 GitHub 릴리즈를 자동 검색하고, 새 베타가 있으면 **확인 없이 자동 설치·재시작**.
 - `GUI_실행.pyw` 실행 전 `auto_update.try_launch_update()` 호출. `GUI_실행.vbs`는 .pyw 실행, 직접 `python gui.py` 실행도 `__main__`에서 업데이트 검사 수행.
@@ -50,17 +50,27 @@
 - `Documents/KNULLI Auto Scraper Data`와 `work` 폴더, ROM, 현재 기기 데이터는 수정하지 않으며 사용자가 수정한 `aliases.json`/`artwork.xml`은 덮어쓰지 않음. 이 과정에서 만드는 일시적인 프로그램 코드 롤백 복사본은 스크래핑 백업이 아니며 정상 완료 시 제거.
 - 업데이트 확인/다운로드 실패 시 GUI는 기존 버전으로 실행, 로그는 사용자 데이터 폴더의 `auto_update.log`.
 - **초기 배포 한계:** 기존 v0.8.5-beta.2에는 업데이터가 없으므로 v0.8.6-beta.1은 처음 한 번 수동 설치해야 함. 이후부터 실행 시 자동 베타 업데이트.
-- [PR #3](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/pull/3) **main 병합 완료** (커밋 `6543db6376f54d7fe01da448a3aea5ceb2bcef7d`). Linux 회귀 및 Windows 업데이터 CI 모두 통과. Windows 실제 사용자 프로그램 갱신 과정 미검증.
-- **현재 중단 지점:** PR #3 병합 완료. **이제 `release/request.json`을 v0.8.6-beta.1로 갱신하고 Windows·Linux 릴리즈 게이트 및 GitHub Release 첨부파일 검증 필요.** 다음 단계는 사용자 PC에서 베타.1 최초 설치 및 향후 실제 베타 업데이트/재시작 동작 확인.
+- [PR #3](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/pull/3) main 병합 완료 (커밋 `6543db6376f54d7fe01da448a3aea5ceb2bcef7d`). [최종 Windows+Linux 릴리즈 검증](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/actions/runs/45052031828) 통과. Windows 실제 사용자 프로그램 갱신 과정 미검증.
+- **릴리즈 완료 (2026-11-23):** [v0.8.6-beta.1](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.6-beta.1) 공개, `prerelease=true`, Windows ZIP(82,651바이트) 및 SHA-256 첨부파일 확인. [GitHub Actions](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/actions/runs/45052031828) Windows 업데이터 테스트, Linux 전체 테스트, ZIP 검증, 릴리즈 등록 전 단계 성공.
+- **현재 중단 지점 / 다음 작업:** Windows 사용자 PC에서 v0.8.6-beta.1 최초 수동 설치 확인. 후속 베타 릴리즈가 발행되면 업데이트→프로그램 종료→교체→자동 재시작을 실기기에서 검증. 설치 권한/네트워크 오류는 사용자 문서 폴더의 `auto_update.log`로 조사.
 
 ## 릴리즈 운영 규칙 (2026-11-23)
 - 사용자는 **작업이 성공적으로 종료될 때마다 GitHub Release 발행**을 요구함. 개발은 릴리즈까지 끝나야 완료임.
 - 사용자가 정식 출시를 명시적으로 승인하기 전에는 `vMAJOR.MINOR.PATCH-beta.N` 형식의 **Pre-release**만 가능. 번호는 개발 담당자가 관리.
-- 현재 개발 중인 다음 베타: `v0.8.6-beta.1`. 기존 공개 베타: `v0.8.5-beta.2`, [기존 릴리즈 페이지](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.5-beta.2). 첫 베타는 `v0.8.5-beta.1`.
+- 현재 최신 베타: [`v0.8.6-beta.1`](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.6-beta.1). 이전 베타: `v0.8.5-beta.2`, [기존 릴리즈 페이지](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.5-beta.2). 첫 베타는 `v0.8.5-beta.1`.
 - 릴리즈는 테스트→배포 ZIP/체크섬 생성→GitHub 사전출시 상태/첨부파일 확인까지 완료해야 성공.
 - 절차: [RELEASE_PROCESS.md](RELEASE_PROCESS.md), GitHub Actions `.github/workflows/publish-beta.yml`, 트리거 `release/request.json`.
 - **첫 GitHub Beta Release 발행 확인 완료 (2026-11-23):** [v0.8.5-beta.1](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.5-beta.1). `prerelease=true`, ZIP(68,614 bytes), `.sha256` 두 첨부 자산 확인. [배포 GitHub Actions](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/actions/runs/45046433924)의 테스트·ZIP 빌드·검증·게시·첨부파일 확인 전 단계 성공.
 - **릴리즈 확인 완료 (2026-11-23):** [v0.8.5-beta.2](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.5-beta.2) 공개. `prerelease=true` 확인, Windows ZIP(72,525바이트)과 SHA256 파일 모두 첨부됨. [GitHub Actions 배포 실행](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/actions/runs/45049288546) 테스트·패키징·검증·릴리즈 게시 성공. **다음 작업은 실기기에서 셸 길이 오류와 이전 앱 백업 정리 결과 확인**. 사용자 승인 전 정식 릴리즈 금지.
+
+## 최종 베타 릴리즈 검증 근거
+
+- v0.8.6-beta.1 태그: `bde1d8ad8fb2595dbd9021321c33b967ce6cc3d6`
+- ZIP: `KNULLI-Korean-Auto-Scraper-v0.8.6-beta.1-Windows.zip`, 82,651 bytes, SHA256 `f2b3e87f8e8e60414a6e2762e4808a4dde42564d7bf54bec6379770ef79c86e5`
+- [릴리즈](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.6-beta.1)에서 Pre-release 및 ZIP/.sha256 첨부 확인
+- [릴리즈 GitHub Actions](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/actions/runs/45052031828) 성공
+- **업데이트 동작은 Windows 테스트 러너에서 검증했지만 실제 사용자 Windows 설치본의 자동 업데이트는 아직 미확인**. v0.8.5-beta.2 사용자는 최초 한 번 수동 설치가 필요.
+- 향후 기능 개발 성공 시 `app_version.VERSION_TAG`와 `release/request.json`을 일치시켜 새로운 `beta.N` 릴리즈를 자동 발행. 정식 출시 승인 전까지 stable 배포 금지.
 
 ## 현재 중단 지점
 **v0.8.5-beta.2 GitHub 사전 출시 완료.** PR #1에서 삭제된 게임 자료 정리, PR #2에서 ADB 명령 길이 수정과 자동 XML 백업 폐지를 적용. 모든 개발 단위 테스트 85개 통과, 릴리즈 아카이브 생성/체크섬 검증 성공. **실제 Windows/RG35XX Plus 연결 결과 미확인**. 다음은 긴 한글 경로/삭제된 게임 XML 정리/기기 과거 백업 제거의 현장 검증이며, 오류 발생 시 로그 분석과 후속 Beta 3 릴리즈 진행.
