@@ -107,6 +107,23 @@ def _media_path(root: str, system: str, tag: str, text: str | None) -> str | Non
     return path
 
 
+def _reference_path(root: str, system: str, tag: str, text: str | None) -> str | None:
+    """Also recognize explicit links to another system's media for share safety."""
+    local = _media_path(root, system, tag, text)
+    if local:
+        return local
+    if not text or not text.startswith(root + '/') or '..' in text.split('/'):
+        return None
+    parts = PurePosixPath(text).parts
+    root_parts = PurePosixPath(root).parts
+    if len(parts) <= len(root_parts) or parts[:len(root_parts)] != root_parts:
+        return None
+    target_system = parts[len(root_parts)]
+    if target_system not in core.SYSTEM_IDS:
+        return None
+    return _media_path(root, target_system, tag, text)
+
+
 def _path_states(adb, paths: list[str]) -> dict[str, bool]:
     """Read file existence safely across a Korean-path-hostile ADB shell.
 
@@ -183,7 +200,7 @@ def inspect(adb, config: dict) -> CleanupPlan:
                     continue
             for child in node.iter():
                 if child.tag in MEDIA_TAGS:
-                    media = _media_path(root, system, child.tag, child.text)
+                    media = _reference_path(root, system, child.tag, child.text)
                     if media:
                         used_media.add(media)
 
