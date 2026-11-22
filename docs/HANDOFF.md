@@ -6,7 +6,7 @@
 - 작성일: 2026-11-20 (Asia/Seoul)
 - 프로젝트: KNULLI Korean Auto Scraper
 - 저장소: https://github.com/Propeex/KNULLI-Korean-Auto-Scraper
-- **현재 최신 공개 베타: [`v0.8.7-beta.2`](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.7-beta.2) (Atomiswave .7z 인식 수정).** 이전 공개 베타는 `v0.8.7-beta.1` (PortMaster 지원). 이전 공개 버전: `v0.8.6-beta.1`. 이전 공개 베타: `v0.8.5-beta.2`. 이전 공개 버전은 `v0.8.5-beta.1`. 최초 이식 소스 기준: **v0.8.4 베타** (`knulli_auto_scraper_adb_v084_unicode_folders.zip`)
+- **다음 배포 대상: `v0.8.7-beta.3` (PSP 대용량 ROM 이름 검색).** 현재 최신 공개 베타는 [`v0.8.7-beta.2`](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.7-beta.2) (Atomiswave .7z 인식 수정). 이전 공개 베타는 `v0.8.7-beta.1` (PortMaster 지원). 이전 공개 버전: `v0.8.6-beta.1`. 이전 공개 베타: `v0.8.5-beta.2`. 이전 공개 버전은 `v0.8.5-beta.1`. 최초 이식 소스 기준: **v0.8.4 베타** (`knulli_auto_scraper_adb_v084_unicode_folders.zip`)
 - 대상: Windows PC, RG35XX Plus (KNULLI), USB ADB
 - 스크래핑: Windows에서 Skyscraper / ScreenScraper 사용. PC 인터넷만 필요, 기기 인터넷 불필요.
 - **GitHub 최초 이식 완료:** 2026-11-20, 원본 v0.8.4 소스를 코드 변경 없이 복원한 커밋 `4734f7a954d0953a6f1306f8a3910039bcc6a634`. 원본 압축 스냅샷 SHA256 검증 및 GitHub Actions 복원 성공. 상세 기록: [MIGRATION.md](MIGRATION.md). 실기기 테스트는 사용자 환경에서 별도 확인해야 함.
@@ -31,6 +31,19 @@
 - v0.8.3에서 한글 하위 폴더 `psx/한글 폴더/Silent Hill (K).cue`의 경로가 `????`로 깨져 `remote file size unavailable` 발생.
 - v0.8.4에서 기기 경로를 바이트/NUL 구분 + 영숫자 인코딩으로 PC에 전달, 파일 크기 조회의 인코딩 개선.
 - **단위 테스트는 통과했지만 이 v0.8.4 수정의 실기기 성공 피드백은 아직 받지 못함.**
+
+## 수정 진행 — PSP 대용량 디스크 `rom_too_large` (v0.8.7-beta.3, 2026-11-23)
+
+- **사용자 문제:** PSP 게임 ISO 등이 256MB를 초과해 `rom_too_large`로 표시됨. 이미지·텍스트 스크래핑에 원본 수 GB 디스크를 PC로 복사할 필요가 없다고 지적.
+- **확인된 원인:** GUI의 `bundle_engine.py`와 구형 `backend.py`/`legacy_bridge.py`가 모든 ROM을 먼저 PC로 복사하므로 `max_rom_transfer_mb=256`을 넘으면 검색 전에 차단.
+- **대응:** 신규 `rom_staging.py`로 공통 입력 준비. 전송 제한 이하 게임은 기존 원본 복사·해시 검색. 제한 초과 디스크 형식(`.iso`, `.cso`, `.pbp`, `.chd`, `.cdi`, `.gdi`)은 원본을 읽지 않고 **4KiB짜리 임시 파일명 운반체**로만 Skyscraper 호출. 출처 ROM의 원격 경로별 SHA-256 라벨로 운반체를 구분(원본 내용 해시 아님), 캐시 혼동 방지.
+- **검색 안전성:** 대용량 디스크는 `--query romnom=영문 검색명`만 사용해 가짜 파일의 체크섬 조회를 차단. 기존 반환 게임 제목 ↔ 검색어 유사도 검사를 유지. 검색어가 없거나 일치하지 않으면 적용하지 않음. Skyscraper 문서에 `--query` 시 자동 해시 검색 미수행 명시.
+- **범위:** ZIP/7z 등 큰 압축파일은 유효하지 않은 가짜 아카이브가 파서에 사용될 수 있어 우회하지 않고 기존 제한 유지. PSP ISO/CSO/PBP/CHD에 집중. 원본 ROM·기기 설정·사용자 한글 이름 보호. XML 영구 백업 미생성 정책 유지.
+- **수정 경로:** `bundle_engine.py`(현재 GUI), `backend.py`(레거시 직접 스크래핑), `legacy_bridge.py`(레거시 CLI), `rom_staging.py`(신규), `tests/test_v087_beta3_large_psp.py`(자동 검증), Windows GitHub CI 게이트.
+- **자동 테스트:** PSP 2GiB 가상 `stat_size`로 실제 ROM `adb.pull` 호출 0회 보장, `--query` 강제, 작은 ROM 기존 복사, 큰 ZIP/7z 차단, XML/한글명 보존, 코드 캐시 고유성 회귀 테스트.
+- **현재 PR:** [#6](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/pull/6), 브랜치 `fix/large-psp-rom-name-only-v087-beta3`.
+- **현재 중단 지점:** 최종 PR CI → `main` 병합 → `release/request.json`을 `v0.8.7-beta.3`로 변경 → Windows+Linux 릴리즈 게이트와 ZIP/.sha256 첨부 확인. 실제 Windows Skyscraper의 이름 기반 임시 입력 파일 처리 및 사용자 RG35XX Plus에서 메타데이터 적용 성공은 아직 미확인.
+- **정책:** 모든 작업 성공 후 GitHub Beta Pre-release까지 발행. 이 HANDOFF의 현재 공개 릴리즈/중단 지점을 최신화. 사용자 정식 승인 전 Stable 금지.
 
 ## 수정·배포 완료 — Atomiswave .7z 게임 미인식 (v0.8.7-beta.2, 2026-11-23)
 
