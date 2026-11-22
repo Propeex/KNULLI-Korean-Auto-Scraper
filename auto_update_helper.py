@@ -75,7 +75,10 @@ def apply_update(stage: Path, install: Path) -> int:
     contains only application code, never gamelist.xml or scraped media.
     """
     stage = Path(stage).resolve()
-    install = Path(install).resolve()
+    requested_install = Path(install)
+    if requested_install.is_symlink():
+        raise ValueError("Refusing to update through a symlinked install folder")
+    install = requested_install.resolve()
     _check_target(install)
     files = _load_manifest(stage)
     rollback = stage / "rollback"
