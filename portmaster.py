@@ -96,6 +96,9 @@ def _launcher_from_path(text: str, ports_root: str) -> str | None:
         text = text[2:]
     elif text.startswith(ports_root + '/'):
         text = text[len(ports_root)+1:]
+    elif text.startswith('ports/'):
+        # GUI catalogue entries are relative to the ROM root.
+        text = text[len('ports/'):]
     if '/' in text or text in ('.','..'):
         return None
     rel = 'ports/' + text
