@@ -8,7 +8,7 @@
 - Skyscraper는 `--query`일 때 자동 파일 해시 검색을 사용하지 않는다고 문서화. **검색 이름과 검색 결과 게임명 유사도 검증은 반드시 유지**하고, 영문 후보가 없으면 안전하게 중단.
 - 공유 `rom_staging.py`를 도입해 GUI·구형 backend·CLI legacy 코드의 대용량 디스크 처리 동일화. 다른 형식(큰 ZIP/7z 등)은 가짜 압축파일로 잘못 처리하지 않도록 기존 제한 유지.
 - 2GiB를 가상으로 보고하는 PSP ROM에서 실제 ADB 파일 복사가 전혀 호출되지 않음을 자동 테스트로 검증, 한글명/XML 원본과 기존 ROM 보존.
-- [PR #6](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/pull/6). 실제 Windows Skyscraper/사용자 RG35XX Plus에서의 통합 검증은 아직 필요.
+- [PR #6](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/pull/6) main 병합 완료. [GitHub Windows+Linux 릴리즈 CI](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/actions/runs/45059639699) 전 단계 성공. [v0.8.7-beta.3 Pre-release](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.7-beta.3), Windows ZIP 93,758 bytes + SHA-256 검사 파일 등록 확인. **실제 Windows Skyscraper/사용자 RG35XX Plus에서의 통합 검증은 아직 필요.**
 
 
 ## v0.8.7-beta.2 — Atomiswave .7z 게임 인식 누락 수정 (2026-11-23)
