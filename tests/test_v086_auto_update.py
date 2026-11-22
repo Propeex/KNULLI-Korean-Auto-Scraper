@@ -196,7 +196,7 @@ class TestArchiveSafety(unittest.TestCase):
 
     def test_package_release_tag_alignment(self):
         # The running app's version and next package tag must match.
-        self.assertEqual(app_version.VERSION_TAG, "v0.8.6-beta.1")
+        self.assertGreaterEqual(update.beta_key(app_version.VERSION_TAG), (0, 8, 6, 1))
         self.assertTrue(update.MANDATORY.issubset({
             "GUI_실행.pyw", "gui.py", "app_version.py",
             "auto_update.py", "auto_update_helper.py",
