@@ -401,8 +401,8 @@ class App(tk.Tk):
                 self._restyle_row(rid)
 
     def _insert_item(self,item):
-        values=(self._glyph(item.rel),item.system.upper() if item.system not in ('neogeo','megadrive','gamegear','ports')
-                else {'neogeo':'Neo Geo','megadrive':'Mega Drive','gamegear':'Game Gear','ports':'PortMaster'}[item.system],
+        values=(self._glyph(item.rel),item.system.upper() if item.system not in ('neogeo','megadrive','gamegear','ports','atomiswave')
+                else {'neogeo':'Neo Geo','megadrive':'Mega Drive','gamegear':'Game Gear','ports':'PortMaster','atomiswave':'Atomiswave'}[item.system],
                 visible_name(item),self._status_text(item))
         self.tree.insert('','end',iid=item.rel,values=values)
 
