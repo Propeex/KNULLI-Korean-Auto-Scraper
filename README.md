@@ -2,11 +2,11 @@
 
 Windows에서 USB ADB로 **RG35XX Plus / KNULLI**의 ROM을 직접 탐색하고, 한국어 파일명·표시명을 보존하면서 ScreenScraper 자료를 수집·적용하는 데스크톱 앱입니다.
 
-> **현재 최신 공개 베타:** [`v0.8.7-beta.3`](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.7-beta.3) (2026-11-23). 이전 베타는 `v0.8.7-beta.2`입니다. 기반 소스는 v0.8.4이며, 기존 스크래핑 기능에 삭제된 ROM 관련 자료 정리 기능을 추가했습니다. 자동 테스트는 통과했지만 이 기능의 실제 기기 검증은 아직 필요합니다.
+> **다음 배포 버전:** `v0.8.8-beta.1` (PS1 멀티디스크 통합). 기존 공개 베타: [`v0.8.7-beta.3`](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.7-beta.3) (2026-11-23). 이전 베타는 `v0.8.7-beta.2`입니다. 기반 소스는 v0.8.4이며, 기존 스크래핑 기능에 삭제된 ROM 관련 자료 정리 기능을 추가했습니다. 자동 테스트는 통과했지만 이 기능의 실제 기기 검증은 아직 필요합니다.
 
 ## 최신 Windows 베타 다운로드
 
-[**GitHub Releases — v0.8.7-beta.3**](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.7-beta.3)에서 Windows ZIP과 SHA-256 검사 파일을 받으세요. 이 패키지는 독립 실행 EXE가 아니라 **Python GUI 소스 패키지**이며, Windows에 Python 3.10+가 필요합니다.
+[**GitHub Releases — v0.8.8-beta.1**](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.8-beta.1)에서 Windows ZIP과 SHA-256 검사 파일을 받으세요. 이 패키지는 독립 실행 EXE가 아니라 **Python GUI 소스 패키지**이며, Windows에 Python 3.10+가 필요합니다.
 
 배포 규칙: [docs/RELEASE_PROCESS.md](docs/RELEASE_PROCESS.md). 사용자가 정식 출시를 승인하기 전에는 모든 버전을 **Pre-release / Beta**로 발행합니다.
 
@@ -84,6 +84,17 @@ KNULLI의 `/userdata/roms/ports/` 최상위 `.sh` 게임 실행 스크립트도 
 기존 스크래핑 코드가 **256MiB 초과 ROM 전체를 ADB로 PC에 복사하기 전부터 차단**해 PSP ISO 등에서 `rom_too_large`가 발생했습니다. 이제 기본 설정의 용량 제한을 초과하는 **디스크 이미지**(`.iso`, `.cso`, `.pbp`, `.chd`, `.cdi`, `.gdi`)는 ROM 파일을 복사하지 않고 동일한 파일명/확장자의 **작은 임시 이름 검색용 파일**을 만들어 Skyscraper에 `--query romnom=영문검색명`으로 조회합니다. 실제 ROM 해시 조회는 시도하지 않으며, 반환된 게임 제목이 검색어와 충분히 일치하지 않으면 적용하지 않습니다. **원본 ROM과 한글 표시명은 보존**됩니다.
 
 256MiB 이하 파일은 기존 실제 ROM 복사 및 해시/이름 검색 방식을 유지합니다. 위 디스크 형식이 아닌 **큰 ZIP/7z**는 유효하지 않은 가짜 압축파일 처리의 위험 때문에 기존 전송 제한을 유지합니다. 디스크명 검색에 필요한 영문 후보가 없거나 매칭되지 않으면 성공으로 처리하지 않습니다. 사용자 PC의 Skyscraper/ScreenScraper 실제 호출 결과는 실기기 피드백으로 확인해야 합니다. [Skyscraper 공식 CLI `--query` 문서](https://gemba.github.io/skyscraper/CLIHELP/).
+
+## PS1 멀티디스크 게임 통합 및 KNULLI M3U (v0.8.8-beta.1)
+
+**드래곤 퀘스트 7 (Disc 1).chd**와 **(Disc 2).chd**처럼 같은 폴더에 들어 있는 디스크들은, 게임명이 같고 번호가 Disc 1부터 연속하며 중복이 없으면 스크래퍼 목록에서 **게임 1개**로 보입니다. 불명확하거나 디스크 번호가 빠진 게임은 자동으로 묶지 않습니다. 하위 폴더의 한글 파일명도 지원합니다.
+
+- **기존 M3U가 있는 경우:** `roms/psx/*.m3u` 또는 게임 하위 폴더의 재생목록을 조회해 유효한 상대 경로로 연결된 디스크를 중복 목록에서 숨깁니다. KNULLI에 이미 만들어진 재생목록은 수정하지 않습니다.
+- **M3U가 없는 경우:** 목록의 **멀티디스크 묶기** 버튼을 클릭하면 생성 후보와 디스크 장수를 보여주고 **동의 후에만** `.m3u` 파일을 생성합니다. 원본 디스크/메모리카드/세이브는 이동하거나 변경·삭제하지 않습니다. 기존 `.m3u`는 덮어쓰지 않습니다.
+- **게임 정보:** 기존 Disc 1의 제목·설명·이미지 등 gamelist.xml 항목이 있으면 새 M3U 게임 항목에 복사해 유지합니다. 기존 디스크 항목을 삭제하지 않으며 **XML 백업도 만들지 않습니다**.
+- **스크래핑:** M3U는 디스크 내용의 해시 대신 게임명 검색을 사용하고, 대표 게임에 스크래핑을 한 번만 수행합니다. 검색 결과 제목 일치도 검증은 유지합니다.
+
+기기에서 디스크를 숨기려면 **START → SYSTEM SETTINGS → FRONTEND DEVELOPER OPTIONS → Ignore Multi-File Disk Content (CUE/GDI/CCD/M3U)** 를 켠 후, **GAME SETTINGS → UPDATE GAMELISTS** 를 실행하세요. 본 기능은 KNULLI [멀티디스크 공식 안내](https://knulli.org/configure/multi-disc-games/)를 따릅니다. 디스크 여러 장이 **서로 다른 폴더에 있고 M3U가 아직 없으면** 자동 생성하지 않으므로 먼저 M3U를 수동 구성하세요. 실제 RG35XX Plus에서의 최종 확인은 필요합니다.
 
 ## 테스트
 
