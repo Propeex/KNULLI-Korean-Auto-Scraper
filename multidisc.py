@@ -100,7 +100,7 @@ def plans_for(roms: list[tuple], root: str) -> list[PlaylistPlan]:
     return plans
 
 
-def _playlist_refs(adb, playlist: str, remote_files: set[str]) -> set[str]:
+def _playlist_refs(adb, playlist: str, remote_files: set[str], root: str) -> set[str]:
     """Resolve an existing M3U only if every relative reference is safe/existing."""
     try:
         size = adb.stat_size(playlist)
@@ -126,7 +126,7 @@ def _playlist_refs(adb, playlist: str, remote_files: set[str]) -> set[str]:
             if any(p in (".", "..", "") for p in parts):
                 return set()
             remote = str(base.joinpath(*parts))
-            if not remote.startswith("/userdata/") and "/psx/" not in remote:
+            if not remote.startswith(root.rstrip("/") + "/psx/"):
                 return set()
             if remote not in remote_files:
                 return set()
@@ -152,7 +152,7 @@ def group_catalogue(adb, roms: list[tuple], root: str) -> tuple[list[tuple], dic
     for playlist in all_playlists:
         if not playlist.startswith(psx_root):
             continue
-        hidden.update(_playlist_refs(adb, playlist, all_files))
+        hidden.update(_playlist_refs(adb, playlist, all_files, root))
     candidates = {}
     for plan in plans_for(roms, root):
         if any(p in hidden for p in plan.tracks):
