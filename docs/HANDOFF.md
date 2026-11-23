@@ -6,7 +6,7 @@
 - 작성일: 2026-11-20 (Asia/Seoul)
 - 프로젝트: KNULLI Korean Auto Scraper
 - 저장소: https://github.com/Propeex/KNULLI-Korean-Auto-Scraper
-- **다음 배포 버전: `v0.8.8-beta.1` (PS1 멀티디스크 M3U).** 현재 최신 공개 베타: [`v0.8.7-beta.3`](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.7-beta.3) (PSP 대용량 ROM 이름 검색).** 이전 버전은 `v0.8.7-beta.2` (Atomiswave .7z 인식 수정). 이전 공개 베타는 `v0.8.7-beta.1` (PortMaster 지원). 이전 공개 버전: `v0.8.6-beta.1`. 이전 공개 베타: `v0.8.5-beta.2`. 이전 공개 버전은 `v0.8.5-beta.1`. 최초 이식 소스 기준: **v0.8.4 베타** (`knulli_auto_scraper_adb_v084_unicode_folders.zip`)
+- **현재 최신 공개 베타: [`v0.8.8-beta.1`](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.8-beta.1) (PS1 멀티디스크 M3U 지원).** 이전 베타: `v0.8.7-beta.3`. 최초 이식 소스 기준: `v0.8.4`.
 - 대상: Windows PC, RG35XX Plus (KNULLI), USB ADB
 - 스크래핑: Windows에서 Skyscraper / ScreenScraper 사용. PC 인터넷만 필요, 기기 인터넷 불필요.
 - **GitHub 최초 이식 완료:** 2026-11-20, 원본 v0.8.4 소스를 코드 변경 없이 복원한 커밋 `4734f7a954d0953a6f1306f8a3910039bcc6a634`. 원본 압축 스냅샷 SHA256 검증 및 GitHub Actions 복원 성공. 상세 기록: [MIGRATION.md](MIGRATION.md). 실기기 테스트는 사용자 환경에서 별도 확인해야 함.
@@ -32,7 +32,7 @@
 - v0.8.4에서 기기 경로를 바이트/NUL 구분 + 영숫자 인코딩으로 PC에 전달, 파일 크기 조회의 인코딩 개선.
 - **단위 테스트는 통과했지만 이 v0.8.4 수정의 실기기 성공 피드백은 아직 받지 못함.**
 
-## 개발 중 — PS1 멀티디스크 자동 통합 및 M3U 생성 (v0.8.8-beta.1, 2026-11-23)
+## 구현·배포 완료 — PS1 멀티디스크 자동 통합 및 M3U 생성 (v0.8.8-beta.1, 2026-11-23)
 
 - **요청:** 드래곤 퀘스트 7 PS1 디스크 2개가 목록에 따로 보이는 문제를 해결하고 스크래핑 한 번으로 처리. 작업 완료 시 새 GitHub Beta Release 발행 및 이 인수인계 문서 갱신.
 - **기준 문서:** [KNULLI Multi-Disc Games](https://knulli.org/configure/multi-disc-games/). KNULLI는 M3U가 가리키는 디스크를 프론트엔드 옵션으로 숨김.
@@ -41,8 +41,9 @@
 - **안전:** 디스크 원본/세이브/메모리카드/기존 M3U 파일을 변경·삭제·덮어쓰지 않음. 원격 M3U 파일 생성 전 원본 디스크 존재 재검증, 셸 noclobber 처리. Disc 1 XML 메타데이터(사용자 게임명·설명·미디어) 복사 시 기존 항목 보존, XML 영구 백업 미생성.
 - **범위:** M3U 안의 안전한 상대경로는 하위 폴더로 연결 가능. 새 M3U 자동 생성은 같은 폴더의 명확한 디스크 세트에 한정. 이상한/누락 파일 M3U는 추측하지 않고 기존 디스크를 표시.
 - **테스트:** `tests/test_v088_multidisc.py` Windows/Linux 유닛, Linux 실제 POSIX 셸 시뮬레이션에서 한글 M3U 생성, 디스크·세이브·기존 XML 보존 확인. Windows 릴리즈 게이트에 추가.
-- **PR:** [#7](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/pull/7), 브랜치 `feature/psx-multidisc-m3u-v088`.
-- **다음 중단 지점:** 최종 브랜치 CI 검증 → PR #7 main 병합 → `release/request.json`의 버전을 `v0.8.8-beta.1`로 변경 → GitHub Beta/Pre-release Windows ZIP/.sha256 자산, CI 상태 확인. 실제 RG35XX Plus에서 재생목록 게임 실행과 디스크 교체 여부는 현장 검증 필요. 또한 KNULLI에서 'Ignore Multi-File Disk Content (CUE/GDI/CCD/M3U)' 설정과 gamelist 갱신 안내 유지.
+- **구현 및 main 병합 완료:** [PR #7](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/pull/7) (squash commit `d173927b120493bb7e85dce4cf5776e9b4b35d19`), 개발 브랜치 `feature/psx-multidisc-m3u-v088`.
+- **릴리즈 완료 및 검증 (2026-11-23):** [v0.8.8-beta.1](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.8-beta.1) 공개, `prerelease=true`. Windows ZIP 100,707 bytes, SHA256 `b29bb275d079ddb2c0606ffc7844363418df4efa285fef23699d845d9dc236f3`, `.sha256` 첨부 파일 확인. [GitHub Actions](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/actions/runs/45147929620) Windows + Linux 전체 테스트, 패키징·체크섬·릴리즈 검사 모두 성공.
+- **현재 중단 지점 / 다음 작업:** 사용자 RG35XX Plus에서 `.m3u` 신규 생성 후 KNULLI의 `Ignore Multi-File Disk Content` 설정 및 게임 목록 갱신, 실제 Disc 1 실행·Disc 2 전환과 기존 세이브 호환성 확인. 사용자 PC에서 멀티디스크 게임명 검색·이미지 메타데이터 적용도 검증. 특정 파일명 규칙·폴더 구조가 매칭되지 않으면 로그/목록 사례를 수집해 다음 Beta에서 수정.
 - **정책:** 정식판 승인 전 베타만 출시, 성공적으로 끝난 모든 작업은 릴리즈 필수, GitHub 문서에 다음 대화의 개발 중단 지점까지 기록.
 
 ## 수정·배포 완료 — PSP 대용량 디스크 `rom_too_large` (v0.8.7-beta.3, 2026-11-23)
@@ -107,7 +108,7 @@
 ## 릴리즈 운영 규칙 (2026-11-23)
 - 사용자는 **작업이 성공적으로 종료될 때마다 GitHub Release 발행**을 요구함. 개발은 릴리즈까지 끝나야 완료임.
 - 사용자가 정식 출시를 명시적으로 승인하기 전에는 `vMAJOR.MINOR.PATCH-beta.N` 형식의 **Pre-release**만 가능. 번호는 개발 담당자가 관리.
-- 현재 최신 베타: [`v0.8.7-beta.3`](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.7-beta.3). 이전 베타: `v0.8.7-beta.2`,    [기존 릴리즈 페이지](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.5-beta.2). 첫 베타는 `v0.8.5-beta.1`.
+- 현재 최신 베타: [`v0.8.8-beta.1`](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.8-beta.1). 이전 베타: `v0.8.7-beta.3`. 초기 베타: `v0.8.5-beta.1`.
 - 릴리즈는 테스트→배포 ZIP/체크섬 생성→GitHub 사전출시 상태/첨부파일 확인까지 완료해야 성공.
 - 절차: [RELEASE_PROCESS.md](RELEASE_PROCESS.md), GitHub Actions `.github/workflows/publish-beta.yml`, 트리거 `release/request.json`.
 - **첫 GitHub Beta Release 발행 확인 완료 (2026-11-23):** [v0.8.5-beta.1](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.5-beta.1). `prerelease=true`, ZIP(68,614 bytes), `.sha256` 두 첨부 자산 확인. [배포 GitHub Actions](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/actions/runs/45046433924)의 테스트·ZIP 빌드·검증·게시·첨부파일 확인 전 단계 성공.
@@ -134,7 +135,7 @@
 - 향후 기능 개발 성공 시 `app_version.VERSION_TAG`와 `release/request.json`을 일치시켜 새로운 `beta.N` 릴리즈를 자동 발행. 정식 출시 승인 전까지 stable 배포 금지.
 
 ## 현재 중단 지점
-**최신 배포 완료: `v0.8.7-beta.3`** (PSP 대용량 ISO/CSO/PBP/CHD `rom_too_large` 해소). [릴리즈](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.7-beta.3), [Windows+Linux 릴리즈 검증](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/actions/runs/45059639699). PortMaster, Atomiswave, 자동 업데이트, 스크랩 데이터 XML 백업 미생성 정책은 유지. **다음 작업:** 사용자 Windows PC에서 실제 PSP 대용량 디스크 이름 검색이 Skyscraper 버전과 호환되는지, 원하는 게임의 이미지/설명이 제대로 적용되는지 실기기 테스트. 원본 ROM 복사가 없다는 점은 자동 테스트로 검증했으나 실사용 성공을 단정하지 말 것. 확인되지 않은 부분은 후속 Beta 4 이상으로 수정.
+**최신 배포 완료: `v0.8.8-beta.1`**. PS1 멀티디스크 자동 통합, 기존/신규 M3U, 게임 정보 보존 및 동의 후 M3U 작성 구현. [릴리즈](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.8-beta.1), [Windows + Linux CI](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/actions/runs/45147929620) 검증 성공. **다음 작업:** 실제 RG35XX Plus에서 2장 이상의 게임 파일로 M3U 작성, 게임 목록 중복 숨김, 디스크 교체, 게임 실행·세이브 호환성, 스크래핑 메타데이터 적용을 검증. 기기에 있는 ROM·세이브 파일을 변경하거나 삭제하지 않는 정책 및 XML 영구 백업 미생성 정책 유지. 실제 기기 성공 여부는 아직 미확인.
 
 ## 이어서 할 일 (우선순위)
 1. [완료] 원본 v0.8.4의 모든 소스 파일을 저장소 루트에 복원. 압축 스냅샷 SHA256 확인. 
