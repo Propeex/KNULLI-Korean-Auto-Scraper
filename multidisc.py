@@ -106,10 +106,24 @@ def _playlist_refs(adb, playlist: str, remote_files: set[str], root: str) -> set
         size = adb.stat_size(playlist)
         if not 0 < size <= PLAYLIST_MAX_BYTES:
             return set()
-        with tempfile.TemporaryDirectory(prefix="knulli_m3u_read_") as td:
-            local = Path(td) / "playlist.m3u"
-            adb.pull(playlist, local)
-            data = local.read_bytes()
+        # First read with an ASCII-only shell command: Windows ADB may lose
+        # Korean path bytes when 'adb pull' passes a Unicode argument.
+        data = None
+        try:
+            response = adb.shell(
+                "od -An -v -tx1 " + core.Adb._encoded_remote_path(playlist),
+                timeout=30,
+            )
+            words = response.split()
+            if words and all(re.fullmatch(r"[0-9a-fA-F]{2}", w) for w in words):
+                data = bytes.fromhex("".join(words))
+        except (RuntimeError, ValueError, OSError):
+            pass
+        if data is None:
+            with tempfile.TemporaryDirectory(prefix="knulli_m3u_read_") as td:
+                local = Path(td) / "playlist.m3u"
+                adb.pull(playlist, local)
+                data = local.read_bytes()
         if len(data) != size:
             return set()
         raw = data.decode("utf-8-sig")
