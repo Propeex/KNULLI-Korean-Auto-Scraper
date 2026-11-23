@@ -92,7 +92,7 @@
 - [x] 디스크·세이브 파일 보호, 기존 XML 사용자 메타데이터를 새 재생목록 항목에 복사, XML 백업 미생성
 - [x] .m3u 원본 해시 조회 없이 게임명 기반 스크래핑
 - [x] Windows + Linux 다중 디스크 및 실제 POSIX 셸 생성 회귀 테스트
-- [ ] 코드 병합 및 Beta Pre-release `v0.8.8-beta.1` 자산 확인
+- [x] [PR #7](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/pull/7) main 병합 및 [v0.8.8-beta.1 Pre-release](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.8-beta.1) Windows ZIP/SHA-256 확인 ([릴리즈 GitHub Actions](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/actions/runs/45147929620) 성공)
 - [ ] 사용자 KNULLI/RG35XX Plus에서 디스크 자동 인식·실제 교체 및 UI 표시 검증
 
 ## P2 — 다운로드 범위와 검색 정확도
