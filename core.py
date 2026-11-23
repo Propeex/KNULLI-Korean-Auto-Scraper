@@ -32,15 +32,15 @@ SYSTEM_IDS = {
 }
 ROM_EXT = {'.nes','.fds','.sfc','.smc','.gb','.gbc','.gba','.nds','.n64','.z64','.v64',
            '.md','.gen','.bin','.sms','.gg','.pce','.zip','.7z','.chd','.iso','.cue','.lst','.dat',
-           '.pbp','.cso','.cdi','.gdi','.32x','.a26','.a78','.ngp','.ngc','.ws','.wsc','.sh'}
+           '.pbp','.cso','.cdi','.gdi','.m3u','.ccd','.32x','.a26','.a78','.ngp','.ngc','.ws','.wsc','.sh'}
 # Disc containers/archives can't be assumed to match hash catalog; for them search names only.
-NO_HASH = {'.zip','.7z','.chd','.iso','.cue','.pbp','.cso','.cdi','.gdi'}
+NO_HASH = {'.zip','.7z','.chd','.iso','.cue','.pbp','.cso','.cdi','.gdi','.m3u','.ccd'}
 EXT_MATCH = {
     '.nes':{'nes'}, '.sfc':{'snes'},'.smc':{'snes'}, '.gba':{'gba'},'.gb':{'gb'},'.gbc':{'gbc'},
     '.nds':{'nds'},'.n64':{'n64'},'.z64':{'n64'},'.v64':{'n64'},'.pce':{'pcengine'},
     '.sms':{'mastersystem'},'.gg':{'gamegear'},'.a26':{'atari2600'},'.a78':{'atari7800'},
     '.ngp':{'ngp'},'.ngc':{'ngpc'},'.ws':{'wswan'},'.wsc':{'wswanc'},
-    '.lst':{'atomiswave'}, '.dat':{'atomiswave'},
+    '.lst':{'atomiswave'}, '.dat':{'atomiswave'}, '.m3u':{'psx'}, '.ccd':{'psx'},
 }
 
 
