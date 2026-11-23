@@ -315,7 +315,8 @@ def process_selected(adb,config,items:list[RomItem], overrides:dict,
                 wiki=[]
                 if config.get('use_wikidata',True) and not manual and not aliases.get(core.norm(item.stem)) and re.search(r'[가-힣]',item.stem):
                     wiki=core.wikidata_title(item.stem,wiki_cache)
-                candidates=legacy.normalized_candidates(item.stem,aliases,internal,wiki)
+                source_stem=multidisc.clean_title(item.stem) if item.system=='psx' else item.stem
+                candidates=legacy.normalized_candidates(source_stem,aliases,internal,wiki)
                 if manual:
                     candidates=[manual]+[s for s in candidates if core.norm(s)!=core.norm(manual)]
                 row['candidates']=candidates
