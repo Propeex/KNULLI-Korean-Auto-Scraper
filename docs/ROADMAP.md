@@ -83,6 +83,18 @@
 - [x] [PR #6](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/pull/6) 병합, [GitHub Windows+Linux 릴리즈 CI](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/actions/runs/45059639699) 통과, [v0.8.7-beta.3 Pre-release](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.7-beta.3) ZIP/.sha256 첨부 확인
 - [ ] 사용자 Windows/RG35XX Plus에서 실제 PSP ISO 이름 검색 및 이미지 적용 확인
 
+## P1.11 — PS1 멀티디스크 통합 (v0.8.8-beta.1)
+
+- [x] KNULLI `psx`에서 `.m3u` 재생목록을 인식하고 유효한 트랙만 숨겨 게임 1개로 표시
+- [x] Disc/Disk/CD/디스크 1..N을 같은 폴더에서 정확히 분류, 불완전/중복 디스크 세트는 건너뜀
+- [x] 재생목록이 없는 완전한 세트는 대표 Disc 1만 앱 목록에 표시
+- [x] 명시적 [멀티디스크 묶기] 승인 시 기존 M3U를 덮어쓰지 않고 작은 재생목록 생성
+- [x] 디스크·세이브 파일 보호, 기존 XML 사용자 메타데이터를 새 재생목록 항목에 복사, XML 백업 미생성
+- [x] .m3u 원본 해시 조회 없이 게임명 기반 스크래핑
+- [x] Windows + Linux 다중 디스크 및 실제 POSIX 셸 생성 회귀 테스트
+- [ ] 코드 병합 및 Beta Pre-release `v0.8.8-beta.1` 자산 확인
+- [ ] 사용자 KNULLI/RG35XX Plus에서 디스크 자동 인식·실제 교체 및 UI 표시 검증
+
 ## P2 — 다운로드 범위와 검색 정확도
 - [ ] 타이틀 화면(sstitle) 다운로드 가능한 공식/허용 경로 검증
 - [ ] KNULLI 스크래퍼 선택지와 실제 Windows 엔진 옵션 대응표 정리

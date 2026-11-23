@@ -30,6 +30,8 @@ jobs:
         run: python tests/test_v087_beta2_atomiswave.py -v
       - name: Verify large PSP ROMs use name-only scraping on Windows
         run: python tests/test_v087_beta3_large_psp.py -v
+      - name: Verify PS1 multi-disc grouping on Windows
+        run: python tests/test_v088_multidisc.py -v
       - name: Verify updater modules compile
         run: python -m compileall -q GUI_실행.pyw auto_update.py auto_update_helper.py app_version.py gui.py portmaster.py
 

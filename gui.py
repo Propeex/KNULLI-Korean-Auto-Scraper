@@ -21,6 +21,7 @@ import bundle_engine
 import core
 import legacy_bridge as legacy
 import manager
+import multidisc
 import scrape_options
 import setup_engine
 import setup_platform_tools
@@ -59,6 +60,7 @@ class App(tk.Tk):
         self.adb=None;self.busy=False
         self._backups_cleaned=False
         self.items={};self.checked=set();self.current=None
+        self._multidisc_plans={}
         self.preview_file=None;self.preview_img=None;self.preview_request_id=0
         self.pending_check=None
         self.name_var=tk.StringVar()
@@ -148,6 +150,8 @@ class App(tk.Tk):
         self.btn_missing.pack(side='left',padx=(0,6))
         self.btn_failed=ttk.Button(toolbar,text='실패 항목 선택',command=lambda:self.bulk('failed'))
         self.btn_failed.pack(side='left',padx=(0,6))
+        self.btn_multidisc=ttk.Button(toolbar,text='멀티디스크 묶기',command=self.create_multidisc)
+        self.btn_multidisc.pack(side='left',padx=(8,6))
         self.btn_go=ttk.Button(toolbar,text='작업 시작',style='Main.TButton',command=self.scrape)
         self.btn_go.pack(side='right')
 
@@ -244,7 +248,7 @@ class App(tk.Tk):
         self.progress=ttk.Progressbar(footer,maximum=1,mode='determinate')
         self.progress.pack(fill='x')
         ttk.Label(footer,textvariable=self.status_var,foreground=MUTED,wraplength=1200).pack(anchor='w',pady=(5,0))
-        self.action_buttons=[self.btn_all,self.btn_missing,self.btn_failed,self.btn_settings,self.btn_go]
+        self.action_buttons=[self.btn_all,self.btn_missing,self.btn_failed,self.btn_multidisc,self.btn_settings,self.btn_go]
         self.edit_buttons=[self.btn_name,self.btn_description]
         self._set_editable(False)
         self._bind_detail_wheel(canvas)
@@ -285,7 +289,9 @@ class App(tk.Tk):
 
     def _busy(self,value):
         self.busy=value
-        for widget in self.action_buttons:widget.configure(state='disabled' if value else 'normal')
+        for widget in self.action_buttons:
+            disabled=value or (widget==self.btn_multidisc and not self._multidisc_plans)
+            widget.configure(state='disabled' if disabled else 'normal')
         self._set_editable(not value)
 
     def _initial_setup(self):
@@ -334,6 +340,31 @@ class App(tk.Tk):
                                        cleanup_plan,cleanup_error,
                                        backup_report,backup_error)))
             except Exception as exc:self.q.put(('fatal','ROM 조회 실패: '+str(exc)))
+        self._thread(job)
+
+    def create_multidisc(self):
+        """Explicit user action: create non-destructive PS1 M3U playlists."""
+        if self.busy or not self._multidisc_plans or self.adb is None:
+            return
+        plans=list(self._multidisc_plans.values())
+        examples='\n'.join('• '+plan.title+f' ({len(plan.tracks)}장)' for plan in plans[:6])
+        if len(plans)>6:examples+='\n• 외 '+str(len(plans)-6)+'개'
+        message=(f'PS1 멀티디스크 게임 {len(plans)}개에 M3U 재생목록을 생성합니다.\n\n'
+                 f'{examples}\n\n'
+                 '디스크 파일과 세이브는 이동하거나 삭제하지 않습니다.\n'
+                 '기존 M3U를 덮어쓰지 않으며, Disc 1에 등록된 게임 정보는 새 M3U로 복사합니다.\n'
+                 'XML 백업은 생성하지 않습니다.\n\n생성하시겠습니까?')
+        if not messagebox.askyesno('PS1 멀티디스크 묶기',message,default='no'):
+            return
+        self._busy(True)
+        self.status_var.set('PS1 멀티디스크 M3U 생성 중…')
+        def job():
+            try:
+                root=self.config.get('remote_root','/userdata/roms')
+                result=multidisc.create_many(self.adb,root,plans)
+                self.q.put(('multidisc-done',result))
+            except Exception as exc:
+                self.q.put(('multidisc-error',str(exc)))
         self._thread(job)
 
     def _offer_cleanup(self,plan):
@@ -393,7 +424,8 @@ class App(tk.Tk):
             self.tree.item(rid,tags=(tag,) if tag else ())
 
     def _update_summary(self):
-        self.summary_var.set(f'{len(self.items)}개 · 선택 {len(self.checked)}개')
+        pending=len(self._multidisc_plans)
+        self.summary_var.set(f'{len(self.items)}개 · 선택 {len(self.checked)}개'+(f' · 디스크 묶기 {pending}개' if pending else ''))
         for rid in self.items:
             if self.tree.exists(rid):
                 self.tree.set(rid,'check',self._glyph(rid))
@@ -852,6 +884,13 @@ class App(tk.Tk):
                     backup_error=value[8] if len(value)>8 else ''
                     if backup_report is not None:
                         self._backups_cleaned=True
+                    self._multidisc_plans={
+                        item.rel:multidisc.PlaylistPlan(
+                            item.playlist_target,
+                            PurePosixPath(item.playlist_target).stem,
+                            item.disc_group,item.remote)
+                        for item in rows if item.playlist_target
+                    }
                     self._busy(False);self._paint(rows,self.current)
                     message=f'기기 연결됨 · ROM {len(rows)}개'
                     if sync_count:message+=f' · KNULLI 한글 표시명 {sync_count}개 동기화 (기기 목록 갱신 필요)'
@@ -864,6 +903,18 @@ class App(tk.Tk):
                     self.status_var.set(message)
                     if cleanup_plan and cleanup_plan.game_count:
                         self.after(150,lambda p=cleanup_plan:self._offer_cleanup(p))
+                elif msg=='multidisc-done':
+                    self._busy(False)
+                    created=value.get('created',[]); warnings=value.get('warnings',[])
+                    summary=f'멀티디스크 M3U {len(created)}개 생성 완료'
+                    if warnings:
+                        messagebox.showwarning('멀티디스크 일부 처리 실패',summary+'\n\n'+'\n'.join(warnings[:6]))
+                    else:
+                        messagebox.showinfo('멀티디스크 묶기 완료',summary+'\nKNULLI에서 게임 목록을 갱신해 주세요.')
+                    self.scan()
+                elif msg=='multidisc-error':
+                    self._busy(False)
+                    messagebox.showerror('멀티디스크 묶기 실패',str(value))
                 elif msg=='cleanup-done':
                     self._busy(False)
                     message=(f'정리 완료 · 게임 정보 {value["removed_games"]}개, '

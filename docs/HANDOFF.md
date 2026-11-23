@@ -6,7 +6,7 @@
 - 작성일: 2026-11-20 (Asia/Seoul)
 - 프로젝트: KNULLI Korean Auto Scraper
 - 저장소: https://github.com/Propeex/KNULLI-Korean-Auto-Scraper
-- **현재 최신 공개 베타: [`v0.8.7-beta.3`](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.7-beta.3) (PSP 대용량 ROM 이름 검색).** 이전 버전은 `v0.8.7-beta.2` (Atomiswave .7z 인식 수정). 이전 공개 베타는 `v0.8.7-beta.1` (PortMaster 지원). 이전 공개 버전: `v0.8.6-beta.1`. 이전 공개 베타: `v0.8.5-beta.2`. 이전 공개 버전은 `v0.8.5-beta.1`. 최초 이식 소스 기준: **v0.8.4 베타** (`knulli_auto_scraper_adb_v084_unicode_folders.zip`)
+- **다음 배포 버전: `v0.8.8-beta.1` (PS1 멀티디스크 M3U).** 현재 최신 공개 베타: [`v0.8.7-beta.3`](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.7-beta.3) (PSP 대용량 ROM 이름 검색).** 이전 버전은 `v0.8.7-beta.2` (Atomiswave .7z 인식 수정). 이전 공개 베타는 `v0.8.7-beta.1` (PortMaster 지원). 이전 공개 버전: `v0.8.6-beta.1`. 이전 공개 베타: `v0.8.5-beta.2`. 이전 공개 버전은 `v0.8.5-beta.1`. 최초 이식 소스 기준: **v0.8.4 베타** (`knulli_auto_scraper_adb_v084_unicode_folders.zip`)
 - 대상: Windows PC, RG35XX Plus (KNULLI), USB ADB
 - 스크래핑: Windows에서 Skyscraper / ScreenScraper 사용. PC 인터넷만 필요, 기기 인터넷 불필요.
 - **GitHub 최초 이식 완료:** 2026-11-20, 원본 v0.8.4 소스를 코드 변경 없이 복원한 커밋 `4734f7a954d0953a6f1306f8a3910039bcc6a634`. 원본 압축 스냅샷 SHA256 검증 및 GitHub Actions 복원 성공. 상세 기록: [MIGRATION.md](MIGRATION.md). 실기기 테스트는 사용자 환경에서 별도 확인해야 함.
@@ -31,6 +31,19 @@
 - v0.8.3에서 한글 하위 폴더 `psx/한글 폴더/Silent Hill (K).cue`의 경로가 `????`로 깨져 `remote file size unavailable` 발생.
 - v0.8.4에서 기기 경로를 바이트/NUL 구분 + 영숫자 인코딩으로 PC에 전달, 파일 크기 조회의 인코딩 개선.
 - **단위 테스트는 통과했지만 이 v0.8.4 수정의 실기기 성공 피드백은 아직 받지 못함.**
+
+## 개발 중 — PS1 멀티디스크 자동 통합 및 M3U 생성 (v0.8.8-beta.1, 2026-11-23)
+
+- **요청:** 드래곤 퀘스트 7 PS1 디스크 2개가 목록에 따로 보이는 문제를 해결하고 스크래핑 한 번으로 처리. 작업 완료 시 새 GitHub Beta Release 발행 및 이 인수인계 문서 갱신.
+- **기준 문서:** [KNULLI Multi-Disc Games](https://knulli.org/configure/multi-disc-games/). KNULLI는 M3U가 가리키는 디스크를 프론트엔드 옵션으로 숨김.
+- **구현:** `core.ROM_EXT`에 PS1 `.m3u`/`.ccd` 추가, `multidisc.py`(Disc/Disk/CD/디스크 1..N 정확한 인식, M3U 상대경로 읽기/검증, 스캔 중 논리적 그룹 통합 및 승인 후 M3U 생성), `backend.catalogue` 그룹 항목 표시, `gui.py` [멀티디스크 묶기] 버튼, `bundle_engine.py`/레거시 backend의 M3U 게임명 검색 강제.
+- **동작:** 기존 유효한 M3U는 대표 게임으로 사용하고 그 안에 참조된 개별 디스크 행을 숨김. M3U 없는 경우 같은 폴더의 정확한 Disc 1..N 세트만 임시로 한 게임 행으로 묶음. M3U 실제 생성은 사용자 버튼 및 명시적 확인 후 진행.
+- **안전:** 디스크 원본/세이브/메모리카드/기존 M3U 파일을 변경·삭제·덮어쓰지 않음. 원격 M3U 파일 생성 전 원본 디스크 존재 재검증, 셸 noclobber 처리. Disc 1 XML 메타데이터(사용자 게임명·설명·미디어) 복사 시 기존 항목 보존, XML 영구 백업 미생성.
+- **범위:** M3U 안의 안전한 상대경로는 하위 폴더로 연결 가능. 새 M3U 자동 생성은 같은 폴더의 명확한 디스크 세트에 한정. 이상한/누락 파일 M3U는 추측하지 않고 기존 디스크를 표시.
+- **테스트:** `tests/test_v088_multidisc.py` Windows/Linux 유닛, Linux 실제 POSIX 셸 시뮬레이션에서 한글 M3U 생성, 디스크·세이브·기존 XML 보존 확인. Windows 릴리즈 게이트에 추가.
+- **PR:** [#7](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/pull/7), 브랜치 `feature/psx-multidisc-m3u-v088`.
+- **다음 중단 지점:** 최종 브랜치 CI 검증 → PR #7 main 병합 → `release/request.json`의 버전을 `v0.8.8-beta.1`로 변경 → GitHub Beta/Pre-release Windows ZIP/.sha256 자산, CI 상태 확인. 실제 RG35XX Plus에서 재생목록 게임 실행과 디스크 교체 여부는 현장 검증 필요. 또한 KNULLI에서 'Ignore Multi-File Disk Content (CUE/GDI/CCD/M3U)' 설정과 gamelist 갱신 안내 유지.
+- **정책:** 정식판 승인 전 베타만 출시, 성공적으로 끝난 모든 작업은 릴리즈 필수, GitHub 문서에 다음 대화의 개발 중단 지점까지 기록.
 
 ## 수정·배포 완료 — PSP 대용량 디스크 `rom_too_large` (v0.8.7-beta.3, 2026-11-23)
 

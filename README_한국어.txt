@@ -1,4 +1,4 @@
-KNULLI Auto Scraper v0.8.7-beta.3 (Windows / RG35XX Plus / USB ADB)
+KNULLI Auto Scraper v0.8.8-beta.1 (Windows / RG35XX Plus / USB ADB)
 =====================================================
 
 시작하기
@@ -147,7 +147,7 @@ Platform-Tools: https://developer.android.com/tools/releases/platform-tools
 
 [베타 릴리즈 다운로드]
 ------------------------
-- https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.7-beta.3
+- https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.8-beta.1
 - Windows ZIP을 압축 해제한 후 GUI_실행.pyw를 실행합니다 (Python 3.10 이상 필요).
 - 이번 버전은 정식판이 아니며 GitHub 사전 출시(Beta)로 배포됩니다.
 
@@ -216,3 +216,17 @@ Platform-Tools: https://developer.android.com/tools/releases/platform-tools
 - 작은 ROM은 기존 해시 기반 검색을 유지하고, 큰 .zip/.7z 파일은 용량 제한을 유지합니다.
 - ROM 원본과 사용자 한글 게임명은 변경하지 않습니다. XML 자동 백업도 생성하지 않습니다.
 - 실제 사용자 PC의 Skyscraper 및 기기에서 검색 결과는 아직 실기기 확인 전입니다.
+
+
+[v0.8.8-beta.1: PS1 멀티디스크 게임 통합]
+----------------------------------------------
+- 드래곤 퀘스트 7 (Disc 1), (Disc 2)처럼 정확한 연속 디스크 번호가 있으면 스크래퍼 목록에서 게임 한 개로 묶어 보여 줍니다.
+- 기존 .m3u 파일이 있으면 파일 내 상대경로를 검사해 대표 게임으로 표시합니다.
+- 아직 .m3u가 없는 경우 상단 [멀티디스크 묶기]를 누르고 확인하면 .m3u를 생성합니다.
+- .m3u에는 실제 디스크 파일명 또는 상대 경로를 순서대로 기록합니다.
+- 원본 디스크, 게임 세이브, 메모리카드는 이동/수정/삭제하지 않습니다. 기존 .m3u도 덮어쓰지 않습니다.
+- 기존 Disc 1에 기록된 한글 이름, 설명, 미디어 경로는 새 M3U gamelist.xml 항목에 복사합니다. 기존 항목은 지우지 않고 XML 백업도 만들지 않습니다.
+- .m3u 스크래핑은 게임명으로 한 번 검색하므로 디스크별 중복 검색이 없습니다.
+- KNULLI에서 START > SYSTEM SETTINGS > FRONTEND DEVELOPER OPTIONS > Ignore Multi-File Disk Content (CUE/GDI/CCD/M3U)를 켜고 GAME SETTINGS > UPDATE GAMELISTS를 진행하세요.
+- 다른 폴더에 흩어진 디스크는 자동으로 새 M3U를 만들지 않습니다. 이미 만들어진 올바른 M3U는 지원합니다.
+- Windows + 실제 RG35XX Plus 환경은 아직 검증 전입니다.

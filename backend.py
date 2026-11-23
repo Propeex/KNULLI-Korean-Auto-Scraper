@@ -19,6 +19,7 @@ import user_data
 import credential_store
 import legacy_bridge as legacy
 import rom_staging
+import multidisc
 
 HERE = Path(__file__).resolve().parent
 RESOURCES = ('image', 'thumbnail', 'marquee', 'fanart', 'video', 'manual', 'boxback', 'titleshot', 'wheel', 'mix', 'boxart')
@@ -37,6 +38,8 @@ class RomItem:
     xml_problem: str = ''
     status: str = ''
     details: str = ''
+    disc_group: tuple[str, ...] = ()
+    playlist_target: str = ''
 
     @property
     def stem(self):
@@ -73,6 +76,7 @@ def catalogue(adb: core.Adb, config: dict, update: Callable[[str],None]|None=Non
     if adb.shell('if [ -d '+core.sq(root)+' ]; then echo YES; fi')!='YES':
         raise RuntimeError('ROM root not found: '+root)
     files=core.collect_roms(adb,root)
+    files, disc_plans = multidisc.group_catalogue(adb,files,root)
     # A valid, reachable KNULLI ROM root can contain zero games. The orphan
     # cleanup feature must still be able to inspect existing gamelist.xml files.
     report=load_json(HERE/'work'/'last_report.json',[])
@@ -94,6 +98,11 @@ def catalogue(adb: core.Adb, config: dict, update: Callable[[str],None]|None=Non
                     by_system[system]=(None,'XML 읽기 실패: '+str(e)[:130])
             doc,problem=by_system[system]
             item=RomItem(remote,rel.as_posix(),system,rel.stem,xml_problem=problem)
+            if remote in disc_plans:
+                plan=disc_plans[remote]
+                item.disc_group=plan.tracks
+                item.playlist_target=plan.remote
+                item.display=plan.title
             if doc is not None:
                 local_path='./'+PurePosixPath(*rel.parts[1:]).as_posix()
                 entry=core.find_entry(doc,local_path)
@@ -114,6 +123,7 @@ def catalogue(adb: core.Adb, config: dict, update: Callable[[str],None]|None=Non
             item.existing_resources={k for k,path in item.resource_paths.items() if existence.get(path,False)}
             item.image_exists='image' in item.existing_resources
             if item.xml_problem:item.status='XML 오류'
+            elif item.playlist_target:item.status='멀티디스크 묶기 필요'
             elif item.has_data:item.status='데이터 있음'
             elif item.resource_paths:item.status='자원 경로만 있음'
             else:item.status='데이터 없음'
@@ -296,7 +306,7 @@ def process_selected(adb,config,items:list[RomItem], overrides:dict,
                 local_rom=stage/'roms'/PurePosixPath(item.rel).name
                 name_only=rom_staging.prepare(
                     adb,item.remote,local_rom,size,
-                    int(config.get('max_rom_transfer_mb',256)))
+                    int(config.get('max_rom_transfer_mb',256))) or item.rel.lower().endswith('.m3u')
                 manual=(overrides.get(item.rel) or '').strip()
                 internal=None
                 if item.system=='gba':
@@ -305,7 +315,8 @@ def process_selected(adb,config,items:list[RomItem], overrides:dict,
                 wiki=[]
                 if config.get('use_wikidata',True) and not manual and not aliases.get(core.norm(item.stem)) and re.search(r'[가-힣]',item.stem):
                     wiki=core.wikidata_title(item.stem,wiki_cache)
-                candidates=legacy.normalized_candidates(item.stem,aliases,internal,wiki)
+                source_stem=multidisc.clean_title(item.stem) if item.system=='psx' else item.stem
+                candidates=legacy.normalized_candidates(source_stem,aliases,internal,wiki)
                 if manual:
                     candidates=[manual]+[s for s in candidates if core.norm(s)!=core.norm(manual)]
                 row['candidates']=candidates
