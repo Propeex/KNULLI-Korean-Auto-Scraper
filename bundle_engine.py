@@ -21,6 +21,7 @@ import user_data
 import legacy_bridge as legacy
 import portmaster
 import rom_staging
+import multidisc
 
 MEDIA_TAGS=('image','thumbnail','marquee','fanart','video','manual','boxback')
 TEXT_TAGS=('desc','rating','releasedate','genre','developer','publisher','players')
@@ -263,7 +264,7 @@ def _process_selected(adb,config,items,overrides,progress=None, engine=None,secr
                 local=stage/'roms'/PurePosixPath(item.rel).name
                 name_only=rom_staging.prepare(
                     adb,item.remote,local,size,
-                    int(config.get('max_rom_transfer_mb',256)))
+                    int(config.get('max_rom_transfer_mb',256))) or item.rel.lower().endswith('.m3u')
                 rec['lookup']='name_only' if name_only else 'hash_or_name'
                 manual=(overrides.get(item.rel) or '').strip()
                 learned_term=learned_titles.lookup(learned,item.system,item.stem)
@@ -271,7 +272,8 @@ def _process_selected(adb,config,items,overrides,progress=None, engine=None,secr
                 wiki=[]
                 if config.get('use_wikidata',True) and not manual and not aliases.get(core.norm(item.stem)) and re.search('[가-힣]',item.stem):
                     wiki=core.wikidata_title(item.stem,wiki_cache)
-                terms=legacy.normalized_candidates(item.stem,aliases,internal,wiki)
+                source_stem=multidisc.clean_title(item.stem) if item.system=='psx' else item.stem
+                terms=legacy.normalized_candidates(source_stem,aliases,internal,wiki)
                 prior=manual or learned_term
                 if prior:terms=[prior]+[s for s in terms if core.norm(s)!=core.norm(prior)]
                 rec['candidates']=terms
