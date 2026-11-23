@@ -7,7 +7,7 @@
 - 사용자의 명시적 동의를 받은 뒤 상단 [멀티디스크 묶기] 버튼으로 M3U 생성. 기존 파일을 덮어쓰지 않으며 디스크·세이브 파일 무수정.
 - Disc 1의 기존 사용자 이름·설명·미디어 경로를 새 playlist용 XML 게임 항목에 복사(기존 항목 보존, XML 백업 미생성).
 - M3U에 대해 해시 검색을 건너뛰고 이름 기반 검색으로 한 번 스크래핑.
-- [PR #7](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/pull/7). Windows/Linux CI 통과 후 v0.8.8-beta.1 Pre-release 발행 예정. 실기기 검증 별도.
+- [PR #7](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/pull/7) main 병합 완료. [v0.8.8-beta.1 Pre-release](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/releases/tag/v0.8.8-beta.1) 발행 완료. [Windows+Linux 릴리즈 CI](https://github.com/Propeex/KNULLI-Korean-Auto-Scraper/actions/runs/45147929620) 성공, Windows ZIP 100,707 bytes 및 SHA256 첨부 확인. **실제 RG35XX Plus에서 디스크 전환/게임 실행 검증은 필요.**
 
 
 ## v0.8.7-beta.3 — PSP 대용량 디스크 `rom_too_large` 수정 (2026-11-23)
